@@ -1,0 +1,1338 @@
+{
+  "updatedAt": "2026-02-17T19:33:01.105Z",
+  "createdAt": "2026-02-07T23:18:07.651Z",
+  "name": "JB - Learning Workflow",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblipcEGTgumBSY2t",
+          "mode": "list",
+          "cachedResultName": "weeklyAnalysis",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "filterByFormula": "{Status} = 'complete'",
+        "returnAll": false,
+        "limit": 2,
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "created_at",
+              "direction": "desc"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2096,
+        1360
+      ],
+      "id": "49541cf0-a52f-42a5-b448-ef906a6150da",
+      "name": "Get Weekly Analysis",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl7JyyQrSFvxMRe4",
+          "mode": "list",
+          "cachedResultName": "learningPatterns",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "filterByFormula": "OR({status} = 'Current', {status} = 'Completed')",
+        "returnAll": false,
+        "limit": 3,
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "weekEnd",
+              "direction": "desc"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2096,
+        1168
+      ],
+      "id": "82d00cab-ec0a-43cf-b90b-1b4f3baa5db4",
+      "name": "Get Latest Learnings",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblKKkKESC83u1hk8",
+          "mode": "list",
+          "cachedResultName": "myTweets",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "filterByFormula": "AND(IS_AFTER({Collected At}, DATEADD(TODAY(), -7, 'days')), {Account} = 'jb')",
+        "returnAll": false,
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "Created At",
+              "direction": "desc"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2096,
+        976
+      ],
+      "id": "80c25368-4a1e-40fb-ba22-11e0bb2e367b",
+      "name": "Get Latest Tweets",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 3,
+              "triggerAtHour": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        1872,
+        1168
+      ],
+      "id": "34fff27a-4709-48ce-918e-ac3c26efd9ee",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// LEARNING WORKFLOW - OPTIMIZED CODE NODE v2.0\n// ============================================\n// IMPROVEMENTS:\n// - Configurable parameters (no magic numbers)\n// - Empty data guard\n// - Reduced AI payload (Top 10 + Bottom 5 only)\n// - Pattern counts without full text\n// - Hook template extraction\n// ============================================\n\n// ============================================\n// CONFIGURATION - Easy to adjust\n// ============================================\nconst CONFIG = {\n  analysisDays: 7,\n  minTweetsForAnalysis: 5,\n  \n  // AI payload reduction - only send these\n  topPerformersToSend: 10,\n  bottomPerformersToSend: 5,\n  \n  // Performance tier thresholds\n  percentileThresholds: {\n    viral: 90,\n    strong: 70,\n    average: 40,\n    weak: 20\n  },\n  \n  // Composite score weights (must sum to 1.0)\n  compositeWeights: {\n    views: 0.30,\n    engagement: 0.35,\n    bookmarks: 0.25,\n    velocity: 0.10\n  },\n  \n  // Fatigue detection\n  fatigueThresholds: {\n    overuseCount: 3,  // Pattern used more than 3x = overused\n    declinePercent: 20  // >20% decline = fatigued\n  }\n};\n\n// Get all input data from previous nodes\nconst tweets = $('Get Latest Tweets').all();\nconst previousLearnings = $('Get Latest Learnings').all();\nconst weeklyAnalysis = $('Get Weekly Analysis').all();\n\n// ============================================\n// EMPTY DATA GUARD\n// ============================================\nif (tweets.length < CONFIG.minTweetsForAnalysis) {\n  return [{\n    json: {\n      error: 'Insufficient data',\n      message: `Only ${tweets.length} tweets found. Minimum required: ${CONFIG.minTweetsForAnalysis}`,\n      analysisDate: new Date().toISOString(),\n      metrics: {\n        totalPosts: tweets.length,\n        status: 'skipped'\n      },\n      status: 'skipped'\n    }\n  }];\n}\n\n// ============================================\n// HELPER FUNCTIONS\n// ============================================\n\nfunction percentile(arr, val) {\n  if (arr.length === 0) return 50;\n  const sorted = [...arr].sort((a, b) => a - b);\n  const idx = sorted.findIndex(v => v >= val);\n  if (idx === -1) return 100;\n  return Math.round((idx / arr.length) * 100);\n}\n\nfunction extractDayOfWeek(dateStr) {\n  if (!dateStr) return 'Unknown';\n  const date = new Date(dateStr);\n  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];\n  return days[date.getDay()] || 'Unknown';\n}\n\nfunction extractTimeSlot(dateStr) {\n  if (!dateStr) return 'Unknown';\n  const date = new Date(dateStr);\n  const hour = date.getHours();\n  if (hour < 7) return 'early_morning';\n  if (hour < 9) return '7am';\n  if (hour < 12) return '9am';\n  if (hour < 14) return '12pm';\n  if (hour < 16) return '2pm';\n  if (hour < 19) return '4pm';\n  if (hour < 22) return '7pm';\n  return '11pm';\n}\n\nfunction detectSyntaMention(text) {\n  if (!text) return { mentioned: false, position: null };\n  const lowerText = text.toLowerCase();\n  const syntaKeywords = ['synta', 'mcp', 'n8n', 'workflow', 'automation'];\n  \n  for (const keyword of syntaKeywords) {\n    const idx = lowerText.indexOf(keyword);\n    if (idx !== -1) {\n      const position = idx < text.length * 0.3 ? 'hook' : \n                       idx < text.length * 0.7 ? 'middle' : 'end';\n      return { mentioned: true, position, keyword };\n    }\n  }\n  return { mentioned: false, position: null };\n}\n\nfunction detectCTAType(text) {\n  if (!text) return 'none';\n  const lower = text.toLowerCase();\n  \n  if (/comment|drop a|type|reply with|tell me/i.test(lower)) return 'comment_trigger';\n  if (/follow for|must be following|follow me/i.test(lower)) return 'follow_trigger';\n  if (/link|check out|grab|get it/i.test(lower)) return 'link_drop';\n  if (/retweet|rt|share/i.test(lower)) return 'retweet_ask';\n  if (/bookmark|save this/i.test(lower)) return 'bookmark_ask';\n  if (/\\?$/.test(text.trim())) return 'soft_ask'; // Ends with question\n  \n  return 'none';\n}\n\nfunction calculateVelocity(views, hoursLive) {\n  if (!hoursLive || hoursLive === 0) return 0;\n  // Views per hour, normalized to 0-100 scale\n  const viewsPerHour = views / hoursLive;\n  return Math.min(100, Math.round(viewsPerHour / 100)); // 10K views/hour = 100\n}\n\n// ============================================\n// EXTRACT METRIC ARRAYS FOR PERCENTILE CALC\n// ============================================\nconst allViews = tweets.map(t => t.json['View Count'] || t.json.viewCount || 0);\nconst allEngagements = tweets.map(t => t.json['Total Engagement'] || t.json.totalEngagement || 0);\nconst allBookmarks = tweets.map(t => t.json['Bookmark Count'] || t.json.bookmarkCount || 0);\n\n// ============================================\n// PROCESS EACH TWEET - COMPREHENSIVE METRICS\n// ============================================\nconst processedTweets = tweets.map(tweet => {\n  const data = tweet.json;\n  \n  // Extract raw metrics\n  const views = data['View Count'] || data.viewCount || 1;\n  const likes = data['Like Count'] || data.likeCount || 0;\n  const retweets = data['Retweet Count'] || data.retweetCount || 0;\n  const replies = data['Reply Count'] || data.replyCount || 0;\n  const quotes = data['Quote Count'] || data.quoteCount || 0;\n  const bookmarks = data['Bookmark Count'] || data.bookmarkCount || 0;\n  const totalEngagement = data['Total Engagement'] || data.totalEngagement || (likes + retweets + replies + quotes);\n  const createdAt = data['Created At'] || data.createdAt;\n  \n  // Calculate rates\n  const engagementRate = (totalEngagement / views) * 100;\n  const bookmarkRate = (bookmarks / views) * 100;\n  const replyRate = (replies / views) * 100;\n  \n  // Calculate hours live (for velocity)\n  let hoursLive = 24; // Default\n  if (createdAt) {\n    const postDate = new Date(createdAt);\n    const now = new Date();\n    hoursLive = Math.max(1, (now - postDate) / (1000 * 60 * 60));\n  }\n  \n  // Calculate velocity\n  const velocity = calculateVelocity(views, hoursLive);\n  \n  // Calculate percentiles\n  const viewsPercentile = percentile(allViews, views);\n  const engagementPercentile = percentile(allEngagements, totalEngagement);\n  const bookmarkPercentile = percentile(allBookmarks, bookmarks);\n  \n  // COMPOSITE SCORE FORMULA - Using CONFIG weights\n  const compositeScore = Math.min(100, Math.round(\n    (viewsPercentile * CONFIG.compositeWeights.views) +\n    (engagementPercentile * CONFIG.compositeWeights.engagement) +\n    (bookmarkPercentile * CONFIG.compositeWeights.bookmarks) +\n    (velocity * CONFIG.compositeWeights.velocity)\n  ));\n  \n  // Assign Performance Tier - Using CONFIG thresholds\n  let tier;\n  if (compositeScore >= CONFIG.percentileThresholds.viral) tier = 'viral';\n  else if (compositeScore >= CONFIG.percentileThresholds.strong) tier = 'strong';\n  else if (compositeScore >= CONFIG.percentileThresholds.average) tier = 'average';\n  else if (compositeScore >= CONFIG.percentileThresholds.weak) tier = 'weak';\n  else tier = 'flop';\n  \n  // Extract full text for analysis\n  const fullText = data.Text || data.text || '';\n  const hook = data.Hook || data.hook || fullText.split('\\n')[0] || '';\n  \n  // Detect patterns (deterministic)\n  const syntaInfo = detectSyntaMention(fullText);\n  const ctaType = detectCTAType(fullText);\n  const dayOfWeek = extractDayOfWeek(createdAt);\n  const timeSlot = extractTimeSlot(createdAt);\n  \n  return {\n    // Identifiers\n    id: data.id,\n    tweetId: data['Tweet ID'] || data.tweetId,\n    \n    // FULL CONTENT (for AI to analyze)\n    hook: hook,\n    text: fullText,\n    \n    // Metadata\n    author: data.Author || data.author || 'justben_builds',\n    url: data.URL || data.url,\n    contentType: data['Content Type'] || data.contentType || '',\n    createdAt: createdAt,\n    collectedAt: data['Collected At'] || data.collectedAt,\n    daysSincePosted: data['Days Since Posted'] || data.daysSincePosted || 0,\n    \n    // TIME ANALYSIS (NEW)\n    dayOfWeek: dayOfWeek,\n    timeSlot: timeSlot,\n    hoursLive: Math.round(hoursLive),\n    \n    // RAW METRICS\n    likeCount: likes,\n    retweetCount: retweets,\n    replyCount: replies,\n    quoteCount: quotes,\n    bookmarkCount: bookmarks,\n    viewCount: views,\n    totalEngagement: totalEngagement,\n    \n    // CALCULATED RATES\n    engagementRate: parseFloat(engagementRate.toFixed(2)),\n    bookmarkRate: parseFloat(bookmarkRate.toFixed(3)),\n    replyRate: parseFloat(replyRate.toFixed(3)),\n    velocity: velocity,\n    \n    // PERCENTILES\n    viewsPercentile: viewsPercentile,\n    engagementPercentile: engagementPercentile,\n    bookmarkPercentile: bookmarkPercentile,\n    \n    // FINAL SCORE\n    compositeScore: compositeScore,\n    performanceTier: tier,\n    \n    // PATTERN DETECTION (Deterministic)\n    syntaMention: syntaInfo,\n    ctaType: ctaType,\n    \n    // Flags from original data\n    isViralPattern: data['Is Viral Pattern'] || data.isViralPattern || false,\n    isThread: data['Is Thread'] || data.isThread || false,\n    hasMedia: !!(data['Media URLs'] || data.mediaUrls),\n    textLength: fullText.length,\n    wordCount: fullText.split(/\\s+/).filter(w => w).length,\n    content_format: data.content_format || data['content_format'] || null,\n    postCount: data.post_count || data['post_count'] || 1\n  };\n});\n\n// Sort by composite score\nconst sortedTweets = [...processedTweets].sort((a, b) => b.compositeScore - a.compositeScore);\n\n// Add ranking\nsortedTweets.forEach((tweet, idx) => {\n  tweet.rank = idx + 1;\n  tweet.percentileRank = Math.round(((sortedTweets.length - idx) / sortedTweets.length) * 100);\n});\n\n// ============================================\n// PRE-AGGREGATE STATISTICS\n// ============================================\nconst totalTweets = sortedTweets.length;\n\n// Basic aggregates\nconst avgCompositeScore = totalTweets > 0 \n  ? parseFloat((sortedTweets.reduce((sum, t) => sum + t.compositeScore, 0) / totalTweets).toFixed(1))\n  : 0;\nconst avgEngagementRate = totalTweets > 0 \n  ? parseFloat((sortedTweets.reduce((sum, t) => sum + t.engagementRate, 0) / totalTweets).toFixed(2))\n  : 0;\nconst avgBookmarkRate = totalTweets > 0 \n  ? parseFloat((sortedTweets.reduce((sum, t) => sum + t.bookmarkRate, 0) / totalTweets).toFixed(3))\n  : 0;\nconst avgVelocity = totalTweets > 0\n  ? parseFloat((sortedTweets.reduce((sum, t) => sum + t.velocity, 0) / totalTweets).toFixed(1))\n  : 0;\nconst avgViews = totalTweets > 0\n  ? Math.round(sortedTweets.reduce((sum, t) => sum + t.viewCount, 0) / totalTweets)\n  : 0;\n\n// Tier distribution\nconst tierDistribution = {\n  viral: sortedTweets.filter(t => t.performanceTier === 'viral').length,\n  strong: sortedTweets.filter(t => t.performanceTier === 'strong').length,\n  average: sortedTweets.filter(t => t.performanceTier === 'average').length,\n  weak: sortedTweets.filter(t => t.performanceTier === 'weak').length,\n  flop: sortedTweets.filter(t => t.performanceTier === 'flop').length\n};\n\n// ============================================\n// TIME ANALYSIS AGGREGATES (NEW)\n// ============================================\nconst dayStats = {};\nconst timeSlotStats = {};\n\nsortedTweets.forEach(t => {\n  // Day aggregation\n  if (!dayStats[t.dayOfWeek]) {\n    dayStats[t.dayOfWeek] = { posts: 0, totalScore: 0, totalBookmarkRate: 0 };\n  }\n  dayStats[t.dayOfWeek].posts++;\n  dayStats[t.dayOfWeek].totalScore += t.compositeScore;\n  dayStats[t.dayOfWeek].totalBookmarkRate += t.bookmarkRate;\n  \n  // Time slot aggregation\n  if (!timeSlotStats[t.timeSlot]) {\n    timeSlotStats[t.timeSlot] = { posts: 0, totalScore: 0 };\n  }\n  timeSlotStats[t.timeSlot].posts++;\n  timeSlotStats[t.timeSlot].totalScore += t.compositeScore;\n});\n\n// Calculate averages\nconst timeAnalysis = {\n  byDay: {},\n  byTimeSlot: {}\n};\n\nfor (const day in dayStats) {\n  timeAnalysis.byDay[day] = {\n    posts: dayStats[day].posts,\n    avgScore: parseFloat((dayStats[day].totalScore / dayStats[day].posts).toFixed(1)),\n    avgBookmarkRate: parseFloat((dayStats[day].totalBookmarkRate / dayStats[day].posts).toFixed(3))\n  };\n}\n\nfor (const slot in timeSlotStats) {\n  timeAnalysis.byTimeSlot[slot] = {\n    posts: timeSlotStats[slot].posts,\n    avgScore: parseFloat((timeSlotStats[slot].totalScore / timeSlotStats[slot].posts).toFixed(1))\n  };\n}\n\n// ============================================\n// CTA ANALYSIS AGGREGATES (NEW)\n// ============================================\nconst ctaStats = {};\nsortedTweets.forEach(t => {\n  if (!ctaStats[t.ctaType]) {\n    ctaStats[t.ctaType] = { posts: 0, totalScore: 0, totalReplies: 0, totalBookmarkRate: 0 };\n  }\n  ctaStats[t.ctaType].posts++;\n  ctaStats[t.ctaType].totalScore += t.compositeScore;\n  ctaStats[t.ctaType].totalReplies += t.replyCount;\n  ctaStats[t.ctaType].totalBookmarkRate += t.bookmarkRate;\n});\n\nconst ctaAnalysis = {};\nfor (const cta in ctaStats) {\n  ctaAnalysis[cta] = {\n    posts: ctaStats[cta].posts,\n    avgScore: parseFloat((ctaStats[cta].totalScore / ctaStats[cta].posts).toFixed(1)),\n    avgReplies: parseFloat((ctaStats[cta].totalReplies / ctaStats[cta].posts).toFixed(1)),\n    avgBookmarkRate: parseFloat((ctaStats[cta].totalBookmarkRate / ctaStats[cta].posts).toFixed(3))\n  };\n}\n\n// ============================================\n// SYNTA/PRODUCT MENTION ANALYSIS (NEW)\n// ============================================\nconst withSynta = sortedTweets.filter(t => t.syntaMention.mentioned);\nconst withoutSynta = sortedTweets.filter(t => !t.syntaMention.mentioned);\n\nconst syntaAnalysis = {\n  totalMentions: withSynta.length,\n  avgScoreWithSynta: withSynta.length > 0 \n    ? parseFloat((withSynta.reduce((sum, t) => sum + t.compositeScore, 0) / withSynta.length).toFixed(1))\n    : 0,\n  avgScoreWithoutSynta: withoutSynta.length > 0\n    ? parseFloat((withoutSynta.reduce((sum, t) => sum + t.compositeScore, 0) / withoutSynta.length).toFixed(1))\n    : 0,\n  avgBookmarkRateWithSynta: withSynta.length > 0\n    ? parseFloat((withSynta.reduce((sum, t) => sum + t.bookmarkRate, 0) / withSynta.length).toFixed(3))\n    : 0,\n  byPosition: {\n    hook: withSynta.filter(t => t.syntaMention.position === 'hook').length,\n    middle: withSynta.filter(t => t.syntaMention.position === 'middle').length,\n    end: withSynta.filter(t => t.syntaMention.position === 'end').length\n  }\n};\n\n// ============================================\n// BOOKMARK-SPECIFIC ANALYSIS (NEW)\n// ============================================\nconst sortedByBookmarks = [...sortedTweets].sort((a, b) => b.bookmarkRate - a.bookmarkRate);\nconst topBookmarkPosts = sortedByBookmarks.slice(0, 5).map(t => ({\n  tweetId: t.tweetId,\n  hook: t.hook.substring(0, 100),\n  bookmarkRate: t.bookmarkRate,\n  compositeScore: t.compositeScore,\n  ctaType: t.ctaType\n}));\n\nconst bookmarkAnalysis = {\n  avgBookmarkRate: avgBookmarkRate,\n  topBookmarkPosts: topBookmarkPosts,\n  highBookmarkThreshold: sortedByBookmarks.length > 0 ? sortedByBookmarks[Math.floor(sortedByBookmarks.length * 0.2)]?.bookmarkRate || 0 : 0,\n  lowBookmarkThreshold: sortedByBookmarks.length > 0 ? sortedByBookmarks[Math.floor(sortedByBookmarks.length * 0.8)]?.bookmarkRate || 0 : 0\n};\n\n// ============================================\n// FORMAT ANALYSIS (NEW)\n// ============================================\nconst formatStats = {\n  single_tweet: { posts: 0, totalScore: 0 },\n  thread: { posts: 0, totalScore: 0 },\n  short: { posts: 0, totalScore: 0 },\n  medium: { posts: 0, totalScore: 0 },\n  long: { posts: 0, totalScore: 0 }\n};\n\nsortedTweets.forEach(t => {\n  // Thread vs single\n  if (t.isThread) {\n    formatStats.thread.posts++;\n    formatStats.thread.totalScore += t.compositeScore;\n  } else {\n    formatStats.single_tweet.posts++;\n    formatStats.single_tweet.totalScore += t.compositeScore;\n  }\n  \n  // Length categorization\n  if (t.wordCount < 30) {\n    formatStats.short.posts++;\n    formatStats.short.totalScore += t.compositeScore;\n  } else if (t.wordCount < 80) {\n    formatStats.medium.posts++;\n    formatStats.medium.totalScore += t.compositeScore;\n  } else {\n    formatStats.long.posts++;\n    formatStats.long.totalScore += t.compositeScore;\n  }\n});\n\nconst formatAnalysis = {};\nfor (const format in formatStats) {\n  if (formatStats[format].posts > 0) {\n    formatAnalysis[format] = {\n      posts: formatStats[format].posts,\n      avgScore: parseFloat((formatStats[format].totalScore / formatStats[format].posts).toFixed(1))\n    };\n  }\n}\n\n// ============================================\n// GRANULAR FORMAT PERFORMANCE (content_format field)\n// ============================================\nconst formatDetailStats = {};\nsortedTweets.forEach(t => {\n  // Use content_format if available, fallback to heuristic detection\n  const fmt = t.content_format || (t.isThread ? 'thread_2' : t.wordCount < 30 ? 'short_punchy' : t.wordCount < 80 ? 'medium_story' : 'long_insight');\n  if (!formatDetailStats[fmt]) {\n    formatDetailStats[fmt] = { posts: 0, totalScore: 0, totalViews: 0, totalBookmarkRate: 0 };\n  }\n  formatDetailStats[fmt].posts++;\n  formatDetailStats[fmt].totalScore += t.compositeScore;\n  formatDetailStats[fmt].totalViews += t.viewCount;\n  formatDetailStats[fmt].totalBookmarkRate += t.bookmarkRate;\n});\n\nconst formatPerformance = {};\nfor (const [fmt, stats] of Object.entries(formatDetailStats)) {\n  formatPerformance[fmt] = {\n    posts: stats.posts,\n    avgScore: parseFloat((stats.totalScore / stats.posts).toFixed(1)),\n    avgViews: Math.round(stats.totalViews / stats.posts),\n    avgBookmarkRate: parseFloat((stats.totalBookmarkRate / stats.posts).toFixed(3))\n  };\n}\n\n// ============================================\n// EXTRACT PREVIOUS CONTEXT\n// ============================================\nconst previousLearningContext = previousLearnings.length > 0\n  ? previousLearnings.map(l => {\n      const data = l.json;\n      return {\n        ...data,\n        // Extract structured fields for hypothesis resolution\n        _previousHypotheses: (() => {\n          try { return JSON.parse(data.newHypotheses || '[]'); } catch(e) { return []; }\n        })(),\n        _previousCooldowns: (() => {\n          try { return JSON.parse(data.cooldowns || '[]'); } catch(e) { return []; }\n        })(),\n        _previousContentPlan: (() => {\n          try { return JSON.parse(data.weeklyContentPlan || '{}'); } catch(e) { return {}; }\n        })()\n      };\n    })\n  : [];\n\nconst weeklyAnalysisContext = weeklyAnalysis.length > 0\n  ? {\n      latestAnalysis: weeklyAnalysis[0].json,\n      totalAnalysesAvailable: weeklyAnalysis.length,\n      // Adapted WF4 fields (new schema)\n      stealAngles: weeklyAnalysis[0].json.steal_angles || weeklyAnalysis[0].json['Steal Angles'] || null,\n      hookFormulasExternal: weeklyAnalysis[0].json.hook_formulas || weeklyAnalysis[0].json['Hook Analysis'] || null,\n      contentGaps: weeklyAnalysis[0].json.content_gaps || weeklyAnalysis[0].json['Content Gaps'] || null,\n      fatigueAlertsExternal: weeklyAnalysis[0].json.fatigue_alerts || weeklyAnalysis[0].json['Fatigue Signals'] || weeklyAnalysis[0].json.fatigueSignals || null,\n      trendingFormats: weeklyAnalysis[0].json.trending_formats || null,\n      marketAmmoBrief: weeklyAnalysis[0].json.market_ammo_brief || null,\n      // Legacy fields (backward compatibility)\n      previousRecommendations: weeklyAnalysis[0].json['Strategic Recommendations'] || weeklyAnalysis[0].json.recommendations || null,\n      previousViralPatterns: weeklyAnalysis[0].json['Top Viral Patterns'] || weeklyAnalysis[0].json.winningHooks || null,\n      previousHookAnalysis: weeklyAnalysis[0].json['Hook Analysis'] || null,\n      previousVoicePatterns: weeklyAnalysis[0].json['Voice Patterns'] || null,\n      previousFatigueSignals: weeklyAnalysis[0].json['Fatigue Signals'] || weeklyAnalysis[0].json.fatigueSignals || null,\n      previousDiversityScore: weeklyAnalysis[0].json.diversityScore || null,\n      previousAvgScore: weeklyAnalysis[0].json.metrics?.avgCompositeScore || null,\n      previousCooldowns: weeklyAnalysis[0].json.cooldowns || null,\n      previousHypotheses: weeklyAnalysis[0].json.hypotheses || null\n    }\n  : null;\n\n// Calculate week-over-week changes if we have previous data\nlet weekOverWeekChange = null;\n// Try previousLearnings first (our own past data), then weeklyAnalysis\nconst prevLearningScore = previousLearningContext.length > 0\n  ? previousLearningContext[0].avgCompositeScore || null\n  : null;\nconst prevScore = prevLearningScore || weeklyAnalysisContext?.previousAvgScore || null;\nif (prevScore) {\n  const change = ((avgCompositeScore - prevScore) / prevScore) * 100;\n  weekOverWeekChange = {\n    compositeScore: (change >= 0 ? '+' : '') + change.toFixed(1) + '%',\n    raw: change,\n    source: prevLearningScore ? 'learningPatterns' : 'weeklyAnalysis'\n  };\n}\n\n// ============================================\n// HOOK TYPE DETECTION (for pattern counting)\n// ============================================\nfunction detectHookType(text) {\n  if (!text) return 'unknown';\n  const lower = text.toLowerCase();\n  const firstLine = text.split('\\n')[0] || text;\n  \n  if (/i just|i found|just built|just discovered/i.test(lower)) return 'discovery';\n  if (/\\$[\\d,]+|\\d+%|\\d+x|\\d+ (hours|days|minutes)/i.test(firstLine)) return 'shock_stat';\n  if (/unpopular opinion|hot take|controversial|nobody.*wants/i.test(lower)) return 'controversy';\n  if (/\\?\\s*$/.test(firstLine)) return 'question';\n  if (/^(I |My |When I )/i.test(firstLine)) return 'personal_story';\n  if (/\\d+\\s*(tips|ways|steps|things|reasons)/i.test(lower)) return 'list';\n  if (/nobody knows|secret|most people|what .* don't/i.test(lower)) return 'curiosity_gap';\n  if (/how to|step[- ]by[- ]step|tutorial|guide/i.test(lower)) return 'tutorial';\n  if (/breaking|just announced|news:|update:/i.test(lower)) return 'news_commentary';\n  \n  return 'standard';\n}\n\n// ============================================\n// TOPIC DETECTION (for pattern counting)\n// ============================================\nfunction detectTopic(text) {\n  if (!text) return 'general';\n  const lower = text.toLowerCase();\n  \n  if (/consultant|agency|agencies|\\$\\d+k|charging|overpriced/i.test(lower)) return 'anti_consultant';\n  if (/n8n/i.test(lower)) return 'n8n_specific';\n  if (/mcp|server|claude/i.test(lower)) return 'mcp_features';\n  if (/gpt|chatgpt|openai|gemini|llm|ai tool/i.test(lower)) return 'ai_tools';\n  if (/built|building|here's how|step \\d/i.test(lower)) return 'build_tutorial';\n  if (/real estate|legal|healthcare|finance|industry/i.test(lower)) return 'industry_specific';\n  if (/automation|automate|workflow/i.test(lower)) return 'automation_general';\n  if (/^(I |My |When I |Last week)/i.test(text)) return 'personal_insight';\n  \n  return 'general';\n}\n\n// ============================================\n// TONE DETECTION\n// ============================================\nfunction detectTone(text) {\n  if (!text) return 'neutral';\n  const lower = text.toLowerCase();\n  \n  if (/scam|fraud|exposed|attack|calling out|stop|wrong/i.test(lower)) return 'aggressive';\n  if (/learn|tip|how to|guide|here's|tutorial/i.test(lower)) return 'educational';\n  if (/hot take|unpopular|controversial|debate/i.test(lower)) return 'controversial';\n  if (/honest|struggle|failed|mistake|learned/i.test(lower)) return 'vulnerable';\n  if (/lol|lmao|\ud83d\ude02|funny|joke/i.test(lower)) return 'humorous';\n  \n  return 'neutral';\n}\n\n// Add classifications to all tweets\nsortedTweets.forEach(t => {\n  t.hookType = detectHookType(t.text);\n  t.topic = detectTopic(t.text);\n  t.tone = detectTone(t.text);\n});\n\n// ============================================\n// PATTERN COUNTS (aggregated, no full text)\n// ============================================\nfunction countByProperty(arr, prop) {\n  return arr.reduce((acc, item) => {\n    const key = item[prop] || 'unknown';\n    acc[key] = (acc[key] || 0) + 1;\n    return acc;\n  }, {});\n}\n\nconst patternCounts = {\n  byHookType: countByProperty(sortedTweets, 'hookType'),\n  byTopic: countByProperty(sortedTweets, 'topic'),\n  byTone: countByProperty(sortedTweets, 'tone'),\n  byCtaType: countByProperty(sortedTweets, 'ctaType'),\n  byTier: tierDistribution\n};\n\n// Flag overused patterns\nconst overusedPatterns = [];\nfor (const [pattern, count] of Object.entries(patternCounts.byHookType)) {\n  if (count > CONFIG.fatigueThresholds.overuseCount) {\n    overusedPatterns.push({ type: 'hookType', pattern, count, threshold: CONFIG.fatigueThresholds.overuseCount });\n  }\n}\nfor (const [pattern, count] of Object.entries(patternCounts.byTopic)) {\n  if (count > CONFIG.fatigueThresholds.overuseCount) {\n    overusedPatterns.push({ type: 'topic', pattern, count, threshold: CONFIG.fatigueThresholds.overuseCount });\n  }\n}\n\n// ============================================\n// TOP & WORST PERFORMERS (EXPANDED for AI)\n// ============================================\nconst topPerformers = sortedTweets.slice(0, CONFIG.topPerformersToSend).map(t => ({\n  tweetId: t.tweetId,\n  hook: t.hook,\n  text: t.text,  // Full text for top performers\n  compositeScore: t.compositeScore,\n  performanceTier: t.performanceTier,\n  views: t.viewCount,\n  engagementRate: t.engagementRate,\n  bookmarkRate: t.bookmarkRate,\n  velocity: t.velocity,\n  ctaType: t.ctaType,\n  hookType: t.hookType,\n  topic: t.topic,\n  tone: t.tone,\n  dayOfWeek: t.dayOfWeek,\n  timeSlot: t.timeSlot,\n  syntaMention: t.syntaMention,\n  textLength: t.textLength,\n  wordCount: t.wordCount\n}));\n\nconst worstPerformers = sortedTweets.slice(-CONFIG.bottomPerformersToSend).reverse().map(t => ({\n  tweetId: t.tweetId,\n  hook: t.hook,\n  text: t.text,  // Full text for worst performers too\n  compositeScore: t.compositeScore,\n  performanceTier: t.performanceTier,\n  views: t.viewCount,\n  engagementRate: t.engagementRate,\n  bookmarkRate: t.bookmarkRate,\n  ctaType: t.ctaType,\n  hookType: t.hookType,\n  topic: t.topic,\n  tone: t.tone,\n  dayOfWeek: t.dayOfWeek,\n  timeSlot: t.timeSlot\n}));\n\n// ============================================\n// OUTPUT FOR AI AGENT\n// ============================================\nreturn [{\n  json: {\n    // Metadata\n    analysisDate: new Date().toISOString(),\n    analysisId: `LEARN_${Date.now()}`,\n    periodStart: sortedTweets.length > 0 \n      ? sortedTweets.reduce((min, t) => t.createdAt < min ? t.createdAt : min, sortedTweets[0].createdAt)\n      : null,\n    periodEnd: sortedTweets.length > 0 \n      ? sortedTweets.reduce((max, t) => t.createdAt > max ? t.createdAt : max, sortedTweets[0].createdAt)\n      : null,\n    \n    // ENHANCED SUMMARY METRICS\n    metrics: {\n      totalPosts: totalTweets,\n      avgViews: avgViews,\n      avgEngagementRate: avgEngagementRate,\n      avgBookmarkRate: avgBookmarkRate,\n      avgVelocity: avgVelocity,\n      avgCompositeScore: avgCompositeScore,\n      topScore: sortedTweets.length > 0 ? sortedTweets[0].compositeScore : 0,\n      bottomScore: sortedTweets.length > 0 ? sortedTweets[sortedTweets.length - 1].compositeScore : 0,\n      tierDistribution: tierDistribution,\n      weekOverWeekChange: weekOverWeekChange\n    },\n    \n    // PRE-AGGREGATED ANALYSIS (Deterministic)\n    timeAnalysis: timeAnalysis,\n    ctaAnalysis: ctaAnalysis,\n    syntaAnalysis: syntaAnalysis,\n    bookmarkAnalysis: bookmarkAnalysis,\n    formatAnalysis: formatAnalysis,\n    formatPerformance: formatPerformance,\n    \n    // TOP/WORST PERFORMERS (for AI deep analysis)\n    topPerformers: topPerformers,\n    worstPerformers: worstPerformers,\n    \n    // PATTERN COUNTS (replaces full tweets array - 60% token reduction)\n    patternCounts: patternCounts,\n    overusedPatterns: overusedPatterns,\n    \n    // MIDDLE PERFORMERS (summary only, no full text)\n    middlePerformersSummary: sortedTweets\n      .slice(CONFIG.topPerformersToSend, -CONFIG.bottomPerformersToSend)\n      .map(t => ({\n        tweetId: t.tweetId,\n        hookPreview: t.hook.substring(0, 80),\n        compositeScore: t.compositeScore,\n        hookType: t.hookType,\n        topic: t.topic,\n        tone: t.tone,\n        ctaType: t.ctaType\n      })),\n    \n    // CONFIG used (for transparency)\n    configUsed: CONFIG,\n    \n    // HISTORICAL CONTEXT\n    previousLearnings: previousLearningContext,\n    weeklyAnalysisContext: weeklyAnalysisContext,\n    \n    // Validation counts\n    inputCounts: {\n      tweetsReceived: tweets.length,\n      previousLearningsReceived: previousLearnings.length,\n      weeklyAnalysisReceived: weeklyAnalysis.length\n    }\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2544,
+        1168
+      ],
+      "id": "9377aba8-2f16-4c77-80a2-81f582ffc4b5",
+      "name": "Metrics Calculation"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl7JyyQrSFvxMRe4",
+          "mode": "list",
+          "cachedResultName": "learningPatterns",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "weekStart": "={{ $json.output.weekStart }}",
+            "weekEnd": "={{ $json.output.weekEnd }}",
+            "summary": "={{ $json.output.summary }}",
+            "totalPosts": "={{ $json.output.metrics?.totalPosts || 0 }}",
+            "avgEngagementRate": "={{ $json.output.metrics?.avgEngagementRate || 0 }}",
+            "avgCompositeScore": "={{ $json.output.metrics?.avgCompositeScore || 0 }}",
+            "topScore": "={{ $json.output.metrics?.topScore || 0 }}",
+            "bottomScore": "={{ $json.output.metrics?.bottomScore || 0 }}",
+            "weekOverWeekChange": "={{ $json.output.metrics?.weekOverWeekChange || 'N/A' }}",
+            "winningHooks": "={{ JSON.stringify($json.output.winningHooks || []) }}",
+            "winningStructures": "={{ JSON.stringify($json.output.winningStructures || []) }}",
+            "winningTones": "={{ JSON.stringify($json.output.winningTones || []) }}",
+            "topicPerformance": "={{ JSON.stringify($json.output.topicPerformance || []) }}",
+            "timeSlotInsights": "={{ JSON.stringify($json.output.timeSlotInsights || {}) }}",
+            "fatigueSignals": "={{ JSON.stringify($json.output.fatigueSignals || []) }}",
+            "emergingOpportunities": "={{ JSON.stringify($json.output.emergingOpportunities || []) }}",
+            "antiSlopAlerts": "={{ JSON.stringify($json.output.antiSlopAlerts || []) }}",
+            "diversityScore": "={{ $json.output.diversityScore || 0 }}",
+            "exploit": "={{ JSON.stringify($json.output.exploit || []) }}",
+            "explore": "={{ JSON.stringify($json.output.explore || []) }}",
+            "reduce": "={{ JSON.stringify($json.output.reduce || []) }}",
+            "kill": "={{ JSON.stringify($json.output.kill || []) }}",
+            "topPerformers": "={{ JSON.stringify($json.output.topPerformers || []) }}",
+            "worstPerformers": "={{ JSON.stringify($json.output.worstPerformers || []) }}",
+            "analysisRaw": "={{ $json.output.analysisRaw }}",
+            "formatPerformance": "={{ JSON.stringify($json.output.formatPerformance || {}) }}",
+            "status": "=Current",
+            "account": "jb"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "weekEnd",
+              "displayName": "weekEnd",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "weekStart",
+              "displayName": "weekStart",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "account",
+              "displayName": "account",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "ww",
+                  "value": "ww"
+                },
+                {
+                  "name": "jb",
+                  "value": "jb"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "totalPosts",
+              "displayName": "totalPosts",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "avgEngagementRate",
+              "displayName": "avgEngagementRate",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "avgCompositeScore",
+              "displayName": "avgCompositeScore",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "topScore",
+              "displayName": "topScore",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "bottomScore",
+              "displayName": "bottomScore",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "weekOverWeekChange",
+              "displayName": "weekOverWeekChange",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "winningHooks",
+              "displayName": "winningHooks",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "winningStructures",
+              "displayName": "winningStructures",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "formatPerformance",
+              "displayName": "formatPerformance",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "winningTones",
+              "displayName": "winningTones",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "topicPerformance",
+              "displayName": "topicPerformance",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "timeSlotInsights",
+              "displayName": "timeSlotInsights",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "fatigueSignals",
+              "displayName": "fatigueSignals",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "emergingOpportunities",
+              "displayName": "emergingOpportunities",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "antiSlopAlerts",
+              "displayName": "antiSlopAlerts",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "diversityScore",
+              "displayName": "diversityScore",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "exploit",
+              "displayName": "exploit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explore",
+              "displayName": "explore",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "reduce",
+              "displayName": "reduce",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "kill",
+              "displayName": "kill",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "topPerformers",
+              "displayName": "topPerformers",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "worstPerformers",
+              "displayName": "worstPerformers",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "analysisRaw",
+              "displayName": "analysisRaw",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Current",
+                  "value": "Current"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "Archived",
+                  "value": "Archived"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        3344,
+        1264
+      ],
+      "id": "94cc473c-2a63-4623-b900-e7e2eaea60db",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# JB LEARNING ANALYSIS\n\n## PERIOD: {{ $json.periodStart }} to {{ $json.periodEnd }}\n\n## METRICS (echo these back in your metrics object)\nTotal Posts: {{ $json.metrics.totalPosts }} | Avg Score: {{ $json.metrics.avgCompositeScore }}/100 | Avg Engagement: {{ $json.metrics.avgEngagementRate }}% | Avg Bookmark Rate: {{ $json.metrics.avgBookmarkRate }}% | Top: {{ $json.metrics.topScore }} | Bottom: {{ $json.metrics.bottomScore }} | WoW: {{ $json.metrics.weekOverWeekChange?.compositeScore || 'N/A' }}\n\nTiers \u2014 Viral(90+): {{ $json.metrics.tierDistribution.viral }} | Strong(70-89): {{ $json.metrics.tierDistribution.strong }} | Average(40-69): {{ $json.metrics.tierDistribution.average }} | Weak(20-39): {{ $json.metrics.tierDistribution.weak }} | Flop(<20): {{ $json.metrics.tierDistribution.flop }}\n\n## PATTERN COUNTS\n{{ JSON.stringify($json.patternCounts, null, 2) }}\n\n## OVERUSED PATTERNS (must assign cooldowns to ALL of these)\n{{ JSON.stringify($json.overusedPatterns, null, 2) }}\n\n## TIME ANALYSIS\n{{ JSON.stringify($json.timeAnalysis, null, 2) }}\n\n## CTA ANALYSIS\n{{ JSON.stringify($json.ctaAnalysis, null, 2) }}\n\n## SYNTA MENTION ANALYSIS\n{{ JSON.stringify($json.syntaAnalysis, null, 2) }}\n\n## BOOKMARK ANALYSIS\n{{ JSON.stringify($json.bookmarkAnalysis, null, 2) }}\n\n## FORMAT ANALYSIS (basic)\n{{ JSON.stringify($json.formatAnalysis, null, 2) }}\n\n## GRANULAR FORMAT PERFORMANCE (by content_format tag)\n{{ JSON.stringify($json.formatPerformance, null, 2) }}\n\n## TOP PERFORMERS (extract reusable hook formulas from these)\n{{ JSON.stringify($json.topPerformers, null, 2) }}\n\n## BOTTOM PERFORMERS (diagnose why each failed)\n{{ JSON.stringify($json.worstPerformers, null, 2) }}\n\n## MIDDLE PERFORMERS\n{{ JSON.stringify($json.middlePerformersSummary, null, 2) }}\n\n## EXTERNAL MARKET INTELLIGENCE (use as context only \u2014 don't repeat, identify gaps)\n{{ JSON.stringify($json.weeklyAnalysisContext, null, 2) || 'None available' }}\n\n## PREVIOUS LEARNINGS (your previous output \u2014 use for week-over-week comparison)\n{{ JSON.stringify($json.previousLearnings, null, 2) || 'None available' }}\n\n---\n\n# ANALYSIS TASKS\n\n1. **Hook Formulas**: Extract 3-5 reusable hook TEMPLATES from top performers. Each needs: the formula pattern, a real example, its avg score, and WHY it works for JB's audience specifically.\n\n2. **Failure Diagnosis**: For each bottom performer \u2014 what specifically failed? The hook? Topic? Timing? Tone? Is anything salvageable?\n\n3. **Fatigue & Cooldowns**: Every pattern in OVERUSED PATTERNS above MUST get a cooldown entry with duration (3/7/14 days), an alternative to use instead, and a return condition.\n\n4. **External Gaps**: Compare JB's patterns against external market data. What winning patterns has JB NOT tried? What external fatigue should JB preemptively avoid?\n\n5. **Strategy Lists**: Build exploit (double down), explore (new tests), reduce (limit frequency), and kill (ban) lists with specific evidence from the data.\n\n6. **Content Plan**: Create a specific plan for the next 3-day cycle (~15 posts total). 60% exploit proven patterns, 40% explore new patterns. Include synta slots (4pm daily) and chaos/experiment slots.\n\n7. **Format Performance Analysis**: Review the GRANULAR FORMAT PERFORMANCE data and produce formatPerformance recommendations:\n   - Which formats are winners (avgScore > 70)? Double down on these.\n   - Which formats are underexplored (< 3 posts)? Recommend testing these.\n   - Should we increase or decrease thread frequency based on the data?\n   - Recommend a format distribution for next cycle (e.g. 3x short_punchy, 2x thread_2, etc.)\n   - Add format-specific insights to your exploit/explore/reduce/kill lists.\n\n---\n\n# REQUIRED JSON OUTPUT\n\nReturn ONLY this JSON structure. Replace all placeholder descriptions with your actual analysis. Every field is required.\n\n{\n  \"weekStart\": \"YYYY-MM-DD from the analysis period start\",\n  \"weekEnd\": \"YYYY-MM-DD from the analysis period end\",\n  \"account_id\": \"jb\",\n  \"summary\": \"2-3 sentences with numbers: overall performance, key trend, biggest actionable insight\",\n\n  \"metrics\": {\n    \"totalPosts\": 0,\n    \"avgEngagementRate\": 0.0,\n    \"avgCompositeScore\": 0.0,\n    \"avgBookmarkRate\": 0.0,\n    \"topScore\": 0,\n    \"bottomScore\": 0,\n    \"weekOverWeekChange\": \"+X% or N/A\"\n  },\n\n  \"winningHooks\": [\n    {\n      \"formula\": \"i [confession verb] that [unexpected result with $number]\",\n      \"example\": \"i just watched an agency charge $12k for something n8n does in 3 clicks\",\n      \"avgScore\": 87,\n      \"count\": 3,\n      \"whyForJB\": \"combines self-deprecating angle with specific numbers - JB audience loves relatable beginner wins\",\n      \"bestTimeSlot\": \"9am\"\n    }\n  ],\n\n  \"winningStructures\": [\n    {\n      \"format\": \"short confession + specific number + punchline\",\n      \"avgScore\": 82,\n      \"count\": 5,\n      \"recommendation\": \"use 3-4x per cycle\"\n    }\n  ],\n\n  \"winningTones\": [\n    {\n      \"tone\": \"vulnerable\",\n      \"avgScore\": 78,\n      \"bestContext\": \"evening posts about failures\",\n      \"trend\": \"rising\"\n    }\n  ],\n\n  \"topicPerformance\": [\n    {\n      \"topic\": \"anti_consultant\",\n      \"postCount\": 8,\n      \"avgScore\": 65,\n      \"trend\": \"declining\",\n      \"recommendation\": \"reduce to max 2/cycle - audience fatiguing\"\n    }\n  ],\n\n  \"timeSlotInsights\": {\n    \"bestSlots\": [\"9am\", \"12pm\"],\n    \"worstSlots\": [\"11pm\"],\n    \"bestDays\": [\"Tuesday\", \"Thursday\"],\n    \"slotRecommendations\": {\n      \"7am\": \"what content type works best at this slot\",\n      \"9am\": \"what content type works best at this slot\",\n      \"12pm\": \"what content type works best at this slot\",\n      \"2pm\": \"what content type works best at this slot\",\n      \"4pm\": \"synta CTA posts\",\n      \"7pm\": \"experiment slot - try new patterns here\",\n      \"11pm\": \"what content type works best at this slot\"\n    }\n  },\n\n  \"fatigueSignals\": [\n    {\n      \"pattern\": \"direct consultant price attacks\",\n      \"type\": \"hook\",\n      \"evidence\": \"used 8x this period, engagement down 35%\",\n      \"usageCount\": 8,\n      \"declinePercent\": 35,\n      \"cooldownDays\": 14,\n      \"alternative\": \"personal build story with implied cost comparison instead\",\n      \"returnCondition\": \"max 1x/cycle after cooldown expires\"\n    }\n  ],\n\n  \"emergingOpportunities\": [\n    {\n      \"opportunity\": \"question hooks - JB used 0, external avg 8200 views\",\n      \"source\": \"external\",\n      \"priority\": \"high\",\n      \"suggestedTest\": \"try 3 question-hook posts this cycle in evening slots\"\n    }\n  ],\n\n  \"antiSlopAlerts\": [\n    {\n      \"alert\": \"arrow bullet lists appearing in 40% of posts\",\n      \"severity\": \"high\",\n      \"action\": \"ban for 7 days, use plain dashes or numbered lists\"\n    }\n  ],\n\n  \"diversityScore\": 62,\n\n  \"formatPerformance\": {\n    \"short_punchy\": { \"posts\": 4, \"avgScore\": 72, \"avgViews\": 1200, \"recommendation\": \"strong performer - use 3-4x/cycle\" },\n    \"medium_story\": { \"posts\": 6, \"avgScore\": 65, \"avgViews\": 900, \"recommendation\": \"average - test with stronger hooks\" },\n    \"thread_2\": { \"posts\": 1, \"avgScore\": 88, \"avgViews\": 3400, \"recommendation\": \"underexplored winner - increase to 2x/cycle\" },\n    \"question\": { \"posts\": 0, \"avgScore\": 0, \"avgViews\": 0, \"recommendation\": \"untested - try 2x in experiment slots\" }\n  },\n\n  \"exploit\": [\n    \"confession hooks with specific $ amounts (avg 85 score, use 4x/cycle)\",\n    \"personal build stories with time saved (avg 78 score, use 3x/cycle)\"\n  ],\n\n  \"explore\": [\n    \"question hooks (untested by JB, high external performance, try 3x)\",\n    \"vulnerable failure stories (limited data but promising, try 2x)\"\n  ],\n\n  \"reduce\": [\n    \"direct consultant attacks (max 1x/cycle - was 5x, fatiguing)\",\n    \"generic automation tips without personal angle (max 1x/cycle)\"\n  ],\n\n  \"kill\": [\n    \"game changer phrase (AI slop indicator - ban permanently)\",\n    \"arrow bullet lists with unicode arrows (overused formatting)\",\n    \"vague 'AI will change everything' takes without specifics\"\n  ],\n\n  \"accountVoiceProfile\": \"1-2 sentences: is JB's voice staying authentic? Any drift toward generic influencer or AI-generated tone?\",\n\n  \"audienceSignals\": \"1-2 sentences: what is the audience saving vs replying to vs ignoring? What does bookmark behavior tell us?\",\n\n  \"cooldowns\": [\n    {\n      \"pattern\": \"anti-consultant price attacks\",\n      \"type\": \"hook\",\n      \"duration\": 14,\n      \"reason\": \"8x usage with 35% engagement decline\",\n      \"alternative\": \"implied cost comparison via personal build stories\",\n      \"returnLimit\": \"max 1x/cycle after cooldown\"\n    }\n  ],\n\n  \"hypothesisResults\": [\n    {\n      \"id\": \"H_PREV_ID\",\n      \"test\": \"what was tested from previous hypotheses\",\n      \"result\": \"worked/failed/not_tested\",\n      \"data\": \"supporting evidence from this period's data\",\n      \"action\": \"promote_to_exploit/carry_forward/kill\"\n    }\n  ],\n\n  \"newHypotheses\": [\n    {\n      \"id\": \"H_YYYY_MM_DD_01\",\n      \"variable\": \"hook_type\",\n      \"test\": \"post 3 question-hook tweets in evening slots\",\n      \"control\": \"JB's avg discovery hook score of 62\",\n      \"successCriteria\": \">4% engagement rate OR >0.5% bookmark rate\",\n      \"suggestedCount\": 3,\n      \"priority\": \"high\"\n    }\n  ],\n\n  \"externalContextUsed\": \"1-2 sentences: which specific external market insights influenced your recommendations and how\",\n\n  \"weeklyContentPlan\": {\n    \"totalPosts\": 15,\n    \"exploitPosts\": 9,\n    \"explorePosts\": 6,\n    \"breakdown\": {\n      \"confession_hooks\": 3,\n      \"build_stories\": 3,\n      \"educational_value\": 2,\n      \"synta_cta\": 1,\n      \"question_hooks_test\": 3,\n      \"vulnerable_evening\": 2,\n      \"wildcard\": 1\n    },\n    \"syntaSlots\": \"4pm daily\",\n    \"chaosSlots\": \"7pm daily - use explore patterns here\"\n  },\n\n  \"topPerformers\": [\n    {\n      \"hook\": \"first line of the top tweet\",\n      \"score\": 89,\n      \"tier\": \"viral\",\n      \"hookType\": \"discovery\",\n      \"topic\": \"automation_general\",\n      \"tone\": \"educational\",\n      \"timeSlot\": \"9am\",\n      \"whyWorked\": \"specific explanation of why this resonated with JB's audience\",\n      \"hookFormula\": \"reusable template: i [verb] [thing] and [unexpected number result]\",\n      \"replicable\": true,\n      \"fatigueRisk\": \"low - only used 1x this period\"\n    }\n  ],\n\n  \"worstPerformers\": [\n    {\n      \"hook\": \"first line of the worst tweet\",\n      \"score\": 12,\n      \"tier\": \"flop\",\n      \"hookType\": \"tutorial\",\n      \"topic\": \"ai_tools\",\n      \"tone\": \"educational\",\n      \"timeSlot\": \"11pm\",\n      \"whyFailed\": \"generic topic + wrong time slot + no personal angle = audience ignored\",\n      \"lesson\": \"tutorials need JB's personal twist and specific numbers to work\",\n      \"salvageable\": \"rewrite with personal build story framing and add specific $ saved\"\n    }\n  ],\n\n  \"analysisRaw\": \"Your full detailed analysis narrative (500-800 words). Include all reasoning, pattern comparisons, week-over-week trends, external context integration, and strategic thinking that doesn't fit in the structured fields above. This is your workspace for thorough analysis.\"\n}",
+        "options": {
+          "systemMessage": "You are @justben_builds's content strategist. You analyze this account's tweet performance data and produce a structured JSON object that an autonomous posting bot parses and acts on directly.\n\n# ACCOUNT: @justben_builds\n- 16 year old kid learning n8n automations from scratch, documenting the journey in real time\n- Voice: always lowercase, gen-z slang ('bro', 'ngl', 'lowkey', 'actually insane'), genuine excitement over small wins, self-deprecating humor about being young and broke\n- Product: synta.io (AI-powered n8n workflow builder) - mentioned naturally as the tool that helps him when he's stuck at midnight on a school night\n- Audience saves: real learning moments, beginner tips that actually work, honest 'i had no idea what i was doing' stories, relatable teenager-trying-to-make-money content\n- Audience ignores: hustle-bro energy, fake guru vibes, content that sounds like an adult pretending to be a teen, generic AI hype\n\n# YOUR JOB\nYou receive pre-calculated tweet metrics from JB's posts plus external market intelligence. Your job is to INTERPRET the data and produce strategic recommendations the posting bot can act on. Do NOT recalculate metrics - they are pre-computed and accurate.\n\n# CRITICAL RULES\n\n1. OUTPUT FORMAT: Return ONLY a single valid JSON object. No markdown code fences. No commentary before or after. No ```json wrapper. Just the raw { } JSON object.\n\n2. SPECIFICITY: Every recommendation needs a number. \"4 posts/cycle\" not \"more posts.\" \"14-day cooldown\" not \"take a break.\" \"$12K\" not \"high prices.\"\n\n3. BOOKMARKS > LIKES: JB's audience saves valuable content. High bookmark rate = real value delivered. Optimize for saves over vanity metrics.\n\n4. FATIGUE IS THE #1 RISK: JB's audience is small and engaged. Repeating patterns kills faster than a large account. Every overused pattern MUST get a cooldown with: duration (3/7/14 days), alternative pattern, and return condition.\n\n5. INTERNAL DATA IS PRIMARY: JB's own tweet performance is your primary analysis. External market data (from weeklyAnalysis) is context only - use it to identify gaps and opportunities, don't repeat it.\n\n6. MAX 8 ITEMS PER ARRAY: Quality over quantity. The posting bot processes these directly.\n\n7. PROPER JSON TYPES: Array fields MUST be actual JSON arrays [ ], never strings. Object fields MUST be JSON objects { }. Numbers must be numbers, not strings.\n\n8. BOT-PARSEABLE OUTPUT: The posting bot directly reads these fields to generate tweets: winningHooks, fatigueSignals, exploit, kill, explore, reduce, cooldowns, timeSlotInsights, weeklyContentPlan. Every item must be structured and specific enough for an automated system to act on.\n\n9. JB-SPECIFIC ALWAYS: \"Stories work\" is useless. \"Learning journey posts where Ben shares specific beginner struggles and breakthroughs work 2.3x better than generic tips for JB's audience\" is actionable. Every recommendation must explain WHY it works (or doesn't) for THIS account.\n\n10. COOLDOWNS ARE MANDATORY: If a pattern appears in overusedPatterns, it MUST get a cooldown entry. No exceptions. Include duration, alternative, and when it can return."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2768,
+        1168
+      ],
+      "id": "c440353e-f3cb-496f-af99-8a223d848355",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl7JyyQrSFvxMRe4",
+          "mode": "list",
+          "cachedResultName": "learningPatterns",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Get Latest Learnings').first().json.id }}",
+            "status": "Completed"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "weekEnd",
+              "displayName": "weekEnd",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "weekStart",
+              "displayName": "weekStart",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "account",
+              "displayName": "account",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "ww",
+                  "value": "ww"
+                },
+                {
+                  "name": "jb",
+                  "value": "jb"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "totalPosts",
+              "displayName": "totalPosts",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "avgEngagementRate",
+              "displayName": "avgEngagementRate",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "avgCompositeScore",
+              "displayName": "avgCompositeScore",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "topScore",
+              "displayName": "topScore",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "bottomScore",
+              "displayName": "bottomScore",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "weekOverWeekChange",
+              "displayName": "weekOverWeekChange",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "winningHooks",
+              "displayName": "winningHooks",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "winningStructures",
+              "displayName": "winningStructures",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "formatPerformance",
+              "displayName": "formatPerformance",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "winningTones",
+              "displayName": "winningTones",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "topicPerformance",
+              "displayName": "topicPerformance",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "timeSlotInsights",
+              "displayName": "timeSlotInsights",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "fatigueSignals",
+              "displayName": "fatigueSignals",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "emergingOpportunities",
+              "displayName": "emergingOpportunities",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "antiSlopAlerts",
+              "displayName": "antiSlopAlerts",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "diversityScore",
+              "displayName": "diversityScore",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "exploit",
+              "displayName": "exploit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "explore",
+              "displayName": "explore",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "reduce",
+              "displayName": "reduce",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "kill",
+              "displayName": "kill",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "topPerformers",
+              "displayName": "topPerformers",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "worstPerformers",
+              "displayName": "worstPerformers",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "analysisRaw",
+              "displayName": "analysisRaw",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Current",
+                  "value": "Current"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "Archived",
+                  "value": "Archived"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        3568,
+        1264
+      ],
+      "id": "3fddb9bb-633c-4f5c-9422-0f70d7486b85",
+      "name": "Create or update a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl7JyyQrSFvxMRe4",
+          "mode": "list",
+          "cachedResultName": "learningPatterns",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "filterByFormula": "=AND({status} = 'Completed', IS_BEFORE({weekEnd}, DATEADD(TODAY(), -14, 'days')), {account} = 'jb')",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        3344,
+        1072
+      ],
+      "id": "f2d26828-4a4e-4dda-91d3-0f15435959c8",
+      "name": "Search Old Completed",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl7JyyQrSFvxMRe4",
+          "mode": "list",
+          "cachedResultName": "learningPatterns",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "status": "Archived"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Current",
+                  "value": "Current"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "Archived",
+                  "value": "Archived"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        3568,
+        1072
+      ],
+      "id": "f851a913-ea87-4828-a6c8-e79d93c1cfb6",
+      "name": "Archive Old Records",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2320,
+        1152
+      ],
+      "id": "014dadab-8027-4ffc-9701-4818d0f2b7c3",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// FORMAT AI OUTPUT - Sanitizer & Validator v1.0\n// ============================================\n// Placed between AI Agent and Airtable writes.\n// Ensures all fields are properly typed/defaulted\n// so the \"Create a record\" node never gets\n// undefined, wrong types, or malformed JSON.\n// ============================================\n\nconst rawInput = $input.first().json;\n\n// ============================================\n// STEP 1: Find the actual AI output\n// The Structured Output Parser can nest output\n// at different depths depending on success/failure\n// ============================================\nlet parsed = null;\nlet rawForDebug = '';\n\nfunction isValidOutput(obj) {\n  return obj && typeof obj === 'object' && !Array.isArray(obj) && (\n    obj.weekStart !== undefined ||\n    obj.summary !== undefined ||\n    obj.winningHooks !== undefined ||\n    obj.metrics !== undefined\n  );\n}\n\nfunction tryParseString(val) {\n  if (typeof val !== 'string') return null;\n  // Direct parse\n  try { const o = JSON.parse(val); if (isValidOutput(o)) return o; } catch(e) {}\n  // Extract from markdown code block\n  const cbMatch = val.match(/```(?:json)?\\s*([\\s\\S]*?)```/);\n  if (cbMatch) {\n    try { const o = JSON.parse(cbMatch[1].trim()); if (isValidOutput(o)) return o; } catch(e) {}\n  }\n  // Extract first { to last }\n  const start = val.indexOf('{');\n  const end = val.lastIndexOf('}');\n  if (start !== -1 && end > start) {\n    try { const o = JSON.parse(val.substring(start, end + 1)); if (isValidOutput(o)) return o; } catch(e) {}\n  }\n  return null;\n}\n\n// Save raw for debugging\ntry { rawForDebug = JSON.stringify(rawInput).substring(0, 50000); } catch(e) { rawForDebug = String(rawInput).substring(0, 50000); }\n\n// Try paths where the output might live\nif (isValidOutput(rawInput.output)) {\n  parsed = rawInput.output;\n} else if (rawInput.output && isValidOutput(rawInput.output.output)) {\n  parsed = rawInput.output.output;\n} else if (isValidOutput(rawInput)) {\n  parsed = rawInput;\n} else {\n  // Try parsing string values\n  parsed = tryParseString(rawInput.output)\n    || tryParseString(rawInput.output?.output)\n    || tryParseString(rawInput.text)\n    || tryParseString(rawInput.response)\n    || {};\n}\n\nconst parserFailed = !parsed || Object.keys(parsed).length === 0;\n\n// ============================================\n// STEP 2: Type-safe helper functions\n// ============================================\n\nfunction safeString(val, fallback) {\n  if (val === null || val === undefined) return fallback !== undefined ? fallback : '';\n  if (typeof val === 'string') return val;\n  if (typeof val === 'object') {\n    try { return JSON.stringify(val); } catch(e) { return fallback || ''; }\n  }\n  return String(val);\n}\n\nfunction safeNumber(val, fallback) {\n  if (val === null || val === undefined) return fallback !== undefined ? fallback : 0;\n  const num = Number(val);\n  return isNaN(num) ? (fallback !== undefined ? fallback : 0) : num;\n}\n\nfunction safeArray(val) {\n  if (Array.isArray(val)) return val;\n  if (typeof val === 'string') {\n    try {\n      const arr = JSON.parse(val);\n      if (Array.isArray(arr)) return arr;\n    } catch(e) {}\n    return val.trim() ? [val] : [];\n  }\n  if (val && typeof val === 'object') return [val];\n  return [];\n}\n\nfunction safeObject(val) {\n  if (val && typeof val === 'object' && !Array.isArray(val)) return val;\n  if (typeof val === 'string') {\n    try {\n      const obj = JSON.parse(val);\n      if (obj && typeof obj === 'object' && !Array.isArray(obj)) return obj;\n    } catch(e) {}\n  }\n  return {};\n}\n\nfunction truncate(str, max) {\n  max = max || 95000;\n  if (!str || typeof str !== 'string') return str || '';\n  return str.length <= max ? str : str.substring(0, max) + '\\n...[TRUNCATED]';\n}\n\n// ============================================\n// STEP 3: Extract & validate metrics sub-object\n// The Create a record node reaches into\n// $json.output.metrics?.totalPosts etc.\n// ============================================\nconst rawMetrics = safeObject(parsed.metrics);\n\nconst metrics = {\n  totalPosts: safeNumber(rawMetrics.totalPosts),\n  avgEngagementRate: safeNumber(rawMetrics.avgEngagementRate),\n  avgCompositeScore: safeNumber(rawMetrics.avgCompositeScore),\n  avgBookmarkRate: safeNumber(rawMetrics.avgBookmarkRate),\n  topScore: safeNumber(rawMetrics.topScore),\n  bottomScore: safeNumber(rawMetrics.bottomScore),\n  weekOverWeekChange: typeof rawMetrics.weekOverWeekChange === 'object'\n    ? safeString(rawMetrics.weekOverWeekChange.compositeScore, 'N/A')\n    : safeString(rawMetrics.weekOverWeekChange, 'N/A')\n};\n\n// ============================================\n// STEP 4: Build validated output\n// Preserves $json.output.* shape so the\n// existing Airtable node expressions work\n// with ZERO changes to the Airtable mapping\n// ============================================\n\nconst validated = {\n  // Dates - fall back to sensible defaults\n  weekStart: safeString(parsed.weekStart) || new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0],\n  weekEnd: safeString(parsed.weekEnd) || new Date().toISOString().split('T')[0],\n\n  // Identity\n  account_id: safeString(parsed.account_id, 'jb'),\n\n  // Summary\n  summary: truncate(safeString(parsed.summary, parserFailed ? 'AI output parsing failed - see analysisRaw for raw response' : 'Analysis completed')),\n\n  // Metrics sub-object (for $json.output.metrics?.X expressions)\n  metrics: metrics,\n\n  // Numeric fields\n  diversityScore: safeNumber(parsed.diversityScore),\n\n  // String fields - with empty-string fallback\n  accountVoiceProfile: truncate(safeString(parsed.accountVoiceProfile, '')),\n  audienceSignals: truncate(safeString(parsed.audienceSignals, '')),\n  externalContextUsed: truncate(safeString(parsed.externalContextUsed, '')),\n  analysisRaw: truncate(parserFailed ? ('PARSER_FAILED. Raw input:\\n' + rawForDebug) : safeString(parsed.analysisRaw, '')),\n\n  // Array fields - guaranteed arrays so JSON.stringify() works\n  winningHooks: safeArray(parsed.winningHooks),\n  winningStructures: safeArray(parsed.winningStructures),\n  winningTones: safeArray(parsed.winningTones),\n  topicPerformance: safeArray(parsed.topicPerformance),\n  fatigueSignals: safeArray(parsed.fatigueSignals),\n  emergingOpportunities: safeArray(parsed.emergingOpportunities),\n  antiSlopAlerts: safeArray(parsed.antiSlopAlerts),\n  exploit: safeArray(parsed.exploit),\n  explore: safeArray(parsed.explore),\n  reduce: safeArray(parsed.reduce),\n  kill: safeArray(parsed.kill),\n  cooldowns: safeArray(parsed.cooldowns),\n  hypothesisResults: safeArray(parsed.hypothesisResults),\n  newHypotheses: safeArray(parsed.newHypotheses),\n  topPerformers: safeArray(parsed.topPerformers),\n  worstPerformers: safeArray(parsed.worstPerformers),\n\n  // Object fields - guaranteed objects so JSON.stringify() works\n  timeSlotInsights: safeObject(parsed.timeSlotInsights),\n  weeklyContentPlan: safeObject(parsed.weeklyContentPlan),\n\n  // Status always Current for new records\n  status: 'Current'\n};\n\n// ============================================\n// OUTPUT: { output: validated } so downstream\n// Airtable expressions like\n//   $json.output.weekStart\n//   $json.output.metrics?.totalPosts\n//   JSON.stringify($json.output.winningHooks || [])\n// all work without any changes\n// ============================================\nreturn [{\n  json: {\n    output: validated,\n    _format_meta: {\n      version: '1.0',\n      parsed_ok: !parserFailed,\n      fields_found: Object.keys(parsed || {}).length,\n      timestamp: new Date().toISOString()\n    }\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3120,
+        1168
+      ],
+      "id": "f578fabb-0bf1-4c24-9de2-7b57b6fb9546",
+      "name": "Format AI Output"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-opus-4-6",
+          "mode": "list",
+          "cachedResultName": "Claude Opus 4.6"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        2768,
+        1392
+      ],
+      "id": "cf355653-0583-4f0b-bd26-6323cb9d170a",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "RUW9B3IT8szl1T2i",
+          "name": "Anthropic account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Get Weekly Analysis": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Get Latest Learnings": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Get Latest Tweets": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Latest Tweets",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Weekly Analysis",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Latest Learnings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Metrics Calculation": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record": {
+      "main": [
+        [
+          {
+            "node": "Create or update a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Format AI Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Old Completed": {
+      "main": [
+        [
+          {
+            "node": "Archive Old Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Metrics Calculation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format AI Output": {
+      "main": [
+        [
+          {
+            "node": "Search Old Completed",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "rNbwKO00WlrMdWEc",
+    "timezone": "Europe/London",
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate",
+    "timeSavedPerExecution": 22
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "activeVersionId": null,
+  "versionCounter": 64,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-07T23:18:07.651Z",
+      "createdAt": "2026-02-07T23:18:07.651Z",
+      "role": "workflow:owner",
+      "workflowId": "7p4GKvcKVZmtFvBs77L3T",
+      "projectId": "3PTcJ2mMcVduDkV6",
+      "project": {
+        "updatedAt": "2025-04-23T19:12:24.962Z",
+        "createdAt": "2025-04-23T19:10:00.223Z",
+        "id": "3PTcJ2mMcVduDkV6",
+        "name": "YOUR_CREDENTIAL_HERE",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "c59b8fe8-021b-47c6-bde5-5b2ca7aae876"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
