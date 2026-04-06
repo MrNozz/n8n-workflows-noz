@@ -1,0 +1,1463 @@
+{
+  "updatedAt": "2025-10-08T19:57:35.265Z",
+  "createdAt": "2025-09-01T07:00:24.860Z",
+  "name": "Lead Scorer",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "\ud83c\udfaf Smart Lead Selection Wizard",
+        "formDescription": "Tell us your campaign goals and we'll recommend the perfect leads for maximum impact. Our AI will analyze your preferences and suggest the optimal strategy.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "\ud83c\udfaf What's your primary campaign objective?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "\ud83d\ude80 Quick Wins - Fast responses and meetings"
+                  },
+                  {
+                    "option": "\ud83d\udc8e High Value - Target premium prospects"
+                  },
+                  {
+                    "option": "\ud83d\udcca Strategic Growth - Long-term relationships"
+                  },
+                  {
+                    "option": "\ud83e\uddea Market Testing - Validate messaging"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "\u2696\ufe0f What's your risk tolerance?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "\ud83d\udee1\ufe0f Conservative - Verified contacts only"
+                  },
+                  {
+                    "option": "\u2696\ufe0f Balanced - Mix of verified and potential"
+                  },
+                  {
+                    "option": "\ud83c\udfb2 Aggressive - Include high-potential unverified"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "\ud83c\udfe2 Preferred company size to target?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "\ud83d\ude80 Startup Focused (11-50 employees)"
+                  },
+                  {
+                    "option": "\ud83d\udcc8 Growth Stage (51-200 employees)"
+                  },
+                  {
+                    "option": "\ud83c\udfdb\ufe0f Established (201-500 employees)"
+                  },
+                  {
+                    "option": "\ud83c\udfaf Mixed Portfolio (All sizes)"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "\ud83d\udcb0 Funding stage preference?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "\ud83d\udcb0 Recently Funded (Seed to Series A)"
+                  },
+                  {
+                    "option": "\ud83d\ude80 Growth Funded (Series A+)"
+                  },
+                  {
+                    "option": "\ud83d\udee0\ufe0f Bootstrapped/Private Companies"
+                  },
+                  {
+                    "option": "\ud83c\udfaf Funding Agnostic"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "\ud83d\udcde Preferred outreach method?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "\ud83d\udce7 Email Focused - Verified emails priority"
+                  },
+                  {
+                    "option": "\ud83d\udcbc LinkedIn Focused - Social selling"
+                  },
+                  {
+                    "option": "\ud83c\udfaf Multi-Channel - Email + LinkedIn"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "\ud83d\udc51 Target seniority level?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "\ud83d\udc51 C-Level Only (CEO, CTO, COO)"
+                  },
+                  {
+                    "option": "\ud83c\udfaf Senior Leadership (C-Level + VPs)"
+                  },
+                  {
+                    "option": "\ud83d\udc65 Management Tier (Directors + Managers)"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "\ud83d\udcca How many leads for your first campaign?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "\ud83e\uddea Pilot Test (15 leads) - $30-45 budget"
+                  },
+                  {
+                    "option": "\ud83c\udfaf Focused Campaign (30 leads) - $60-90 budget"
+                  },
+                  {
+                    "option": "\ud83d\udcc8 Standard Campaign (50 leads) - $100-150 budget"
+                  },
+                  {
+                    "option": "\ud83d\ude80 Aggressive Push (75 leads) - $150-225 budget"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "\u23f0 Campaign timeline?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "\u26a1 Immediate (Start this week)"
+                  },
+                  {
+                    "option": "\ud83d\udcc5 Planned (Start next week)"
+                  },
+                  {
+                    "option": "\ud83c\udfaf Strategic (Start in 2-3 weeks)"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -1136,
+        48
+      ],
+      "id": "f6327233-23bf-4ca3-94bd-fee0adb41157",
+      "name": "\ud83c\udfaf Smart Lead Selection Form",
+      "webhookId": "YOUR_WEBHOOKID_HERE"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appM31OKQZtVVzbS8",
+          "mode": "list",
+          "cachedResultName": "Lead Intelligence",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblXRRZ1vHPbevxQT",
+          "mode": "list",
+          "cachedResultName": "Lead Intelligence",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "filterByFormula": "={{ $json.airtable_filter }}",
+        "options": {}
+      },
+      "id": "50f1dfb0-f5af-42e6-8e12-72bb43044910",
+      "name": "\ud83d\udcca Fetch Matching Leads from Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -144,
+        48
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appM31OKQZtVVzbS8",
+          "mode": "list",
+          "cachedResultName": "Lead Intelligence",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblXRRZ1vHPbevxQT",
+          "mode": "list",
+          "cachedResultName": "Lead Intelligence",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "options": {
+          "fields": [
+            "Target Industry",
+            "Outreach Focus",
+            "Service Offering"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -816,
+        48
+      ],
+      "id": "3bda3fe8-a658-45d8-9bc7-ba5425a11a8f",
+      "name": "Search records",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.telegram_message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1328,
+        -64
+      ],
+      "id": "9de176c6-feac-4829-a109-d8bac3dee911",
+      "name": "\ud83d\udcf1 Send Success Notification",
+      "webhookId": "YOUR_WEBHOOKID_HERE",
+      "credentials": {
+        "telegramApi": {
+          "id": "EMYdSCihMCukxOcQ",
+          "name": "We Love Noz API"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// \u2705 Enhanced Final Success Summary with Complete Campaign Data\nconst items = $input.all();\n\nif (!items || items.length === 0) {\n  return [{\n    json: {\n      success: false,\n      message: 'No leads were updated in Airtable',\n      telegram_message: '\u274c *Lead Selection Failed*\\n\\nNo leads were processed. Please check the workflow configuration.',\n      timestamp: new Date().toISOString()\n    }\n  }];\n}\n\n// This node should receive the SUMMARY object from the \"Filter Summary Only\" node\nconst summaryData = items[0].json;\n\n// Check if this is actually the summary object\nif (!summaryData.selection_complete) {\n  return [{\n    json: {\n      success: false,\n      message: 'Invalid data received - expected summary object',\n      telegram_message: '\u274c *Configuration Error*\\n\\nSummary node received lead data instead of summary. Please check filter configuration.',\n      timestamp: new Date().toISOString()\n    }\n  }];\n}\n\nconst timestamp = new Date().toISOString();\n\n// Extract comprehensive data from the summary object\nconst stats = summaryData.score_range;\nconst quality = summaryData.quality_distribution;\nconst industry = summaryData.industry_relevance_stats;\nconst outcomes = summaryData.recommendation_summary?.expected_outcomes;\nconst niche = summaryData.niche_context;\n\n// Create detailed Telegram message\nconst telegramMessage = `\ud83c\udfaf *Lead Selection Campaign Complete!*\\n\\n` +\n  `${summaryData.strategy_emoji} *${summaryData.strategy_used}*\\n` +\n  `\u2705 *Successfully Selected: ${summaryData.leads_selected} Premium Leads*\\n` +\n  `\ud83d\udcca *Analyzed: ${summaryData.total_leads_analyzed} Total Prospects*\\n\\n` +\n  \n  `*\ud83c\udfaf Campaign Overview:*\\n` +\n  `\u2022 Selection Accuracy: ${summaryData.selection_accuracy}\\n` +\n  `\u2022 Quality Score: ${stats.highest}-${stats.lowest} (avg: ${stats.average})\\n` +\n  `\u2022 Premium Leads: ${quality.premium_leads}/${summaryData.leads_selected}\\n` +\n  `\u2022 C-Level Contacts: ${summaryData.c_level_contacts}\\n` +\n  `\u2022 Funded Companies: ${summaryData.funded_companies}\\n\\n` +\n  \n  `*\ud83c\udfe2 Industry & Niche Focus:*\\n` +\n  `\u2022 Target Industry: ${niche.target_industry}\\n` +\n  `\u2022 Service Focus: ${niche.outreach_focus}\\n` +\n  `\u2022 Service Offering: ${niche.service_offering}\\n` +\n  `\u2022 Avg Industry Relevance: ${industry.avg_relevance}%\\n` +\n  `\u2022 Perfect Matches: ${industry.perfect_matches}\\n\\n` +\n  \n  `*\ud83d\udcc8 Lead Quality Breakdown:*\\n` +\n  `\u2022 Top Industries: ${industry.top_industries.slice(0, 2).join(', ')}\\n` +\n  `\u2022 High Confidence Emails: ${summaryData.high_confidence_emails || 0}\\n` +\n  `\u2022 All C-Level Decision Makers: ${summaryData.c_level_contacts}\\n\\n` +\n  \n  `*\ud83c\udfaf Airtable Processing:*\\n` +\n  `\u2022 Status: \u2705 Complete\\n` +\n  `\u2022 Priority: \ud83d\udd25 High\\n` +\n  `\u2022 Quality: \u2b50 High\\n` +\n  `\u2022 Enrichment Ready: \ud83d\ude80 Yes\\n\\n` +\n  \n  `*\ud83d\udcca Campaign Projections:*\\n` +\n  `\u2022 Expected Response Rate: ${summaryData.predicted_response_rate}\\n` +\n  `\u2022 Projected Meetings: ~${outcomes?.expected_meetings || Math.round(summaryData.leads_selected * 0.2)}\\n` +\n  `\u2022 Budget Estimate: ${summaryData.recommendation_summary?.budget_estimate || '$60-90'}\\n` +\n  `\u2022 Timeline: ${summaryData.recommendation_summary?.timeline || '1-2 weeks'}\\n\\n` +\n  \n  `*\ud83d\ude80 Next Steps:*\\n` +\n  `\u2022 LinkedIn + AI enrichment pipeline\\n` +\n  `\u2022 Personalized message generation\\n` +\n  `\u2022 Multi-channel outreach setup\\n` +\n  `\u2022 Campaign performance tracking\\n\\n` +\n  \n  `*Campaign ID:* ${summaryData.timestamp.slice(-8)}\\n` +\n  `*Completed:* ${new Date().toLocaleString()}\\n` +\n  `*Status:* Ready for Enrichment Pipeline \u2728`;\n\nconst finalSummary = {\n  success: true,\n  leads_updated: summaryData.leads_selected,\n  campaign_overview: {\n    strategy: summaryData.strategy_used,\n    strategy_emoji: summaryData.strategy_emoji,\n    total_analyzed: summaryData.total_leads_analyzed,\n    leads_selected: summaryData.leads_selected,\n    selection_accuracy: summaryData.selection_accuracy,\n    predicted_response_rate: summaryData.predicted_response_rate\n  },\n  quality_metrics: {\n    score_range: stats,\n    quality_distribution: quality,\n    c_level_contacts: summaryData.c_level_contacts,\n    funded_companies: summaryData.funded_companies,\n    high_confidence_emails: summaryData.high_confidence_emails || 0\n  },\n  niche_targeting: {\n    target_industry: niche.target_industry,\n    outreach_focus: niche.outreach_focus,\n    service_offering: niche.service_offering,\n    industry_relevance: industry.avg_relevance,\n    perfect_matches: industry.perfect_matches,\n    top_industries: industry.top_industries\n  },\n  campaign_projections: {\n    expected_response_rate: summaryData.predicted_response_rate,\n    expected_meetings: outcomes?.expected_meetings || Math.round(summaryData.leads_selected * 0.2),\n    budget_estimate: summaryData.recommendation_summary?.budget_estimate || '$60-90',\n    timeline: summaryData.recommendation_summary?.timeline || '1-2 weeks'\n  },\n  airtable_fields_updated: [\n    'Processing Status',\n    'Outreach Priority',\n    'Data Quality', \n    'Ready for Outreach',\n    'Target Industry',\n    'Service Offering'\n  ],\n  telegram_message: telegramMessage,\n  next_phase: 'enrichment_pipeline',\n  timestamp: timestamp,\n  message: `Successfully selected and marked ${summaryData.leads_selected} premium leads using ${summaryData.strategy_used}`,\n  ready_for_next_workflow: true\n};\n\nconsole.log(`\u2705 Campaign Summary: ${summaryData.leads_selected} leads selected`);\nconsole.log(`\ud83d\udcca Strategy: ${summaryData.strategy_used}`);\nconsole.log(`\ud83c\udfaf Score range: ${stats.highest} to ${stats.lowest} (avg: ${stats.average})`);\nconsole.log(`\ud83c\udfaf Ready for enrichment pipeline`);\n\nreturn [{ json: finalSummary }];"
+      },
+      "id": "200791e2-f4f8-403e-87b1-f89452c80d8e",
+      "name": "\u2705 Final Success Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        976,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appM31OKQZtVVzbS8",
+          "mode": "list",
+          "cachedResultName": "Lead Intelligence",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblXRRZ1vHPbevxQT",
+          "mode": "list",
+          "cachedResultName": "Lead Intelligence",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Ready for Enrichment": "={{ $json.ready_for_enrichment }}",
+            "Processing Status": "={{ $json['Processing Status'] }}",
+            "Outreach Priority": "={{ $json['Outreach Priority'] }}",
+            "Data Quality": "={{ $json['Data Quality'] }}",
+            "Target Industry": "={{ $json['Target Industry'] }}",
+            "Outreach Focus": "={{ $json['Outreach Focus'] }}",
+            "Service Offering": "={{ $json['Service Offering'] }}",
+            "Record ID": "={{ $json['Record ID'] }}"
+          },
+          "matchingColumns": [
+            "Record ID"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Apollo ID",
+              "displayName": "Apollo ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Session ID",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Search Type",
+              "displayName": "Search Type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "funded_companies",
+                  "value": "funded_companies"
+                },
+                {
+                  "name": "high_growth_companies",
+                  "value": "high_growth_companies"
+                },
+                {
+                  "name": "tech_ready_companies",
+                  "value": "tech_ready_companies"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Search Priority",
+              "displayName": "Search Priority",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "high",
+                  "value": "high"
+                },
+                {
+                  "name": "medium",
+                  "value": "medium"
+                },
+                {
+                  "name": "low",
+                  "value": "low"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Email Status",
+              "displayName": "Email Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "verified",
+                  "value": "verified"
+                },
+                {
+                  "name": "likely",
+                  "value": "likely"
+                },
+                {
+                  "name": "unverified",
+                  "value": "unverified"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Email Confidence",
+              "displayName": "Email Confidence",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Job Title",
+              "displayName": "Job Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Seniority Level",
+              "displayName": "Seniority Level",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "c_suite",
+                  "value": "c_suite"
+                },
+                {
+                  "name": "vp",
+                  "value": "vp"
+                },
+                {
+                  "name": "director",
+                  "value": "director"
+                },
+                {
+                  "name": "manager",
+                  "value": "manager"
+                },
+                {
+                  "name": "individual_contributor",
+                  "value": "individual_contributor"
+                },
+                {
+                  "name": "C-Level",
+                  "value": "C-Level"
+                },
+                {
+                  "name": "VP",
+                  "value": "VP"
+                },
+                {
+                  "name": "Individual Contributor",
+                  "value": "Individual Contributor"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Personal LinkedIn URL",
+              "displayName": "Personal LinkedIn URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Company Website",
+              "displayName": "Company Website",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Company LinkedIn",
+              "displayName": "Company LinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Company Industry",
+              "displayName": "Company Industry",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Company Size",
+              "displayName": "Company Size",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Company Revenue",
+              "displayName": "Company Revenue",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Funding Status",
+              "displayName": "Funding Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "recently_funded",
+                  "value": "recently_funded"
+                },
+                {
+                  "name": "growth_stage",
+                  "value": "growth_stage"
+                },
+                {
+                  "name": "tech_adoption",
+                  "value": "tech_adoption"
+                },
+                {
+                  "name": "private",
+                  "value": "private"
+                },
+                {
+                  "name": "unknown",
+                  "value": "unknown"
+                },
+                {
+                  "name": "Seed",
+                  "value": "Seed"
+                },
+                {
+                  "name": "Series A",
+                  "value": "Series A"
+                },
+                {
+                  "name": "Private",
+                  "value": "Private"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Country",
+              "displayName": "Country",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Processing Status",
+              "displayName": "Processing Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "apollo_complete",
+                  "value": "apollo_complete"
+                },
+                {
+                  "name": "linkedin_scraping",
+                  "value": "linkedin_scraping"
+                },
+                {
+                  "name": "ai_analysis",
+                  "value": "ai_analysis"
+                },
+                {
+                  "name": "ready_for_outreach",
+                  "value": "ready_for_outreach"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Collection Timestamp",
+              "displayName": "Collection Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Data Quality",
+              "displayName": "Data Quality",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "high",
+                  "value": "high"
+                },
+                {
+                  "name": "medium",
+                  "value": "medium"
+                },
+                {
+                  "name": "low",
+                  "value": "low"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Outreach Priority",
+              "displayName": "Outreach Priority",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "high",
+                  "value": "high"
+                },
+                {
+                  "name": "medium",
+                  "value": "medium"
+                },
+                {
+                  "name": "low",
+                  "value": "low"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Best Approach",
+              "displayName": "Best Approach",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "LinkedIn DM",
+                  "value": "LinkedIn DM"
+                },
+                {
+                  "name": "Email",
+                  "value": "Email"
+                },
+                {
+                  "name": "Phone",
+                  "value": "Phone"
+                },
+                {
+                  "name": "Research contacts first",
+                  "value": "Research contacts first"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ready for Outreach",
+              "displayName": "Ready for Outreach",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Pain Points Detected",
+              "displayName": "Pain Points Detected",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Opportunities Identified",
+              "displayName": "Opportunities Identified",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Personalized Message",
+              "displayName": "Personalized Message",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Target Industry",
+              "displayName": "Target Industry",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Outreach Focus",
+              "displayName": "Outreach Focus",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Service Offering",
+              "displayName": "Service Offering",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ready for Enrichment",
+              "displayName": "Ready for Enrichment",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email Validated",
+              "displayName": "Email Validated",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Business Research Complete",
+              "displayName": "Business Research Complete",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ready for SendSpark",
+              "displayName": "Ready for SendSpark",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ready to Send",
+              "displayName": "Ready to Send",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "cc5f9872-00ee-42a2-9923-b8ffd1cca978",
+      "name": "\ud83d\udcca Mark Selected Leads in Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1216,
+        224
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "61a36a3c-b0f4-4ea5-a8fd-20b69095d44b",
+              "leftValue": "={{ $json.selection_complete === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        -160
+      ],
+      "id": "68b54275-fbe4-4bdb-9c9f-1506319c7e8d",
+      "name": "Summary Filter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "61a36a3c-b0f4-4ea5-a8fd-20b69095d44b",
+              "leftValue": "={{ $json.selection_complete === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        208
+      ],
+      "id": "6a94e9be-0b4d-4a11-a87c-504c4a10f877",
+      "name": "Leads FIlter"
+    },
+    {
+      "parameters": {
+        "content": "\ud83c\udfaf **SMART LEAD SELECTION WORKFLOW**\n\n**Purpose:** Intelligent lead selection from Airtable database using AI scoring and filtering\n\n**Key Features:**\n\u2022 Form-based campaign configuration\n\u2022 AI-powered lead scoring & selection\n\u2022 Automated Airtable updates\n\u2022 Telegram notifications\n\u2022 Quality-based lead filtering\n\n**Prerequisites:**\n\u2022 Airtable database with lead data\n\u2022 Telegram bot for notifications\n\u2022 N8N webhook access",
+        "height": 352,
+        "width": 368,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1296,
+        -640
+      ],
+      "id": "463ffbea-8fad-4b65-bf10-264afa07bbbb",
+      "name": "\ud83d\udccb Workflow Overview"
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcdd **FORM TRIGGER SETUP**\n\n**Configuration Required:**\n\u2022 Set webhook URL for form access\n\u2022 Configure form fields as needed\n\u2022 Test form submission\n\n**Key Fields:**\n\u2022 Campaign objective\n\u2022 Risk tolerance  \n\u2022 Company size preference\n\u2022 Lead quantity (15-75 leads)\n\u2022 Timeline urgency\n\n**Note:** Form generates unique webhook URL for external access",
+        "height": 496,
+        "width": 368,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1296,
+        -272
+      ],
+      "id": "a5369887-1799-452f-820b-8c616585e5d5",
+      "name": "\ud83d\udcdd Form Configuration"
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udd0d **AIRTABLE SEARCH SETUP**\n\n**Credentials Required:**\n\u2022 Set your Airtable API credentials\n\u2022 Verify base ID:\n\u2022 Verify table ID:\n\n**Purpose:**\n\u2022 Fetches niche context (2 records)\n\u2022 Gets target industry/focus data\n\u2022 Feeds recommendation engine\n\n**Fields Retrieved:**\n\u2022 Target Industry\n\u2022 Outreach Focus  \n\u2022 Service Offering",
+        "height": 544,
+        "width": 288,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -912,
+        -320
+      ],
+      "id": "27bc81b7-ebdc-40ab-b754-cf858159bedc",
+      "name": "\ud83d\udd0d Niche Context Search"
+    },
+    {
+      "parameters": {
+        "content": "\ud83e\udde0 **RECOMMENDATION ENGINE**\n\n**Purpose:**\n\u2022 Processes form preferences\n\u2022 Creates campaign strategy\n\u2022 Generates Airtable filters\n\u2022 Sets scoring weights\n\n**Key Outputs:**\n\u2022 Strategy name & emoji\n\u2022 Lead count target\n\u2022 Scoring algorithm weights\n\u2022 Expected outcomes\n\u2022 Budget estimates\n\n**Note:** This is a pure JavaScript code node - no external setup required",
+        "height": 544,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -320
+      ],
+      "id": "8b7de4df-cad4-4f16-a8b4-d21dc425726b",
+      "name": "\ud83e\udde0 AI Strategy Engine"
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcca **AIRTABLE LEAD FETCH**\n\n**Credentials Required:**\n\u2022 Use same Airtable credentials as search node\n\u2022 Ensure proper base/table access\n\n**Purpose:**\n\u2022 Fetches leads using dynamic filter\n\u2022 Gets all lead data for scoring\n\u2022 Processes apollo_complete records\n\n**Filter Source:**\n\u2022 Uses filter from Recommendation Engine\n\u2022 Targets specific lead criteria\n\u2022 Excludes already processed leads",
+        "height": 544,
+        "width": 352,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -320
+      ],
+      "id": "624788bd-134d-4fd7-8c5f-500e19a638bf",
+      "name": "\ud83d\udcca Lead Data Fetch"
+    },
+    {
+      "parameters": {
+        "content": "\ud83c\udfaf **SMART LEAD SCORING**\n\n**Core Algorithm:**\n\u2022 Industry relevance scoring (40%)\n\u2022 Lead quality assessment (25%)\n\u2022 Company size optimization (15%)\n\u2022 Seniority level scoring (15%)\n\u2022 Financial indicators (5%)\n\n**Key Features:**\n\u2022 Exact lead count selection\n\u2022 Premium quality filtering\n\u2022 Bonus multipliers for perfect matches\n\u2022 Comprehensive score breakdown\n\n**Outputs:** Selected leads + summary object",
+        "height": 544,
+        "width": 384
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        96,
+        -320
+      ],
+      "id": "939b142c-fb66-494f-ace8-44d7cda86c65",
+      "name": "\ud83c\udfaf AI Lead Scoring"
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udd04 **DATA FILTERING SYSTEM**\n\n**Two Filter Nodes:**\n\n**Summary Filter:**\n\u2022 Condition: selection_complete === true\n\u2022 Gets 1 summary object\n\u2022 Feeds notification system\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n**Leads Filter:**  \n\u2022 Condition: selection_complete === false\n\u2022 Gets individual lead records\n\u2022 Feeds Airtable updates\n\n**Critical:** Proper filtering prevents data mixing",
+        "height": 816,
+        "width": 336,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        496,
+        -384
+      ],
+      "id": "b5118340-a86d-4bc8-9210-cb8001ef8b81",
+      "name": "\ud83d\udd04 Data Filtering"
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcca **AIRTABLE UPDATES**\n\n**Credentials Required:**\n\u2022 Use your Airtable credentials\n\u2022 Ensure write permissions\n\n\n**Operation:** Update (single record mode)\n**Matching:** Record ID field\n\n**Fields Updated:**\n\u2022 Ready for Enrichment \u2192 true\n\u2022 Processing Status \u2192 existing value\n\u2022 Outreach Priority \u2192 existing value  \n\u2022 Data Quality \u2192 existing value\n\u2022 Target Industry \u2192 from form\n\u2022 Outreach Focus \u2192 from context\n\u2022 Service Offering \u2192 from context",
+        "height": 400,
+        "width": 560,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        848,
+        144
+      ],
+      "id": "a946f108-9502-4c6e-9692-6cfebfe7bac8",
+      "name": "\ud83d\udcca Database Updates"
+    },
+    {
+      "parameters": {
+        "content": "\u2705 **SUCCESS SUMMARY**\n\n**Purpose:**\n\u2022 Processes campaign summary\n\u2022 Creates detailed Telegram message\n\u2022 Provides comprehensive metrics\n\n**Input:** Summary object from filter\n**Output:** Formatted notification data\n\n**Key Metrics:**\n\u2022 Leads selected vs analyzed\n\u2022 Quality distribution\n\u2022 Industry relevance stats\n\u2022 Campaign projections\n\u2022 Next steps guidance",
+        "height": 544,
+        "width": 352
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        848,
+        -416
+      ],
+      "id": "f4ebfd09-a355-465c-a24f-66ee1a80103b",
+      "name": "\u2705 Campaign Summary"
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcf1 **TELEGRAM NOTIFICATION**\n\n**Setup Required:**\n\u2022 Add your Telegram Bot credentials\n\u2022 Set correct Chat ID (currently: 7049994855)\n\u2022 Test bot permissions\n\n**Message Content:**\n\u2022 Campaign completion status\n\u2022 Lead selection metrics\n\u2022 Quality breakdown\n\u2022 Industry analysis\n\u2022 Budget estimates\n\u2022 Next steps\n\n**Note:** Replace Chat ID with your target chat/user ID",
+        "height": 544,
+        "width": 400,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        -416
+      ],
+      "id": "e186cab4-0113-444b-8d1c-ea82032f9dee",
+      "name": "\ud83d\udcf1 Telegram Setup"
+    },
+    {
+      "parameters": {
+        "content": "\u2699\ufe0f **SETUP CHECKLIST**\n\n**Required Credentials:**\n\u25a1 Airtable API Token (3 nodes)\n\u25a1 Telegram Bot Token (1 node)\n\n**Configuration:**\n\u25a1 Update Telegram Chat ID\n\u25a1 Verify Airtable Base/Table IDs\n\u25a1 Test form webhook URL\n\u25a1 Validate field mappings\n\n**Testing:**\n\u25a1 Submit test form\n\u25a1 Check Airtable updates\n\u25a1 Verify Telegram messages\n\u25a1 Validate lead selection accuracy",
+        "height": 352,
+        "width": 256,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -912,
+        -688
+      ],
+      "id": "e0b80512-e0a6-4cd2-9a80-b4460b42ab72",
+      "name": "\u2699\ufe0f Setup Checklist"
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udea8 **TROUBLESHOOTING GUIDE**\n\n**Common Issues:**\n\n**Form not triggering:**\n\u2022 Check webhook URL is active\n\u2022 Verify form field names match code\n\n**No leads found:**\n\u2022 Check Airtable filter logic\n\u2022 Verify Processing Status values\n\u2022 Ensure leads exist with apollo_complete\n\n**Telegram not sending:**\n\u2022 Verify bot credentials\n\u2022 Check Chat ID is correct\n\u2022 Ensure bot has message permissions\n\n**Airtable updates failing:**\n\u2022 Check field name mappings\n\u2022 Verify write permissions\n\u2022 Validate Record ID matching",
+        "height": 448,
+        "width": 400,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -784
+      ],
+      "id": "94a18739-da52-4c44-9d6b-2a12ce7eff11",
+      "name": "\ud83d\udea8 Troubleshooting"
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udcc8 **WORKFLOW PERFORMANCE**\n\n**Expected Processing Times:**\n\u2022 Form to Recommendation: ~2-3 seconds\n\u2022 Lead Scoring (100 leads): ~5-10 seconds\n\u2022 Airtable Updates: ~3-5 seconds\n\u2022 Total Workflow: ~10-20 seconds\n\n**Capacity Limits:**\n\u2022 Max leads per run: ~500\n\u2022 Recommended batch: 50-100 leads\n\u2022 Form timeout: 30 seconds\n\n**Optimization Tips:**\n\u2022 Use targeted Airtable filters\n\u2022 Limit lead quantity in form\n\u2022 Monitor execution logs",
+        "height": 352,
+        "width": 384,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -688
+      ],
+      "id": "7a70a29d-7bc8-4b4c-949a-7269dba07a63",
+      "name": "\ud83d\udcc8 Performance Guide"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "3doXVRlvETKBckF7",
+          "mode": "list",
+          "cachedResultName": "Email Validation"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email Validator + Company Search": "YOUR_EMAIL VALIDATOR + COMPANY SEARCH_HERE"
+          },
+          "matchingColumns": [
+            "Email Validator + Company Search"
+          ],
+          "schema": [
+            {
+              "id": "Email Validator + Company Search",
+              "displayName": "Email Validator + Company Search",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1904,
+        240
+      ],
+      "id": "45609ea0-06d0-4f07-a245-ef15983a557b",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "content": "\ud83d\udd04 **EXECUTE WORKFLOW SETUP**\n\n**Required Configuration:**\n\u25a1 Import \"Email Validator + Company enrichment\" workflow\n\u25a1 Update workflow ID in Execute Workflow node\n\u25a1 Ensure proper workflow permissions\n\n**Purpose:**\n\u2022 Triggers email validation pipeline\n\u2022 Starts company research enrichment\n\u2022 Continues lead processing chain\n\n**Setup Steps:**\n\u2022 Get workflow ID from imported enrichment workflow\n\u2022 Replace current workflow ID in node settings\n\u2022 Test execution permissions and data flow\n\n**Note:** This creates automated handoff from lead selection to enrichment processing",
+        "height": 400,
+        "width": 656,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        144
+      ],
+      "id": "b07083d9-1284-4bf8-962b-95eb767786e8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "// \ud83c\udfaf UNIVERSAL Smart Lead Scoring & Selection - ANY USER INPUT COMPATIBLE\nconst items = $input.all();\n\n// Validate input data\nif (!items || items.length === 0) {\n  return [{\n    json: {\n      error: 'No input data received',\n      suggestion: 'Check if Airtable fetch is providing lead data',\n      timestamp: new Date().toISOString()\n    }\n  }];\n}\n\nconsole.log('\ud83d\udd0d Received items count:', items.length);\nconsole.log('\ud83d\udd0d First item structure:', Object.keys(items[0].json || {}));\n\n// \ud83d\udd27 Get recommendation data from previous node reference\nlet recommendation, userPreferences, nicheContext;\n\ntry {\n  const recommendationNode = $('\ud83e\udde0 Intelligent Recommendation Engine');\n  if (recommendationNode && recommendationNode.first()) {\n    const recData = recommendationNode.first().json;\n    recommendation = recData.recommendation;\n    userPreferences = recData.user_preferences;\n    nicheContext = recData.niche_context;\n    console.log('\u2705 Found recommendation data from node reference');\n  }\n} catch (error) {\n  console.log('\u26a0\ufe0f Could not access recommendation node, using defaults');\n}\n\n// \ud83d\udd27 FALLBACK: Create default recommendation if not available\nif (!recommendation) {\n  console.log('\ud83d\udd04 Creating fallback recommendation strategy');\n  \n  recommendation = {\n    strategy_name: 'Universal Lead Selection',\n    strategy_emoji: '\ud83c\udfaf',\n    lead_count: 15,\n    scoring_weights: {\n      industry_relevance: 40,\n      email_verification: 25,\n      company_size: 15,\n      seniority_level: 15,\n      funding_stage: 5\n    },\n    expected_outcomes: {\n      response_rate: '15-25%',\n      meeting_conversion: '45-65%'\n    },\n    success_probability: 80\n  };\n  \n  userPreferences = {\n    campaign_objective: 'Strategic Growth',\n    risk_tolerance: 'Balanced',\n    lead_quantity: '\ud83e\uddea Pilot Test (15 leads) - $30-45 budget'\n  };\n  \n  nicheContext = {\n    service_offering: 'business services',\n    outreach_focus: 'General Business Development',\n    target_industry: 'technology'\n  };\n}\n\n// \ud83c\udfaf ENHANCED: Extract exact target lead count from user form\nlet targetLeadCount = recommendation.lead_count || 15;\n\n// Try multiple methods to get the exact count the user selected\nif (userPreferences && userPreferences.lead_quantity) {\n  const leadQuantityText = userPreferences.lead_quantity || '';\n  console.log('\ud83d\udcca Raw lead quantity text:', leadQuantityText);\n  \n  // Enhanced regex patterns to catch all formats\n  const patterns = [\n    /\\((\\d+)\\s+leads?\\)/i,           // (15 leads)\n    /(\\d+)\\s+leads?/i,               // 15 leads\n    /pilot.*?(\\d+)/i,                // Pilot Test 15\n    /quick.*?(\\d+)/i,                // Quick Start 30\n    /standard.*?(\\d+)/i,             // Standard 50\n    /premium.*?(\\d+)/i               // Premium 75\n  ];\n  \n  for (const pattern of patterns) {\n    const match = leadQuantityText.match(pattern);\n    if (match) {\n      targetLeadCount = parseInt(match[1]);\n      console.log(`\u2705 Extracted lead count: ${targetLeadCount} using pattern: ${pattern}`);\n      break;\n    }\n  }\n  \n  // Fallback: Check for common numbers in the text\n  if (!targetLeadCount || targetLeadCount === 15) {\n    if (leadQuantityText.includes('30')) targetLeadCount = 30;\n    else if (leadQuantityText.includes('50')) targetLeadCount = 50;\n    else if (leadQuantityText.includes('75')) targetLeadCount = 75;\n    else if (leadQuantityText.includes('100')) targetLeadCount = 100;\n  }\n}\n\nconsole.log('\ud83c\udfaf FINAL TARGET LEAD COUNT:', targetLeadCount);\n\n// Process all items as leads\nconst leads = items;\n\nif (!leads || leads.length === 0) {\n  return [{\n    json: {\n      error: 'No leads found in Airtable data',\n      suggestion: 'Check Airtable filter and ensure leads exist',\n      recommendation: recommendation,\n      timestamp: new Date().toISOString()\n    }\n  }];\n}\n\nconsole.log(`\ud83c\udfaf Scoring ${leads.length} leads to select TOP ${targetLeadCount} using ${recommendation.strategy_name}`);\n\nconst scoredLeads = [];\nconst weights = recommendation.scoring_weights || {};\n\n// \ud83d\udd27 UNIVERSAL Industry Relevance Scoring Function\nfunction calculateIndustryRelevance(companyIndustry, nicheContext) {\n  const industry = (companyIndustry || '').toLowerCase();\n  const service = (nicheContext.service_offering || '').toLowerCase();\n  const focus = (nicheContext.outreach_focus || '').toLowerCase();\n  const target = (nicheContext.target_industry || '').toLowerCase();\n  \n  let relevanceScore = 0;\n  \n  console.log(`\ud83d\udd0d Analyzing industry: \"${industry}\" for service: \"${service}\"`);\n  \n  // \ud83e\udd16 AI & AUTOMATION PERFECT MATCHES\n  if (service.includes('ai') || service.includes('automation')) {\n    if (industry.includes('manufacturing') || industry.includes('logistics')) {\n      relevanceScore = 100; // Perfect match - high automation potential\n    } else if (industry.includes('healthcare') || industry.includes('financial')) {\n      relevanceScore = 95; // Excellent match - process-heavy industries\n    } else if (industry.includes('software') || industry.includes('technology')) {\n      relevanceScore = 90; // Great match - tech-forward companies\n    } else if (industry.includes('consulting') || industry.includes('professional services')) {\n      relevanceScore = 85; // Good match - process optimization needs\n    }\n  }\n  \n  // \ud83d\udcc8 LEAD GENERATION PERFECT MATCHES\n  if (service.includes('lead') || service.includes('marketing') || service.includes('sales')) {\n    if (industry.includes('real estate')) {\n      relevanceScore = Math.max(relevanceScore, 100); // Perfect - lead-dependent industry\n    } else if (industry.includes('insurance') || industry.includes('financial services')) {\n      relevanceScore = Math.max(relevanceScore, 95); // Excellent - client acquisition focused\n    } else if (industry.includes('marketing') || industry.includes('advertising')) {\n      relevanceScore = Math.max(relevanceScore, 92); // Excellent - they understand the value\n    } else if (industry.includes('consulting') || industry.includes('professional services')) {\n      relevanceScore = Math.max(relevanceScore, 88); // Great - always need new clients\n    } else if (industry.includes('software') || industry.includes('technology')) {\n      relevanceScore = Math.max(relevanceScore, 85); // Good - growth-focused\n    }\n  }\n  \n  // \ud83d\udcc4 DOCUMENT PROCESSING PERFECT MATCHES\n  if (service.includes('document') || service.includes('data') || focus.includes('document')) {\n    if (industry.includes('legal')) {\n      relevanceScore = Math.max(relevanceScore, 98); // Perfect - document-heavy\n    } else if (industry.includes('healthcare') || industry.includes('medical')) {\n      relevanceScore = Math.max(relevanceScore, 95); // Excellent - lots of paperwork\n    } else if (industry.includes('financial') || industry.includes('accounting')) {\n      relevanceScore = Math.max(relevanceScore, 92); // Excellent - compliance heavy\n    } else if (industry.includes('insurance')) {\n      relevanceScore = Math.max(relevanceScore, 90); // Great - claims processing\n    } else if (industry.includes('government') || industry.includes('education')) {\n      relevanceScore = Math.max(relevanceScore, 85); // Good - bureaucratic processes\n    }\n  }\n  \n  // \ud83c\udfaf TARGET INDUSTRY SPECIFIC MATCHING\n  if (target) {\n    // Direct industry name matching\n    if (industry.includes(target) || target.includes(industry)) {\n      relevanceScore = Math.max(relevanceScore, 95);\n      console.log('\ud83c\udfaf Direct target industry match found!');\n    }\n    \n    // Dental/Healthcare specific\n    if (target.includes('dental') || target.includes('dentist')) {\n      if (industry.includes('dental') || industry.includes('healthcare') || industry.includes('medical')) {\n        relevanceScore = Math.max(relevanceScore, 100);\n      }\n    }\n    \n    // E-commerce specific\n    if (target.includes('ecommerce') || target.includes('retail')) {\n      if (industry.includes('retail') || industry.includes('e-commerce') || industry.includes('consumer')) {\n        relevanceScore = Math.max(relevanceScore, 95);\n      }\n    }\n    \n    // SaaS/Tech specific\n    if (target.includes('saas') || target.includes('software')) {\n      if (industry.includes('software') || industry.includes('technology') || industry.includes('saas')) {\n        relevanceScore = Math.max(relevanceScore, 95);\n      }\n    }\n  }\n  \n  // \ud83c\udfaf BONUS POINTS for high-growth industries\n  if (industry.includes('saas') || industry.includes('fintech') || industry.includes('ai') || \n      industry.includes('blockchain') || industry.includes('cybersecurity')) {\n    relevanceScore += 10;\n  }\n  \n  // Base alignment scores for common industries\n  if (relevanceScore === 0) {\n    if (industry.includes('information technology') || industry.includes('software')) {\n      relevanceScore = 75;\n    } else if (industry.includes('professional services') || industry.includes('consulting')) {\n      relevanceScore = 70;\n    } else if (industry.includes('business services')) {\n      relevanceScore = 65;\n    } else {\n      relevanceScore = 50; // Base score for any business\n    }\n  }\n  \n  return Math.min(relevanceScore, 100);\n}\n\n// \ud83c\udfc6 ENHANCED Lead Quality Assessment\nfunction assessLeadQuality(lead) {\n  let qualityScore = 0;\n  const qualityFactors = {};\n  \n  // Email quality (critical for outreach)\n  const emailConfidence = parseInt(lead['Email Confidence'] || 0);\n  if (emailConfidence >= 90) {\n    qualityScore += 25;\n    qualityFactors.email = 'excellent';\n  } else if (emailConfidence >= 75) {\n    qualityScore += 20;\n    qualityFactors.email = 'good';\n  } else if (emailConfidence >= 50) {\n    qualityScore += 10;\n    qualityFactors.email = 'fair';\n  } else {\n    qualityFactors.email = 'poor';\n  }\n  \n  // Seniority level (decision makers)\n  const seniority = lead['Seniority Level'];\n  if (seniority === 'C-Level') {\n    qualityScore += 25;\n    qualityFactors.seniority = 'c-level';\n  } else if (seniority === 'VP') {\n    qualityScore += 20;\n    qualityFactors.seniority = 'vp';\n  } else if (seniority === 'Director') {\n    qualityScore += 15;\n    qualityFactors.seniority = 'director';\n  } else if (seniority === 'Manager') {\n    qualityScore += 10;\n    qualityFactors.seniority = 'manager';\n  }\n  \n  // Company size sweet spot\n  const companySize = parseInt(lead['Company Size'] || 0);\n  if (companySize >= 11 && companySize <= 200) {\n    qualityScore += 20; // Sweet spot for responsiveness and budget\n    qualityFactors.size = 'ideal';\n  } else if (companySize >= 201 && companySize <= 1000) {\n    qualityScore += 15;\n    qualityFactors.size = 'good';\n  } else if (companySize >= 1 && companySize <= 10) {\n    qualityScore += 10;\n    qualityFactors.size = 'small';\n  }\n  \n  // LinkedIn presence\n  if (lead['Personal LinkedIn URL'] && lead['Personal LinkedIn URL'] !== '') {\n    qualityScore += 10;\n    qualityFactors.linkedin = 'present';\n  }\n  \n  // Company revenue indicator\n  const revenue = parseFloat(lead['Company Revenue'] || 0);\n  if (revenue > 10000000) {\n    qualityScore += 15;\n    qualityFactors.revenue = 'high';\n  } else if (revenue > 1000000) {\n    qualityScore += 10;\n    qualityFactors.revenue = 'medium';\n  }\n  \n  // Funding status (growth indicator)\n  const fundingStatus = lead['Funding Status'];\n  if (['Series A', 'Series B', 'Series C+'].includes(fundingStatus)) {\n    qualityScore += 15;\n    qualityFactors.funding = 'funded';\n  } else if (fundingStatus === 'Seed') {\n    qualityScore += 10;\n    qualityFactors.funding = 'seed';\n  }\n  \n  return { qualityScore, qualityFactors };\n}\n\n// Score each lead with enhanced algorithm\nfor (const item of leads) {\n  const lead = item.json.fields || item.json;\n  let totalScore = 0;\n  const scoreBreakdown = {};\n  \n  // \ud83c\udfaf Industry Relevance (40% weight)\n  const industryScore = calculateIndustryRelevance(lead['Company Industry'], nicheContext);\n  const industryWeight = (industryScore / 100) * (weights.industry_relevance || 40);\n  totalScore += industryWeight;\n  scoreBreakdown.industry_relevance = industryWeight;\n  scoreBreakdown.industry_relevance_raw = industryScore;\n  \n  // \ud83c\udfc6 Lead Quality Assessment (25% weight)\n  const qualityAssessment = assessLeadQuality(lead);\n  const qualityWeight = (qualityAssessment.qualityScore / 100) * (weights.email_verification || 25);\n  totalScore += qualityWeight;\n  scoreBreakdown.lead_quality = qualityWeight;\n  scoreBreakdown.quality_factors = qualityAssessment.qualityFactors;\n  \n  // \ud83c\udfe2 Company Size Optimization (15% weight)\n  const companySize = parseInt(lead['Company Size'] || 0);\n  let sizeScore = 0;\n  if (companySize >= 11 && companySize <= 50) {\n    sizeScore = 100; // Perfect size for responsiveness\n  } else if (companySize >= 51 && companySize <= 200) {\n    sizeScore = 85; // Good size with budget\n  } else if (companySize >= 201 && companySize <= 500) {\n    sizeScore = 70; // Larger but may be slower\n  } else if (companySize >= 1 && companySize <= 10) {\n    sizeScore = 60; // Small but may lack budget\n  }\n  const sizeWeight = (sizeScore / 100) * (weights.company_size || 15);\n  totalScore += sizeWeight;\n  scoreBreakdown.company_size = sizeWeight;\n  \n  // \ud83d\udc51 Seniority Level (15% weight)\n  const seniority = lead['Seniority Level'];\n  let seniorityScore = 0;\n  if (seniority === 'C-Level') seniorityScore = 100;\n  else if (seniority === 'VP') seniorityScore = 85;\n  else if (seniority === 'Director') seniorityScore = 70;\n  else if (seniority === 'Manager') seniorityScore = 55;\n  else seniorityScore = 30;\n  \n  const seniorityWeight = (seniorityScore / 100) * (weights.seniority_level || 15);\n  totalScore += seniorityWeight;\n  scoreBreakdown.seniority = seniorityWeight;\n  \n  // \ud83d\udcb0 Funding/Revenue Bonus (5% weight)\n  const revenue = parseFloat(lead['Company Revenue'] || 0);\n  const fundingStatus = lead['Funding Status'];\n  let financialScore = 0;\n  \n  if (revenue > 50000000 || ['Series B', 'Series C+'].includes(fundingStatus)) {\n    financialScore = 100;\n  } else if (revenue > 10000000 || fundingStatus === 'Series A') {\n    financialScore = 80;\n  } else if (revenue > 1000000 || fundingStatus === 'Seed') {\n    financialScore = 60;\n  } else if (fundingStatus === 'Private') {\n    financialScore = 40;\n  }\n  \n  const financialWeight = (financialScore / 100) * (weights.funding_stage || 5);\n  totalScore += financialWeight;\n  scoreBreakdown.financial = financialWeight;\n  \n  // \ud83c\udfaf BONUS MULTIPLIERS for exceptional leads\n  let bonusMultiplier = 1.0;\n  \n  // Perfect lead bonus\n  if (industryScore >= 95 && qualityAssessment.qualityScore >= 80) {\n    bonusMultiplier = 1.15; // 15% bonus for perfect leads\n    scoreBreakdown.perfect_lead_bonus = true;\n  }\n  \n  // High-confidence email + C-Level combo\n  if (parseInt(lead['Email Confidence'] || 0) >= 85 && seniority === 'C-Level') {\n    bonusMultiplier = Math.max(bonusMultiplier, 1.10);\n    scoreBreakdown.premium_contact_bonus = true;\n  }\n  \n  // Apply bonus multiplier\n  totalScore *= bonusMultiplier;\n  scoreBreakdown.bonus_multiplier = bonusMultiplier;\n  \n  // Add scored lead to array\n  scoredLeads.push({\n    json: {\n      ...lead,\n      selection_score: Math.round(totalScore),\n      industry_relevance_score: industryScore,\n      lead_quality_score: qualityAssessment.qualityScore,\n      score_breakdown: scoreBreakdown,\n      selection_strategy: recommendation.strategy_name,\n      selection_timestamp: new Date().toISOString(),\n      user_campaign_objective: userPreferences.campaign_objective || 'Unknown',\n      expected_response_rate: recommendation.expected_outcomes ? recommendation.expected_outcomes.response_rate : 'Unknown',\n      niche_match: nicheContext,\n      ready_for_enrichment: true,\n      processing_priority: totalScore >= 85 ? 'urgent' : totalScore >= 70 ? 'high' : totalScore >= 50 ? 'medium' : 'low',\n      lead_tier: totalScore >= 90 ? 'premium' : totalScore >= 75 ? 'gold' : totalScore >= 60 ? 'silver' : 'bronze'\n    }\n  });\n}\n\n// \ud83c\udfc6 Sort by score (highest first) - This ensures we get the BEST leads\nscoredLeads.sort((a, b) => b.json.selection_score - a.json.selection_score);\n\n// \ud83c\udfaf Select EXACTLY the number of leads requested\nconst selectedLeads = scoredLeads.slice(0, targetLeadCount);\n\nconsole.log(`\ud83c\udfc6 SELECTED EXACTLY ${selectedLeads.length} LEADS from ${leads.length} candidates (REQUESTED: ${targetLeadCount})`);\nconsole.log(`\ud83c\udfaf Score range: ${selectedLeads[0]?.json.selection_score} (best) to ${selectedLeads[selectedLeads.length - 1]?.json.selection_score} (lowest selected)`);\nconsole.log(`\ud83d\udcca Average score of selected leads: ${selectedLeads.length > 0 ? Math.round(selectedLeads.reduce((sum, lead) => sum + lead.json.selection_score, 0) / selectedLeads.length) : 0}`);\n\n// Show quality distribution\nconst premiumCount = selectedLeads.filter(lead => lead.json.lead_tier === 'premium').length;\nconst goldCount = selectedLeads.filter(lead => lead.json.lead_tier === 'gold').length;\nconst silverCount = selectedLeads.filter(lead => lead.json.lead_tier === 'silver').length;\n\nconsole.log(`\ud83c\udfc6 Quality distribution: ${premiumCount} Premium, ${goldCount} Gold, ${silverCount} Silver`);\n\n// Generate comprehensive final summary\nconst finalSummary = {\n  json: {\n    selection_complete: true,\n    strategy_used: recommendation.strategy_name,\n    strategy_emoji: recommendation.strategy_emoji || '\ud83c\udfaf',\n    \n    // EXACT COUNTS\n    total_leads_analyzed: leads.length,\n    leads_selected: selectedLeads.length,\n    requested_lead_count: targetLeadCount,\n    selection_accuracy: selectedLeads.length === targetLeadCount ? 'PERFECT' : 'PARTIAL',\n    \n    // QUALITY METRICS\n    score_range: {\n      highest: selectedLeads[0]?.json.selection_score || 0,\n      lowest: selectedLeads[selectedLeads.length - 1]?.json.selection_score || 0,\n      average: selectedLeads.length > 0 ? Math.round(selectedLeads.reduce((sum, lead) => sum + lead.json.selection_score, 0) / selectedLeads.length) : 0\n    },\n    \n    // QUALITY DISTRIBUTION\n    quality_distribution: {\n      premium_leads: premiumCount,\n      gold_leads: goldCount,\n      silver_leads: silverCount,\n      bronze_leads: selectedLeads.filter(lead => lead.json.lead_tier === 'bronze').length\n    },\n    \n    // INDUSTRY RELEVANCE\n    industry_relevance_stats: {\n      avg_relevance: selectedLeads.length > 0 ? Math.round(selectedLeads.reduce((sum, lead) => sum + lead.json.industry_relevance_score, 0) / selectedLeads.length) : 0,\n      perfect_matches: selectedLeads.filter(lead => lead.json.industry_relevance_score >= 95).length,\n      high_relevance_count: selectedLeads.filter(lead => lead.json.industry_relevance_score >= 80).length,\n      top_industries: [...new Set(selectedLeads.slice(0, 10).map(lead => lead.json['Company Industry']))]\n    },\n    \n    // CAMPAIGN READINESS\n    high_confidence_emails: selectedLeads.filter(lead => parseInt(lead.json['Email Confidence'] || 0) >= 85).length,\n    c_level_contacts: selectedLeads.filter(lead => lead.json['Seniority Level'] === 'C-Level').length,\n    funded_companies: selectedLeads.filter(lead => ['Seed', 'Series A', 'Series B', 'Series C+'].includes(lead.json['Funding Status'])).length,\n    \n    niche_context: nicheContext,\n    recommendation_summary: recommendation,\n    user_preferences: userPreferences,\n    ready_for_enrichment: true,\n    timestamp: new Date().toISOString(),\n    \n    // SUCCESS PREDICTION\n    predicted_response_rate: selectedLeads.length > 0 ? \n      Math.round(selectedLeads.reduce((sum, lead) => sum + lead.json.selection_score, 0) / selectedLeads.length / 100 * 25) + '%' : '0%'\n  }\n};\n\nconsole.log('\u2705 UNIVERSAL SELECTION COMPLETE!');\nconsole.log(`\ud83c\udfaf Delivered exactly ${targetLeadCount} leads as requested`);\nconsole.log(`\ud83c\udfc6 Average quality score: ${finalSummary.json.score_range.average}/100`);\nconsole.log(`\ud83d\udce7 High-confidence emails: ${finalSummary.json.high_confidence_emails}/${selectedLeads.length}`);\n\n// Return selected leads + comprehensive summary\nreturn [...selectedLeads, finalSummary];"
+      },
+      "id": "d3f6676f-41da-4ea4-be57-5959edbb35f9",
+      "name": "\ud83c\udfaf Smart Lead Scoring & Selection",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// \ud83e\udde0 Universal Intelligent Recommendation Engine - Dynamic User Input Handler\nconst formData = $json;\n\nconsole.log('\ud83c\udfaf Processing lead selection preferences:', formData);\n\n// Extract user preferences from form\nconst preferences = {\n  campaign_objective: formData['\ud83c\udfaf What\\'s your primary campaign objective?'],\n  risk_tolerance: formData['\u2696\ufe0f What\\'s your risk tolerance?'],\n  company_size_preference: formData['\ud83c\udfe2 Preferred company size to target?'],\n  funding_preference: formData['\ud83d\udcb0 Funding stage preference?'],\n  contact_method_preference: formData['\ud83d\udcde Preferred outreach method?'],\n  seniority_preference: formData['\ud83d\udc51 Target seniority level?'],\n  lead_quantity: formData['\ud83d\udcca How many leads for your first campaign?'],\n  timeline_urgency: formData['\u23f0 Campaign timeline?'],\n  // NEW: Dynamic user inputs\n  service_focus: formData['\ud83c\udfaf Your Service/Product Focus'],\n  target_industries: formData['\ud83c\udfed Target Industries'],\n  value_proposition: formData['\ud83d\udca1 Your Value Proposition']\n};\n\n// Extract lead count\nlet targetLeadCount = 15; // Default fallback\nconst leadQuantityText = preferences.lead_quantity || '';\nconst leadCountMatch = leadQuantityText.match(/\\((\\d+)\\s+leads?\\)/i);\nif (leadCountMatch) {\n  targetLeadCount = parseInt(leadCountMatch[1]);\n}\n\nconsole.log('\ud83d\udcca Target lead count:', targetLeadCount);\n\n// \ud83c\udfaf ENHANCED: Dynamic niche data processing from user inputs\nlet serviceOffering = preferences.service_focus || 'business services';\nlet outreachFocus = 'business development';\nlet targetIndustry = preferences.target_industries || 'technology';\n\n// Parse and enhance the service focus to determine outreach focus\nif (serviceOffering) {\n  const service = serviceOffering.toLowerCase();\n  \n  // Determine outreach focus based on service offering\n  if (service.includes('ai') || service.includes('automation')) {\n    outreachFocus = 'AI & Process Automation';\n  } else if (service.includes('lead') || service.includes('marketing') || service.includes('sales')) {\n    outreachFocus = 'Lead Generation & Sales';\n  } else if (service.includes('document') || service.includes('data entry') || service.includes('processing')) {\n    outreachFocus = 'Document Processing & Data Management';\n  } else if (service.includes('email') || service.includes('communication')) {\n    outreachFocus = 'Email & Communication Systems';\n  } else if (service.includes('customer service') || service.includes('support')) {\n    outreachFocus = 'Customer Service & Support';\n  } else if (service.includes('social media') || service.includes('content')) {\n    outreachFocus = 'Social Media & Content Marketing';\n  } else if (service.includes('hr') || service.includes('administrative')) {\n    outreachFocus = 'HR & Administrative Services';\n  } else {\n    outreachFocus = 'General Business Development';\n  }\n}\n\n// FALLBACK: Try to get from previous Airtable search if available (for backward compatibility)\nconst allInputs = $input.all();\nif (allInputs && allInputs.length > 1) {\n  const potentialNicheData = allInputs[1].json;\n  if (potentialNicheData && potentialNicheData['Service Offering']) {\n    serviceOffering = potentialNicheData['Service Offering'];\n    outreachFocus = potentialNicheData['Outreach Focus'] || outreachFocus;\n    targetIndustry = potentialNicheData['Target Industry'] || targetIndustry;\n    console.log('\ud83d\udd04 Using legacy niche data from Airtable search');\n  }\n}\n\nconsole.log('\ud83c\udfaf Using dynamic niche data:', { serviceOffering, outreachFocus, targetIndustry });\n\n// \ud83d\udd27 UNIVERSAL Industry Matching Logic - Handles ANY User Input\nfunction getRelevantIndustries(serviceOffering, outreachFocus, targetIndustry) {\n  const relevantIndustries = [];\n  const service = (serviceOffering || '').toLowerCase();\n  const focus = (outreachFocus || '').toLowerCase();\n  const target = (targetIndustry || '').toLowerCase();\n  \n  console.log('\ud83c\udfaf Analyzing service patterns:', { service, focus, target });\n  \n  // \ud83e\udd16 AI & AUTOMATION SERVICES\n  if (service.includes('ai') || service.includes('automation') || service.includes('artificial intelligence')) {\n    relevantIndustries.push(\n      'information technology & services', 'software', 'computer software',\n      'manufacturing', 'healthcare', 'financial services', 'consulting',\n      'business services', 'logistics & supply chain', 'retail'\n    );\n  }\n  \n  // \ud83d\udcc8 LEAD GENERATION & SALES SERVICES\n  if (service.includes('lead') || service.includes('marketing') || service.includes('sales') || service.includes('outreach')) {\n    relevantIndustries.push(\n      'real estate', 'insurance', 'financial services', 'marketing & advertising',\n      'consulting', 'professional services', 'software', 'business services',\n      'education', 'healthcare', 'automotive', 'construction'\n    );\n  }\n  \n  // \ud83d\udcc4 DOCUMENT PROCESSING & DATA SERVICES\n  if (service.includes('document') || service.includes('data entry') || service.includes('processing') || \n      focus.includes('document') || focus.includes('data') || focus.includes('processing')) {\n    relevantIndustries.push(\n      'legal services', 'healthcare', 'financial services', 'insurance',\n      'accounting', 'government', 'education', 'real estate', 'consulting'\n    );\n  }\n  \n  // \ud83d\udce7 EMAIL & COMMUNICATION SERVICES\n  if (service.includes('email') || service.includes('communication') || service.includes('messaging')) {\n    relevantIndustries.push(\n      'marketing & advertising', 'professional services', 'consulting',\n      'software', 'business services', 'education', 'healthcare', 'retail'\n    );\n  }\n  \n  // \ud83d\uded2 E-COMMERCE & RETAIL FOCUS\n  if (target.includes('ecommerce') || target.includes('e-commerce') || target.includes('retail') || \n      target.includes('online') || target.includes('shop')) {\n    relevantIndustries.push(\n      'retail', 'e-commerce', 'consumer goods', 'food & beverages',\n      'wholesale', 'apparel & fashion', 'sporting goods', 'furniture'\n    );\n  }\n  \n  // \ud83c\udfe5 HEALTHCARE FOCUS\n  if (target.includes('healthcare') || target.includes('medical') || target.includes('dental') || \n      target.includes('doctor') || target.includes('clinic') || target.includes('dentist')) {\n    relevantIndustries.push(\n      'healthcare', 'medical practice', 'pharmaceuticals', 'medical devices',\n      'biotechnology', 'veterinary', 'mental health care'\n    );\n  }\n  \n  // \ud83c\udfe0 REAL ESTATE FOCUS\n  if (target.includes('real estate') || target.includes('property') || target.includes('realty') || \n      target.includes('mortgage') || target.includes('construction')) {\n    relevantIndustries.push(\n      'real estate', 'construction', 'architecture & planning',\n      'building materials', 'mortgage', 'property management'\n    );\n  }\n  \n  // \ud83d\udcb0 FINANCIAL SERVICES FOCUS\n  if (target.includes('financial') || target.includes('finance') || target.includes('accounting') || \n      target.includes('insurance') || target.includes('banking')) {\n    relevantIndustries.push(\n      'financial services', 'banking', 'insurance', 'accounting',\n      'investment management', 'venture capital & private equity'\n    );\n  }\n  \n  // \u2696\ufe0f LEGAL SERVICES FOCUS\n  if (target.includes('legal') || target.includes('law') || target.includes('attorney') || target.includes('lawyer')) {\n    relevantIndustries.push(\n      'legal services', 'law practice', 'government administration'\n    );\n  }\n  \n  // \ud83d\udcbb TECHNOLOGY & SOFTWARE FOCUS\n  if (target.includes('tech') || target.includes('software') || target.includes('saas') || \n      target.includes('it') || target.includes('digital') || target.includes('app')) {\n    relevantIndustries.push(\n      'information technology & services', 'software', 'computer software',\n      'internet', 'telecommunications', 'computer hardware'\n    );\n  }\n  \n  // \ud83c\udf93 EDUCATION FOCUS\n  if (target.includes('education') || target.includes('school') || target.includes('university') || \n      target.includes('training') || target.includes('learning')) {\n    relevantIndustries.push(\n      'education', 'higher education', 'e-learning', 'primary/secondary education'\n    );\n  }\n  \n  // \ud83c\udfed MANUFACTURING & INDUSTRIAL FOCUS\n  if (target.includes('manufacturing') || target.includes('industrial') || target.includes('factory') || \n      target.includes('production') || target.includes('automotive')) {\n    relevantIndustries.push(\n      'manufacturing', 'automotive', 'industrial automation',\n      'machinery', 'chemicals', 'metals and mining'\n    );\n  }\n  \n  // \ud83c\udf54 FOOD & RESTAURANT FOCUS\n  if (target.includes('food') || target.includes('restaurant') || target.includes('hospitality') || \n      target.includes('hotel') || target.includes('catering')) {\n    relevantIndustries.push(\n      'food & beverages', 'restaurants', 'hospitality',\n      'food production', 'wine and spirits'\n    );\n  }\n  \n  // \ud83d\udcfa MEDIA & MARKETING FOCUS\n  if (target.includes('media') || target.includes('advertising') || target.includes('marketing') || \n      target.includes('agency') || target.includes('creative')) {\n    relevantIndustries.push(\n      'marketing & advertising', 'media production', 'public relations',\n      'graphic design', 'photography', 'entertainment'\n    );\n  }\n  \n  // \ud83d\ude9a LOGISTICS & TRANSPORTATION FOCUS\n  if (target.includes('logistics') || target.includes('shipping') || target.includes('transport') || \n      target.includes('delivery') || target.includes('warehouse')) {\n    relevantIndustries.push(\n      'logistics & supply chain', 'transportation/trucking/railroad',\n      'warehousing', 'package/freight delivery'\n    );\n  }\n  \n  // If no specific matches found, add broad business categories\n  if (relevantIndustries.length === 0) {\n    relevantIndustries.push(\n      'business services', 'professional services', 'consulting',\n      'information technology & services', 'marketing & advertising'\n    );\n    console.log('\ud83d\udd04 No specific industry matches, using broad categories');\n  }\n  \n  const uniqueIndustries = [...new Set(relevantIndustries)];\n  console.log(`\ud83c\udfaf Matched ${uniqueIndustries.length} relevant industries:`, uniqueIndustries.slice(0, 5));\n  \n  return uniqueIndustries;\n}\n\n// Build intelligent filter\nfunction buildIntelligentFilter(preferences, serviceOffering, outreachFocus, targetIndustry) {\n  const filterConditions = [];\n  \n  // Base conditions\n  filterConditions.push('{Processing Status} = \"apollo_complete\"');\n  filterConditions.push('{Ready for Enrichment} != TRUE()');\n  \n  // \ud83c\udfaf Smart Industry Filtering\n  const relevantIndustries = getRelevantIndustries(serviceOffering, outreachFocus, targetIndustry);\n  \n  if (relevantIndustries.length > 0) {\n    const industryConditions = relevantIndustries.map(industry => \n      `FIND(\"${industry}\", LOWER({Company Industry})) > 0`\n    );\n    \n    // Add keyword matching for broader coverage\n    const keywordConditions = [];\n    \n    if (serviceOffering.toLowerCase().includes('lead')) {\n      keywordConditions.push(\n        'FIND(\"marketing\", LOWER({Company Industry})) > 0',\n        'FIND(\"advertising\", LOWER({Company Industry})) > 0',\n        'FIND(\"consulting\", LOWER({Company Industry})) > 0'\n      );\n    }\n    \n    if (outreachFocus.toLowerCase().includes('document')) {\n      keywordConditions.push(\n        'FIND(\"legal\", LOWER({Company Industry})) > 0',\n        'FIND(\"financial\", LOWER({Company Industry})) > 0',\n        'FIND(\"healthcare\", LOWER({Company Industry})) > 0'\n      );\n    }\n    \n    const allIndustryConditions = [...industryConditions, ...keywordConditions];\n    \n    if (allIndustryConditions.length > 0) {\n      filterConditions.push(`OR(${allIndustryConditions.join(', ')})`);\n      console.log('\ud83c\udfaf Added industry filtering for:', relevantIndustries.join(', '));\n    }\n  }\n  \n  // Other filter conditions\n  if (preferences.contact_method_preference && preferences.contact_method_preference.includes('Email Focused')) {\n    filterConditions.push('{Email Confidence} >= 75');\n  } else if (preferences.contact_method_preference && preferences.contact_method_preference.includes('LinkedIn Focused')) {\n    filterConditions.push('{Personal LinkedIn URL} != \"\"');\n  }\n  \n  if (preferences.company_size_preference && preferences.company_size_preference.includes('Startup Focused')) {\n    filterConditions.push('AND({Company Size} >= 11, {Company Size} <= 50)');\n  } else if (preferences.company_size_preference && preferences.company_size_preference.includes('Growth Stage')) {\n    filterConditions.push('AND({Company Size} >= 51, {Company Size} <= 200)');\n  }\n  \n  if (preferences.funding_preference && preferences.funding_preference.includes('Recently Funded')) {\n    filterConditions.push('OR({Funding Status} = \"Seed\", {Funding Status} = \"Series A\")');\n  } else if (preferences.funding_preference && preferences.funding_preference.includes('Bootstrapped')) {\n    filterConditions.push('{Funding Status} = \"Private\"');\n  }\n  \n  if (preferences.seniority_preference && preferences.seniority_preference.includes('C-Level Only')) {\n    filterConditions.push('{Seniority Level} = \"C-Level\"');\n  } else if (preferences.seniority_preference && preferences.seniority_preference.includes('Senior Leadership')) {\n    filterConditions.push('OR({Seniority Level} = \"C-Level\", {Seniority Level} = \"VP\")');\n  }\n  \n  return `AND(${filterConditions.join(', ')})`;\n}\n\n// Generate strategy recommendation\nlet recommendation = {\n  strategy_name: 'Niche-Targeted Strategy',\n  strategy_emoji: '\ud83c\udfaf',\n  lead_count: targetLeadCount,\n  scoring_weights: {},\n  expected_outcomes: {},\n  budget_estimate: '',\n  timeline: '',\n  success_probability: 0,\n  key_benefits: [],\n  next_steps: []\n};\n\n// Set scoring based on campaign objective\nif (preferences.campaign_objective && preferences.campaign_objective.includes('Quick Wins')) {\n  recommendation.strategy_name = 'Quick Response Strategy';\n  recommendation.strategy_emoji = '\ud83d\ude80';\n  recommendation.scoring_weights = {\n    industry_relevance: 35,\n    email_verification: 30,\n    linkedin_activity: 20,\n    seniority_accessibility: 15\n  };\n  recommendation.expected_outcomes = {\n    response_rate: '20-30%',\n    meeting_conversion: '40-60%',\n    expected_meetings: Math.round(targetLeadCount * 0.25 * 0.5)\n  };\n  recommendation.success_probability = 85;\n} else if (preferences.campaign_objective && preferences.campaign_objective.includes('High Value')) {\n  recommendation.strategy_name = 'Premium Prospect Strategy';\n  recommendation.strategy_emoji = '\ud83d\udc8e';\n  recommendation.scoring_weights = {\n    industry_relevance: 40,\n    company_revenue: 30,\n    funding_stage: 20,\n    seniority_level: 10\n  };\n  recommendation.expected_outcomes = {\n    response_rate: '12-20%',\n    meeting_conversion: '50-70%',\n    expected_meetings: Math.round(targetLeadCount * 0.16 * 0.6)\n  };\n  recommendation.success_probability = 70;\n} else {\n  recommendation.scoring_weights = {\n    industry_relevance: 35,\n    email_verification: 25,\n    company_size: 20,\n    seniority_level: 20\n  };\n  recommendation.expected_outcomes = {\n    response_rate: '15-25%',\n    meeting_conversion: '45-65%',\n    expected_meetings: Math.round(targetLeadCount * 0.2 * 0.55)\n  };\n  recommendation.success_probability = 75;\n}\n\n// Budget and timeline\nconst costPerLead = 2.0;\nconst baseCost = targetLeadCount * costPerLead;\nrecommendation.budget_estimate = `$${Math.round(baseCost * 0.8)}-${Math.round(baseCost * 1.2)}`;\nrecommendation.timeline = preferences.timeline_urgency && preferences.timeline_urgency.includes('Immediate') ? '3-5 days' : '1-2 weeks';\n\n// Build the filter\nconst airtableFilter = buildIntelligentFilter(preferences, serviceOffering, outreachFocus, targetIndustry);\n\nconst result = {\n  user_preferences: preferences,\n  recommendation: recommendation,\n  airtable_filter: airtableFilter,\n  niche_context: {\n    service_offering: serviceOffering,\n    outreach_focus: outreachFocus,\n    target_industry: targetIndustry\n  },\n  implementation_ready: true,\n  timestamp: new Date().toISOString()\n};\n\nconsole.log('\ud83c\udfaf Generated niche-targeted recommendation:', recommendation.strategy_name);\nconsole.log('\ud83d\udcca Target lead count:', targetLeadCount);\nconsole.log('\ud83d\udd0d Smart filter:', airtableFilter);\nconsole.log('\ud83c\udfaf Niche context:', result.niche_context);\n\nreturn [{ json: result }];"
+      },
+      "id": "8932ceca-4444-4912-9e04-63e4f0475fe2",
+      "name": "\ud83e\udde0 Intelligent Recommendation Engine",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -496,
+        48
+      ]
+    }
+  ],
+  "connections": {
+    "\ud83c\udfaf Smart Lead Selection Form": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udcca Fetch Matching Leads from Airtable": {
+      "main": [
+        [
+          {
+            "node": "\ud83c\udfaf Smart Lead Scoring & Selection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "\ud83e\udde0 Intelligent Recommendation Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\u2705 Final Success Summary": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udcf1 Send Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udcca Mark Selected Leads in Airtable": {
+      "main": [
+        []
+      ]
+    },
+    "Summary Filter": {
+      "main": [
+        [
+          {
+            "node": "\u2705 Final Success Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leads FIlter": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udcca Mark Selected Leads in Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83c\udfaf Smart Lead Scoring & Selection": {
+      "main": [
+        [
+          {
+            "node": "Summary Filter",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Leads FIlter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83e\udde0 Intelligent Recommendation Engine": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udcca Fetch Matching Leads from Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-09-01T07:00:24.860Z",
+      "createdAt": "2025-09-01T07:00:24.860Z",
+      "role": "workflow:owner",
+      "workflowId": "aOZuELM7aWMWQ59E",
+      "projectId": "3PTcJ2mMcVduDkV6",
+      "project": {
+        "updatedAt": "2025-04-23T19:12:24.962Z",
+        "createdAt": "2025-04-23T19:10:00.223Z",
+        "id": "3PTcJ2mMcVduDkV6",
+        "name": "YOUR_CREDENTIAL_HERE",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "c59b8fe8-021b-47c6-bde5-5b2ca7aae876"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

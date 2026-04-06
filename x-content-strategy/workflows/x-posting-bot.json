@@ -1,0 +1,2904 @@
+{
+  "updatedAt": "2026-02-18T22:15:22.662Z",
+  "createdAt": "2026-02-13T11:36:24.879Z",
+  "name": "X Posting Bot",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "YOUR_URL_HERE",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer c10zSvQQPcdAac7ob6dlFnQojBgYXbWS"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ platforms: { x: { enabled: true, posts: ($json.tweet_content && $json.tweet_content.includes('---THREAD_BREAK---')) ? $json.tweet_content.split('---THREAD_BREAK---').map(function(p) { return { text: p.trim() }; }).filter(function(p) { return p.text.length > 0; }) : [{ text: $json.tweet_content }] } }, publish_at: 'now' }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        33104,
+        15872
+      ],
+      "id": "21cc45c8-8945-4ec6-98e5-757853fd12bf",
+      "name": "Post to Twitter"
+    },
+    {
+      "parameters": {
+        "chatId": "=7049994855",
+        "text": "=\u2705 **POSTED SUCCESSFULLY!**\n\nYour content has been scheduled and will be posted at the optimal time.\n\n\ud83d\udd17 Check your Typefully dashboard for details.\n\nhttps://typefully.com/?a=267894&d={{ $('Post to Twitter').item.json.id }}\n\n\u23f0 Scheduled: {{ new Date($('Post to Twitter').item.json.scheduled_date).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }) }}\n\n\ud83e\udd16 Auto-retweet: Enabled",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        34128,
+        15776
+      ],
+      "id": "b38b4d30-5f03-4917-9263-86ed0859cf51",
+      "name": "Send Success Confirmation",
+      "webhookId": "YOUR_WEBHOOKID_HERE",
+      "credentials": {
+        "telegramApi": {
+          "id": "19UDgjkzawcl04p4",
+          "name": "Telegram Twitter Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ERROR HANDLER - Check Typefully API v2 Response\nconst response = $input.first().json;\n\n// Check for v2 structured errors\nif (response.error) {\n  const errorMsg = typeof response.error === 'object'\n    ? `${response.error.code || 'ERROR'}: ${response.error.message || 'Unknown error'}${response.error.details ? ' - ' + JSON.stringify(response.error.details) : ''}`\n    : response.error;\n  return {\n    json: {\n      success: false,\n      error: errorMsg,\n      originalResponse: response\n    }\n  };\n}\n\n// Check for missing draft ID\nif (!response.id) {\n  return {\n    json: {\n      success: false,\n      error: 'No draft ID returned from Typefully',\n      originalResponse: response\n    }\n  };\n}\n\n// Success - pass through the response\nreturn {\n  json: {\n    success: true,\n    id: response.id,\n    scheduled_date: response.scheduled_date || response.publish_at,\n    originalResponse: response\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        33392,
+        15872
+      ],
+      "id": "eef5ac70-bfef-4d67-84f2-27421e948372",
+      "name": "Typefully Error Handler"
+    },
+    {
+      "parameters": {
+        "chatId": "=7049994855",
+        "text": "=\ud83d\udea8 **TWEET FAILED TO POST**\n\n\u274c Error: {{ $json.error }}\n\n\ud83d\udcdd The content was saved to Airtable but NOT scheduled to Typefully.\n\n\u26a0\ufe0f Please check the Typefully API or manually schedule the tweet.\n\n\ud83d\udd27 Debug info:\n{{ JSON.stringify($json.originalResponse, null, 2) }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        33904,
+        15968
+      ],
+      "id": "c3735ccc-d844-4740-b87c-3ca75df33689",
+      "name": "Send Failure Alert",
+      "webhookId": "YOUR_WEBHOOKID_HERE",
+      "credentials": {
+        "telegramApi": {
+          "id": "19UDgjkzawcl04p4",
+          "name": "Telegram Twitter Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "success_check",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        33680,
+        15872
+      ],
+      "id": "28099801-f899-4d65-97c1-b34d4b4fba15",
+      "name": "Success or Failure"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl4D2XM7hBzowLJI",
+          "mode": "list",
+          "cachedResultName": "pendingContent",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Get Saved Record').item.json.id }}",
+            "status": "posted",
+            "posted_at": "={{ $('Post to Twitter').item.json.scheduled_date }}",
+            "typefully_id": "={{ $('Post to Twitter').item.json.id }}",
+            "post_count": "={{ $('PREPARE FOR AIRTABLE').item.json.post_count }}",
+            "content_format": "={{ $('PREPARE FOR AIRTABLE').item.json.content_format }}",
+            "is_thread": "={{ $('PREPARE FOR AIRTABLE').item.json.is_thread }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "tweet_content",
+              "displayName": "tweet_content",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Account",
+              "displayName": "Account",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "ww",
+                  "value": "ww"
+                },
+                {
+                  "name": "jb",
+                  "value": "jb"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "processing",
+                  "value": "processing"
+                },
+                {
+                  "name": "posted",
+                  "value": "posted"
+                },
+                {
+                  "name": "rejected",
+                  "value": "rejected"
+                },
+                {
+                  "name": "failed",
+                  "value": "failed"
+                },
+                {
+                  "name": "ready",
+                  "value": "ready"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "posted_at",
+              "displayName": "posted_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "time_slot",
+              "displayName": "time_slot",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "7am",
+                  "value": "7am"
+                },
+                {
+                  "name": "9am",
+                  "value": "9am"
+                },
+                {
+                  "name": "12pm",
+                  "value": "12pm"
+                },
+                {
+                  "name": "2pm",
+                  "value": "2pm"
+                },
+                {
+                  "name": "4pm",
+                  "value": "4pm"
+                },
+                {
+                  "name": "7pm",
+                  "value": "7pm"
+                },
+                {
+                  "name": "9pm",
+                  "value": "9pm"
+                },
+                {
+                  "name": "11pm",
+                  "value": "11pm"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "generation_mode",
+              "displayName": "generation_mode",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "wildcard",
+                  "value": "wildcard"
+                },
+                {
+                  "name": "exploit",
+                  "value": "exploit"
+                },
+                {
+                  "name": "experiment",
+                  "value": "experiment"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "hook_type",
+              "displayName": "hook_type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "value",
+                  "value": "value"
+                },
+                {
+                  "name": "story",
+                  "value": "story"
+                },
+                {
+                  "name": "hottake",
+                  "value": "hottake"
+                },
+                {
+                  "name": "confession",
+                  "value": "confession"
+                },
+                {
+                  "name": "discovery",
+                  "value": "discovery"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "content_format",
+              "displayName": "content_format",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "is_thread",
+              "displayName": "is_thread",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "post_count",
+              "displayName": "post_count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "critique_score",
+              "displayName": "critique_score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "cta_data",
+              "displayName": "cta_data",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "rejection_reason",
+              "displayName": "rejection_reason",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "cta_context",
+              "displayName": "cta_context",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "attempt_number",
+              "displayName": "attempt_number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "typefully_id",
+              "displayName": "typefully_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        33904,
+        15776
+      ],
+      "id": "5ecff4af-d047-4eae-a9ca-3adef643f54f",
+      "name": "Update Posted",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract and format data from Airtable for CTA flow\nconst data = $input.first().json;\n\n// Handle both nested (fields) and flat structure\nconst source = data.fields || data;\n\n// Parse pdf_brief from cta_context\nlet pdfBrief = {};\ntry {\n  // Try cta_context first (dedicated field - stringified pdf_brief)\n  if (source.cta_context) {\n    // Clean encoding issues - stray backslashes before underscores from Airtable\n    let ctxString = source.cta_context.trim();\n    ctxString = ctxString.replace(/\\\\_/g, '_');\n    pdfBrief = JSON.parse(ctxString);\n  }\n  // Fallback: try parsing cta_data if it's a JSON string\n  else if (source.cta_data && typeof source.cta_data === 'string' && source.cta_data !== 'true' && source.cta_data !== 'false') {\n    const ctaParsed = JSON.parse(source.cta_data);\n    pdfBrief = ctaParsed.pdf_brief || ctaParsed;\n  }\n} catch (e) {\n  console.log('Could not parse PDF brief, using defaults');\n  pdfBrief = {};\n}\n\n// Extract tweet content\nconst tweetContent = source.tweet_content || source['Tweet Content'];\n\n// Build formatted research from pdf_brief\nconst formattedResearch = pdfBrief.sections \n  ? `**PDF Title:** ${pdfBrief.title || 'Lead Magnet'}\\n**Subtitle:** ${pdfBrief.subtitle || 'A comprehensive guide'}\\n**Sections:**\\n${pdfBrief.sections.map((s, i) => `${i+1}. ${s}`).join('\\n')}\\n**Key Deliverables:**\\n${(pdfBrief.key_deliverables || []).map(d => `- ${d}`).join('\\n')}\\n**Target Word Count:** ${pdfBrief.target_word_count || 1500}\\n**Tone:** ${pdfBrief.tone || 'educational'}`\n  : '**No PDF brief provided - generate based on tweet content**';\n\n// Extract and prepare all data for downstream nodes\nconst output = {\n  // Core identifiers\n  airtable_id: data.id,\n  \n  // Tweet content and metadata\n  tweet_content: tweetContent,\n  cta_type: source.cta_type || source['CTA Type'] || 'engagement',\n  strategy_type: source.generation_mode || source['Strategy Type'] || 'exploit',\n  has_cta: true,\n  hook_type: source.hook_type || source['Hook Type'] || 'value',\n  viral_score: source.critique_score || source['Viral Score'] || 0,\n  \n  // PDF Brief (the new structured data)\n  pdf_brief: pdfBrief,\n  \n  // Formatted for Generate HTML Content\n  formatted_research: formattedResearch,\n  \n  // Timestamps\n  created_at: source.created_at || source['Created At'],\n  approved_at: new Date().toISOString()\n};\n\n// Validation\nif (!output.tweet_content) {\n  throw new Error('Tweet Content is missing from Airtable record');\n}\n\nconsole.log('\u2705 Data prepared for CTA flow:', {\n  cta_type: output.cta_type,\n  has_pdf_brief: !!pdfBrief.title,\n  pdf_sections: pdfBrief.sections?.length || 0,\n  content_length: output.tweet_content.length\n});\n\nreturn { json: output };\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        33104,
+        16208
+      ],
+      "id": "a415d739-725d-4285-b678-414c2dd2017c",
+      "name": "Extract & Format CTA Data",
+      "notes": "\ud83d\udccb Prepares all data for CTA flow\n\n**Extracts from Airtable:**\n- Tweet content\n- CTA metadata\n- Research Data (parsed from JSON)\n\n**Outputs:**\n- Clean structured data\n- Formatted research for HTML generator\n- All fields validated"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"html_content\": \"<!DOCTYPE html>\\n<html>\\n<head>\\n  <meta charset=\\\"UTF-8\\\">\\n  <style>...</style>\\n</head>\\n<body>...</body>\\n</html>\",\n  \"filename\": \"complete-n8n-automation-guide\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        33472,
+        16464
+      ],
+      "id": "66044021-a6ad-460f-84f8-3de5b8544923",
+      "name": "HTML Output Parser",
+      "notes": "\ud83d\udce4 Validates AI output structure\n\n**Expected:**\n- html_content: Complete HTML string\n- filename: URL-friendly name (no extension)"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a lead magnet PDF based on this tweet and brief:\n\n**TWEET:**\n{{ $json.tweet_content }}\n\n**PDF BRIEF:**\n{{ $json.formatted_research }}\n\n{{ $json.pdf_brief && $json.pdf_brief.title ? '**TITLE:** ' + $json.pdf_brief.title : '' }}\n{{ $json.pdf_brief && $json.pdf_brief.subtitle ? '**SUBTITLE:** ' + $json.pdf_brief.subtitle : '' }}\n{{ $json.pdf_brief && $json.pdf_brief.tone ? '**TONE:** ' + $json.pdf_brief.tone : '' }}\n{{ $json.pdf_brief && $json.pdf_brief.target_word_count ? '**TARGET WORDS:** ' + $json.pdf_brief.target_word_count : '' }}\n\n**INSTRUCTIONS:**\n1. The tweet promises something specific \u2014 the PDF MUST deliver exactly that\n2. Follow the pdf_brief sections as your h2 headings \u2014 do not skip or reorder them\n3. Cover every key_deliverable listed in the brief with real, actionable content\n4. Generate a kebab-case filename based on the title (no .pdf extension)\n5. Return ONLY the JSON object with html_content and filename \u2014 nothing else\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an Expert HTML Lead Magnet Generator for @justben_builds \u2014 specialized in creating beautifully designed, content-rich documents that get converted to PDFs.\n\n## YOUR OUTPUT\n\nYou MUST return ONLY a valid JSON object with exactly two fields:\n\n{\n  \"html_content\": \"<!DOCTYPE html>\\n<html>...\",\n  \"filename\": \"kebab-case-name-here\"\n}\n\n- html_content: A COMPLETE HTML document from <!DOCTYPE html> to </html>\n- filename: lowercase, hyphenated, NO .pdf extension\n- NO markdown, NO explanations, NO code fences \u2014 just the raw JSON object\n- Escape quotes inside HTML with \\\"\n- Use \\n for newlines\n\n## HTML DESIGN SYSTEM\n\nUse this exact CSS in every document:\n\n<style>\n  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');\n  * { margin: 0; padding: 0; box-sizing: border-box; }\n  body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.8; color: #2d3748; background: white; padding: 60px 80px; max-width: 800px; margin: 0 auto; }\n  .title-page { text-align: center; padding: 100px 0; border-bottom: 3px solid #3b82f6; margin-bottom: 60px; }\n  .title-page h1 { font-size: 42px; font-weight: 700; color: #1e293b; margin-bottom: 20px; line-height: 1.2; }\n  .title-page .subtitle { font-size: 20px; color: #64748b; margin-bottom: 40px; }\n  .title-page .author { font-size: 16px; color: #3b82f6; font-weight: 600; }\n  h2 { font-size: 32px; font-weight: 700; color: #1e293b; margin: 50px 0 20px; padding-bottom: 10px; border-bottom: 2px solid #e2e8f0; }\n  h3 { font-size: 24px; font-weight: 600; color: #334155; margin: 30px 0 15px; }\n  h4 { font-size: 18px; font-weight: 600; color: #475569; margin: 20px 0 10px; }\n  p { font-size: 16px; margin-bottom: 20px; line-height: 1.8; }\n  ul, ol { margin: 20px 0; padding-left: 30px; }\n  li { font-size: 16px; margin-bottom: 12px; line-height: 1.6; }\n  strong { font-weight: 600; color: #1e293b; }\n  em { font-style: italic; color: #64748b; }\n  a { color: #3b82f6; text-decoration: none; border-bottom: 1px solid #93c5fd; }\n  .callout { background: #f1f5f9; border-left: 4px solid #3b82f6; padding: 20px; margin: 30px 0; border-radius: 4px; }\n  .key-takeaway { background: #ecfdf5; border-left: 4px solid #10b981; padding: 20px; margin: 30px 0; border-radius: 4px; }\n  .tip { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; margin: 30px 0; border-radius: 4px; }\n  .footer-cta { text-align: center; padding: 40px 0; margin-top: 60px; border-top: 3px solid #3b82f6; }\n  .footer-cta h3 { color: #1e293b; margin-bottom: 15px; }\n  .footer-cta p { color: #64748b; font-size: 18px; }\n  .footer-cta .twitter-link { display: inline-block; color: #3b82f6; font-weight: 600; font-size: 20px; margin-top: 10px; }\n</style>\n\n## DOCUMENT STRUCTURE\n\nEvery document must follow this structure:\n\n1. **Title Page** \u2014 h1 title + subtitle + \"by @justben_builds\"\n2. **Introduction** (200-300 words) \u2014 Hook with the pain point, what they'll learn, why it matters now. Include a .callout box listing what they'll learn.\n3. **Main Sections** (follow the pdf_brief sections exactly) \u2014 Each section gets an h2, substantial content (300-500 words each), real examples, numbered steps where appropriate. Use .tip and .key-takeaway boxes to break up content.\n4. **Conclusion** (150-200 words) \u2014 Summary, next steps, encouragement\n5. **Footer CTA** \u2014 .footer-cta with \"Want More Automation Tips?\" + @justben_builds\n\n## CONTENT QUALITY RULES\n\n- 1000-2000 words of REAL, ACTIONABLE content \u2014 not filler\n- Every section from the pdf_brief MUST appear as its own h2 section\n- Every key_deliverable MUST be explicitly covered in the content\n- Use specific numbers, real tool names, concrete steps \u2014 not vague advice\n- Write like a practitioner sharing hard-won knowledge, not a textbook\n- Match the tone specified in the pdf_brief (educational, actionable, or story-driven)\n- Include at least one .callout, one .tip, and one .key-takeaway box\n- NO placeholder text \u2014 every word must be real content\n- All HTML must be self-contained with inline styles (use the CSS above)\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        33328,
+        16208
+      ],
+      "id": "4794273a-08e3-4cbd-8bd3-cc13b617d6b0",
+      "name": "Generate HTML Content",
+      "notes": "\ud83c\udfa8 AI generates complete HTML document\n\n**Input:** Tweet content + research\n**Output:** Complete HTML + filename\n**Model:** Claude 3.5 Sonnet\n\n**No tools needed** - just HTML generation"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "YOUR_URL_HERE",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"html\": {{ JSON.stringify($json.output.html_content) }},\n  \"apiKey\": \"cOTxggm7x2DI5BoRpfrnvetQNBURgpZ3ALiqCxpUnU9fSeLiB7hQNpezZJDvDucB\",\n  \"format\": \"A4\",\n  \"marginTop\": 75,\n  \"marginRight\": 75,\n  \"marginBottom\": 75,\n  \"marginLeft\": 75,\n  \"filename\": \"{{ $json.output.filename }}.pdf\",\n  \"waitFor\": 2,\n  \"media\": \"screen\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        33680,
+        16224
+      ],
+      "id": "d8d09c5e-2467-405e-a422-8256eff248eb",
+      "name": "Convert HTML to PDF",
+      "notes": "\ud83d\udcc4 Converts HTML to PDF via html2pdf.app\n\n**API Response:**\n{\n  \"document\": \"base64_encoded_pdf\"\n}\n\n**Next:** Decode base64 to binary"
+    },
+    {
+      "parameters": {
+        "name": "={{ $json.output.filename }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1Eu4QYpdqfvqiK7-v23M2QeE8N696X6Ph",
+          "mode": "list",
+          "cachedResultName": "X",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        33904,
+        16224
+      ],
+      "id": "d70e2465-7d4d-45de-bca6-844f893c4d04",
+      "name": "Upload to Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "IOZJ0Eh1024Jpx0I",
+          "name": "Google Drive - WW"
+        }
+      },
+      "notes": "\u2601\ufe0f Uploads PDF to Google Drive\n\n**Folder:** Lead Magnets\n**Returns:** file_id and metadata"
+    },
+    {
+      "parameters": {
+        "operation": "share",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "reader",
+            "type": "anyone"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        34128,
+        16224
+      ],
+      "id": "de4a6b67-bd93-428f-b612-1c43193393ff",
+      "name": "Share PDF Publicly",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "IOZJ0Eh1024Jpx0I",
+          "name": "Google Drive - WW"
+        }
+      },
+      "notes": "\ud83d\udd13 Makes PDF publicly accessible\n\n**Permission:** Anyone with link can view\n**Required for Easy.tools integration**"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "YOUR_URL_HERE",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer c10zSvQQPcdAac7ob6dlFnQojBgYXbWS"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ platforms: { x: { enabled: true, posts: ($json.tweet_content && $json.tweet_content.includes('---THREAD_BREAK---')) ? $json.tweet_content.split('---THREAD_BREAK---').map(function(p) { return { text: p.trim() }; }).filter(function(p) { return p.text.length > 0; }) : [{ text: $json.tweet_content }] } } }) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        34576,
+        16224
+      ],
+      "id": "313118ee-65c6-4dc6-a593-b7fc7fa2cade",
+      "name": "Create Tweet Draft",
+      "notes": "\ud83d\udcdd Creates tweet draft in Typefully\n\n**Returns:**\n- draft_id\n- Draft saved to Typefully dashboard\n\n**Next:** Update Airtable"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format final output and create DM template with Synta promotion\nconst driveData = $('Upload to Google Drive').first().json;\nconst aiOutput = $('Generate HTML Content').first().json;\nconst ctaData = $('Extract & Format CTA Data').first().json;\n\n// AI returns nested output structure\nconst filename = aiOutput.output?.filename || aiOutput.filename || 'lead-magnet';\n\n// Format document title (capitalize words from hyphenated filename)\nconst documentTitle = filename\n  .split('-')\n  .map(word => word.charAt(0).toUpperCase() + word.slice(1))\n  .join(' ');\n\n// Create shareable Google Drive URL\nconst shareableUrl = `https://drive.google.com/file/d/${driveData.id}/view?usp=sharing`;\n\n// Random Synta promotion lines (keep it fresh)\nconst syntaPromos = [\n  \"\ud83d\udd25 Built this guide in Synta - the tool you NEED for automation\\nhttps://synta.io\",\n  \"\ud83d\udc8e This is what Synta can do for you - absolute game changer\\nhttps://synta.io\",\n  \"\u26a1 Synta is the goated tool everyone's been looking for\\nhttps://synta.io\",\n  \"\ud83d\ude80 Here's the app that's changing automation forever - Synta\\nhttps://synta.io\",\n  \"\u2728 This guide was created with Synta - the best automation builder\\nhttps://synta.io\",\n  \"\ud83c\udfaf Built with Synta - the tool that actually delivers\\nhttps://synta.io\",\n  \"\ud83d\udcaa Synta is THE app you need if you're serious about automation\\nhttps://synta.io\"\n];\n\n// Randomly select a Synta promo\nconst randomPromo = syntaPromos[Math.floor(Math.random() * syntaPromos.length)];\n\n// Generate DM template with Synta promotion at the top\nconst dmTemplate = `${randomPromo}\\n\\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\\n\\nYour ${documentTitle} \ud83c\udfaf\\n\\nlittle breakdown by yours truly:\\n\\n${shareableUrl}`;\n\nconsole.log('\u2705 PDF workflow completed:', {\n  title: documentTitle,\n  url: shareableUrl,\n  fileId: driveData.id,\n  fileSize: driveData.size,\n  airtableId: ctaData.airtable_id,\n  tweetContent: ctaData.tweet_content,\n  dmTemplate: dmTemplate,\n  syntaPromo: randomPromo\n});\n\nreturn {\n  json: {\n    // Pass through airtable_id for Update node\n    airtable_id: ctaData.airtable_id,\n    \n    // Tweet content (for reference)\n    tweet_content: ctaData.tweet_content,\n    \n    // PDF and document data\n    document_url: shareableUrl,\n    document_id: driveData.id,\n    document_title: documentTitle,\n    filename: driveData.name,\n    file_size: driveData.size,\n    created_at: new Date().toISOString(),\n    pdf_created: true,\n    \n    // DM template for Telegram notification (with Synta promo)\n    dm_template: dmTemplate\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        34352,
+        16224
+      ],
+      "id": "bee37f39-586c-42db-bd3b-e1f0c8363804",
+      "name": "Format final output",
+      "notes": "\ud83d\udcc4 Formats PDF output + creates DM template with Synta promo\n\n**Generates:**\n- airtable_id (pass-through)\n- Google Drive shareable URL\n- Formatted document title\n- Ready-to-use DM template with Synta link\n\n**Next:** Create Typefully draft"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl4D2XM7hBzowLJI",
+          "mode": "list",
+          "cachedResultName": "pendingContent",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Format final output').item.json.airtable_id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "tweet_content",
+              "displayName": "tweet_content",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Account",
+              "displayName": "Account",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "ww",
+                  "value": "ww"
+                },
+                {
+                  "name": "jb",
+                  "value": "jb"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "processing",
+                  "value": "processing"
+                },
+                {
+                  "name": "posted",
+                  "value": "posted"
+                },
+                {
+                  "name": "rejected",
+                  "value": "rejected"
+                },
+                {
+                  "name": "failed",
+                  "value": "failed"
+                },
+                {
+                  "name": "ready",
+                  "value": "ready"
+                },
+                {
+                  "name": "",
+                  "value": ""
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "posted_at",
+              "displayName": "posted_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "time_slot",
+              "displayName": "time_slot",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "7am",
+                  "value": "7am"
+                },
+                {
+                  "name": "9am",
+                  "value": "9am"
+                },
+                {
+                  "name": "12pm",
+                  "value": "12pm"
+                },
+                {
+                  "name": "2pm",
+                  "value": "2pm"
+                },
+                {
+                  "name": "4pm",
+                  "value": "4pm"
+                },
+                {
+                  "name": "7pm",
+                  "value": "7pm"
+                },
+                {
+                  "name": "9pm",
+                  "value": "9pm"
+                },
+                {
+                  "name": "11pm",
+                  "value": "11pm"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "generation_mode",
+              "displayName": "generation_mode",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "wildcard",
+                  "value": "wildcard"
+                },
+                {
+                  "name": "exploit",
+                  "value": "exploit"
+                },
+                {
+                  "name": "experiment",
+                  "value": "experiment"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "hook_type",
+              "displayName": "hook_type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "content_format",
+              "displayName": "content_format",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "is_thread",
+              "displayName": "is_thread",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "post_count",
+              "displayName": "post_count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "critique_score",
+              "displayName": "critique_score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "cta_data",
+              "displayName": "cta_data",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "rejection_reason",
+              "displayName": "rejection_reason",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "cta_context",
+              "displayName": "cta_context",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "attempt_number",
+              "displayName": "attempt_number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "typefully_id",
+              "displayName": "typefully_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        34800,
+        16224
+      ],
+      "id": "e9eb3f8e-bc8b-41ff-a318-13507f65eff4",
+      "name": "Update Airtable1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      },
+      "notes": "\ud83d\udcbe Updates Airtable record\n\nSaves:\n- id (from Format final output)\n- Google Doc Link\n- Tweet Draft ID\n- Status: Posted\n- DM Created: false (manual setup)"
+    },
+    {
+      "parameters": {
+        "chatId": "7049994855",
+        "text": "=\u2705 **POST READY!**\n\n\ud83d\udd17 **Open Typefully:**\nhttps://typefully.com/?a=267894&d={{ $('Create Tweet Draft').item.json.id }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        35024,
+        16224
+      ],
+      "id": "3878b076-af34-400c-9eaa-eaec31b3e77a",
+      "name": "Send Complete Notice1",
+      "webhookId": "YOUR_WEBHOOKID_HERE",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "retryOnFail": false,
+      "notesInFlow": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "19UDgjkzawcl04p4",
+          "name": "Telegram Twitter Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7049994855",
+        "text": "={{ $('Format final output').item.json.dm_template }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        35248,
+        16224
+      ],
+      "id": "11397f22-c0bf-47d3-97d7-d7c99182f8dc",
+      "name": "Send Dm Creation1",
+      "webhookId": "YOUR_WEBHOOKID_HERE",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "retryOnFail": false,
+      "notesInFlow": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "19UDgjkzawcl04p4",
+          "name": "Telegram Twitter Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=**{{ $json.time }} | MODE: {{ $json.mode }} | ATTEMPT: {{ $json.attempt_number }}/3 | DIVERSITY: {{ $json.weekly_diversity_score || 'N/A' }}/100**\n{{ $json.synta_required ? '\ud83d\udea8 SYNTA REQUIRED: You MUST mention synta.io naturally in this tweet. No exceptions.' : '' }}\n{{ $json.synta_context ? '\\n**SYNTA PRODUCT KNOWLEDGE (use this to write about Synta accurately):**\\n' + $json.synta_context : '' }}\n**TARGET FORMAT: {{ $json.target_format }}**\n{{ $json.is_thread ? 'THIS IS A THREAD. Separate each post with ---THREAD_BREAK--- delimiter. Each post must stand alone.' : '' }}\n{{ $json.has_cta ? '\\n\\n\ud83d\udcc4 **PDF BRIEF REQUIRED:**\\nSince this is a CTA post, you MUST also fill in the `pdf_brief` field in your output.\\n\\nThink about what you are promising in the CTA. The pdf_brief must describe:\\n- A compelling title for the PDF\\n- A benefit-focused subtitle\\n- 3-5 sections that deliver on the promise\\n- 2-4 key deliverables the reader will actually get\\n- Target word count (1000-2000)\\n- Tone (educational, actionable, or story-driven)\\n\\nThe PDF will be auto-generated from this brief, so be SPECIFIC about what each section should contain. Do NOT leave it vague.\\n\\nExample: If your CTA says \\\"Comment AUDIT for my 10-point workflow checklist\\\", your pdf_brief should detail all 10 points, the section structure, and what makes each point actionable.\\n' : '' }}\n\n**YOUR AMMO:**\n{{ $json.time_slot_ammo }}\n\n**FRESHEST VERIFIED AMMO:**\n{{ $json.freshest_ammo }}\n\n**BREAKING NEWS STILL RELEVANT:**\n{{ $json.breaking_news_relevant }}\n\n**RECENT TWEETS (DO NOT REPEAT STRUCTURE OR THEME):**\n{{ $json.recent_tweets }}\n\n**FATIGUED PATTERNS (BANNED):**\n{{ $json.fatigue_signals }}\n\n**WEEKLY FATIGUE WARNINGS:**\n{{ $json.weekly_fatigue_warnings }}\n\n**WINNING PATTERNS:**\n{{ $json.winning_hooks }}\n\n**WINNING STRUCTURES THIS WEEK:**\n{{ $json.weekly_winning_structures }}\n\n**BEST HOOKS FROM RESEARCH:**\n{{ $json.best_hooks_this_week }}\n\n**ANTI-SLOP ALERTS (IMMEDIATE AVOID):**\n{{ $json.weekly_anti_slop_alerts }}\n\n**WEEKLY PERFORMANCE CONTEXT:**\n{{ $json.weekly_summary }}\n\n**TOPIC PERFORMANCE:**\n{{ $json.weekly_topic_performance }}\n\n**EMERGING OPPORTUNITIES:**\n{{ $json.weekly_emerging_opportunities }}\n\n**CONTENT GAPS TO FILL:**\n{{ $json.content_gaps }}\n\n**CONTENT STRATEGY:**\n- EXPLOIT (double down): {{ $json.weekly_exploit }}\n- EXPLORE (test new): {{ $json.weekly_explore }}\n- REDUCE (cut back): {{ $json.weekly_reduce }}\n- KILL (stop entirely): {{ $json.weekly_kill }}\n\n**DOMINANT THEMES THIS WEEK:**\n{{ $json.dominant_themes }}\n\n**COMPETITOR MOVES:**\n{{ $json.competitor_moves }}\n\n**MODE: {{ $json.mode }}**\n{{ $json.mode === 'wildcard' ? 'WILDCARD: Break your usual patterns. Try a hot take, question, prediction, or completely different format. Surprise yourself.' : '' }}\n{{ $json.mode === 'experiment' ? 'EXPERIMENT: Test something NEW. Different length, different hook style, different tone. Could be longer, could be a question, could be a list.' : '' }}\n{{ $json.mode === 'exploit' ? 'EXPLOIT: Use your proven confession/story format but with fresh content from your ammo.' : '' }}\n\nWrite ONE tweet. Make it scroll-stopping.",
+        "options": {
+          "systemMessage": "=You are @YesJustBen - a 16 year old kid who saw people on twitter making money with n8n automations and thought 'i could do that.' you're not from a tech family. no CS background. just a regular teenager who's hungry, resourceful, and figuring it out in real time. you started learning n8n a few weeks ago because it's free to self-host (important when you're 16 and broke). zero clients yet. documenting everything because that's what your generation does naturally.\n\n**CORE VOICE:**\n- always lowercase. not a style choice - you just don't bother with caps\n- uses 'bro', 'ngl', 'lowkey', 'no way', 'actually insane' naturally\n- gets genuinely hyped over small wins the way only a teenager can\n- self-deprecating but not insecure - laughs at own failures because you're 16 and that's the point\n- asks for help without ego because you have nothing to protect\n- talks about wanting to make money in an innocent way - not hustle-bro, more like 'imagine if i could actually get a client'\n- respects older builders in the space, calls them 'goats'\n- has that 'i'm gonna figure this out even if it takes me all night' teenager energy\n\n**RECENT TWEETS - YOUR LAST 7 POSTS (vary from these):**\n{{ $json.recent_tweets }}\n\n**BANNED PATTERNS:**\n{{ $json.fatigue_signals }}\n\n**REQUIRED FORMAT: You MUST write in the format specified by target_format in the user prompt.**\n\n**FORMAT SPECIFICATIONS:**\n{{ $json.format_specs }}\n\n**WEEKLY INTELLIGENCE:**\nUse the weekly performance data to guide your decisions:\n- If diversity score is below 50, FORCE a different format than recent tweets\n- If anti-slop alerts mention a pattern, treat it like a KILL pattern\n- If emerging opportunities are listed, prioritize those formats\n- If a topic shows declining performance, avoid it\n- If a time slot has specific insights, adapt your content for that slot\n- Reference the exploit/explore/reduce/kill strategy lists when choosing your approach\n- Check content gaps and try to fill them when relevant\n- Use the freshest verified ammo over stale daily research when available\n- If competitors are doing something specific, consider counter-positioning\n\n**HARD RULES:**\n1. NO arrow bullets (\u2192)\n2. NO 'game changer', 'let that sink in', 'here's the thing'\n3. NO hustle-bro energy, no 'grind' talk, no fake guru vibes\n4. MUST be different structure than recent tweets shown above\n5. Hook (first line) under 280 chars\n6. NEVER sound like an adult pretending to be a teen - be authentic gen-z, not cringe\n{{ $json.synta_required ? '6. MUST mention Synta in the tweet (this is a CTA slot). IMPORTANT: In the TWEET text, write synta(.)io or just \"synta\" - NEVER write synta.io as a raw link. The dot must be wrapped: synta(.)io. However in the pdf_brief content (title, sections, deliverables), use the full synta.io link normally.' : '' }}\n\n\n**PDF BRIEF RULES (CTA POSTS ONLY):**\nWhen has_cta is true, you MUST populate pdf_brief with:\n1. title: Compelling, matches what the CTA promises\n2. subtitle: Benefit-focused, makes the reader want to download\n3. sections: 3-5 section titles that structure the content logically\n4. key_deliverables: 2-4 specific outcomes the reader gets\n5. target_word_count: Between 1000-2000\n6. tone: Match the tweet's energy\n\nThe pdf_brief is what drives the actual PDF generation. If you promise a \"10-point checklist\", your sections must reflect those 10 points. If you promise a \"complete guide\", your sections must cover the full topic.\n\n**SYNTA LINK FORMATTING:**\n- TWEET text: Always use synta(.)io or just \"synta\" \u2014 NEVER synta.io (raw links get suppressed by X)\n- PDF brief fields (title, subtitle, sections, deliverables): Use full synta.io freely \u2014 PDFs don't have link restrictions\n\n\n**MODE DETERMINES FORMAT:**\n- WILDCARD: Surprise me. Hot take, question, prediction, rant - anything unexpected. be the chaotic teenager energy.\n- EXPERIMENT: Try a format you haven't used recently. Length, style, tone - change it up. test something a 16yo would naturally try.\n- EXPLOIT: Your proven 'learning journey / small win / midnight debugging' format works here. Discovery + genuine reaction.\n\n---\n\n\u26a0\ufe0f **REQUIRED OUTPUT FORMAT - YOU MUST FOLLOW THIS EXACTLY** \u26a0\ufe0f\n\nYou MUST respond with ONLY a valid JSON object. No text before it. No text after it. No markdown code fences. Just the raw JSON.\n\n{{ $json.has_cta ? 'Since this is a CTA post, include the pdf_brief field:\\n\\n{\\n  \"tweet\": \"your full tweet text here\",\\n  \"type\": \"confession\",\\n  \"format\": \"short_punchy\",\\n  \"ammo_used\": \"which angle you used\",\\n  \"pdf_brief\": {\\n    \"title\": \"The PDF Title\",\\n    \"subtitle\": \"Benefit-focused subtitle\",\\n    \"sections\": [\"Section 1 title\", \"Section 2 title\", \"Section 3 title\"],\\n    \"key_deliverables\": [\"Deliverable 1\", \"Deliverable 2\"],\\n    \"target_word_count\": 1500,\\n    \"tone\": \"educational\"\\n  }\\n}' : 'Since this is NOT a CTA post, use this simpler format:\\n\\n{\\n  \"tweet\": \"your full tweet text here\",\\n  \"type\": \"confession\",\\n  \"format\": \"short_punchy\",\\n  \"ammo_used\": \"which angle you used\",\\n  \"pdf_brief\": null\\n}' }}\n\n**FIELD DEFINITIONS:**\n- \"tweet\": (string) The full tweet text. Use \\n for line breaks. No quotes wrapping the tweet itself.\n- \"type\": (string) One of: confession, value, story, hottake, discovery, question, list, prediction\n- \"format\": (string) The target_format from the user prompt (e.g. short_punchy, medium_story, thread, etc.)\n- \"ammo_used\": (string) Brief description of which ammo/angle you chose\n- \"pdf_brief\": (object or null) Only populate when has_cta is true. null otherwise.\n\n**COMMON MISTAKES TO AVOID:**\n- Do NOT wrap the JSON in ```json``` code blocks\n- Do NOT add any explanation text before or after the JSON\n- Do NOT use single quotes - use double quotes for all JSON keys and string values\n- Do NOT forget to escape quotes inside tweet text with \\\"\n- Do NOT leave trailing commas in arrays or objects"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        30832,
+        16240
+      ],
+      "id": "fec13c25-a393-4276-938a-b3f2d17fb81a",
+      "name": "AI Generate Tweet",
+      "retryOnFail": true,
+      "maxTries": 2
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=**EVALUATE THIS TWEET:**\n\n{{ $json.output.tweet }}\n\n---\n\n**RECENT TWEETS (must be DIFFERENT):**\n{{ $('Data Prefetch').item.json.recent_tweets }}\n\n**KILL PATTERNS (NEVER USE - hard block):**\n{{ $('Data Prefetch').item.json.kill_patterns }}\n\n**REDUCE PATTERNS (use sparingly - score penalty if detected):**\n{{ $('Data Prefetch').item.json.fatigue_signals }}\n\n**WEEKLY PERFORMANCE BENCHMARK:**\n{{ $('Data Prefetch').item.json.weekly_summary }}\n\n**ANTI-SLOP ALERTS (treat as KILL if matching):**\n{{ $('Data Prefetch').item.json.weekly_anti_slop_alerts }}\n\n**WORST PERFORMERS THIS WEEK (avoid these patterns):**\n{{ $('Data Prefetch').item.json.weekly_worst_performers }}\n\n**CONTENT STRATEGY - KILL LIST:**\n{{ $('Data Prefetch').item.json.weekly_kill }}\n\n**DIVERSITY SCORE: {{ $('Data Prefetch').item.json.weekly_diversity_score }}/100**\n{{ $('Data Prefetch').item.json.weekly_diversity_score < 50 ? '\u26a0\ufe0f DIVERSITY IS LOW - penalize any tweet that repeats a recent format or topic' : '' }}\n\n**FORMAT COMPLIANCE:**\nThe tweet was supposed to be format: {{ $('Data Prefetch').item.json.target_format }}\n{{ $('Data Prefetch').item.json.is_thread ? 'Expected a thread with ---THREAD_BREAK--- delimiter between posts.' : '' }}\nIf the tweet does not match the required format, penalize FRESHNESS score by -3.\n\n---\n\n**SCORING CRITERIA:**\n1. SCROLL_STOP (1-10): Would YOU stop scrolling for this?\n2. HUMAN_VOICE (1-10): Does it sound human (not AI-generated)?\n3. FRESHNESS (1-10): Is it different from the recent tweets shown above?\n4. STRATEGY_FIT (1-10): Does it align with the exploit/explore/reduce/kill strategy?\n   - Matches EXPLOIT strategy = bonus +1\n   - Matches EXPLORE strategy = bonus +1\n   - Matches REDUCE strategy = penalty -1\n   - Matches KILL strategy = instant reject\n\n**FATIGUE CHECK:**\n- KILL patterns = instant reject (list in FATIGUE_VIOLATIONS)\n- REDUCE patterns = flag them but DON'T auto-reject if score is high (8+)\n- We CAN still use fatigued topics occasionally, just not excessively\n\n**DECISION RULES:**\n- If KILL pattern detected \u2192 ACTION: reject\n- If average score < 7 \u2192 ACTION: rewrite (provide improved version)\n- If average score 7-8 with REDUCE pattern \u2192 ACTION: rewrite (remove the pattern)\n- If average score 8+ even with REDUCE pattern \u2192 ACTION: pass (occasional use is OK)\n- If average score >= 7 and no fatigue \u2192 ACTION: pass\n\n---\nSCORE: [X/10]\nSCROLL_STOP: [X/10]\nHUMAN_VOICE: [X/10]\nFRESHNESS: [X/10]\nFATIGUE_VIOLATIONS: [list any patterns found, or \"none\"]\nISSUES: [list any other problems, or \"none\"]\nACTION: [pass/rewrite/reject]\nFINAL_TWEET:\n[the tweet - rewritten if ACTION is rewrite, unchanged if pass, empty if reject]",
+        "options": {
+          "systemMessage": "You are a brutal tweet critic. Your job is to catch AI-sounding, repetitive, or boring content before it goes live.\n\n**INSTANT FAIL (score 0):**\n- Sounds like ChatGPT wrote it (corporate tone, buzzwords, over-explains)\n- Uses arrow bullets (\u2192) like a listicle\n- Says \"game changer\", \"let that sink in\", \"here's the thing\"\n- Too similar to the recent tweets shown\n- Uses ANY banned pattern\n- Feels like marketing copy\n- Too long or wall of text\n\n**GREEN FLAGS (boost score):**\n- Lowercase, gen-z conversational tone\n- Learning journey moments or genuine discoveries\n- Real reactions ('bro', 'ngl', 'lowkey', 'actually insane')\n- Sounds like a 16yo texting about something cool he found\n- Would actually make someone stop scrolling\n- Self-deprecating humor about being young and broke\n- Short, punchy, authentic teenager energy\n- Genuine excitement over small wins\n\n**STRATEGY ALIGNMENT CHECK:**\n- If the tweet matches a KILL strategy pattern = score 0, reject\n- If the tweet matches a REDUCE pattern = flag it, score penalty of -1\n- If the tweet matches an EXPLOIT pattern = green flag, boost score\n- If the tweet fills a content gap = boost FRESHNESS score\n- If diversity is low (<50) and tweet repeats a recent format = reject\n- Anti-slop alerts from weekly analysis should be treated as KILL patterns\n\n**REWRITE GUIDANCE:**\nWhen rewriting, make it:\n- More personal (use 'i' lowercase)\n- More specific (real numbers, real tool names)\n- More authentic teenager energy (genuine excitement or frustration)\n- Shorter and punchier\n- Different structure from recent tweets\n- Sound like a 16yo who just discovered something cool, not a marketer\n\nBe harsh. Mid content hurts the account more than posting nothing.\n\n---\n\n\u26a0\ufe0f **REQUIRED OUTPUT FORMAT - YOU MUST FOLLOW THIS EXACTLY** \u26a0\ufe0f\n\nYou MUST respond with ONLY a valid JSON object. No text before it. No text after it. No markdown code fences. Just raw JSON.\n\n{\n  \"scores\": {\n    \"scroll_stop\": 8,\n    \"human_voice\": 9,\n    \"freshness\": 7\n  },\n  \"average_score\": 8,\n  \"issues\": [\"list any problems here\", \"or empty array if none\"],\n  \"fatigue_violations\": [\"list any fatigue patterns detected\", \"or empty array if none\"],\n  \"final_tweet\": \"the tweet text goes here - rewritten if action is rewrite, unchanged if pass, empty string if reject\",\n  \"action\": \"pass\"\n}\n\n**FIELD DEFINITIONS:**\n- \"scores.scroll_stop\": (integer 1-10) Would someone stop scrolling for this?\n- \"scores.human_voice\": (integer 1-10) Does it sound human, not AI?\n- \"scores.freshness\": (integer 1-10) Is it different from recent tweets?\n- \"average_score\": (integer 1-10) Average of the three scores above\n- \"issues\": (array of strings) List of problems found. Empty array [] if none.\n- \"fatigue_violations\": (array of strings) List of fatigued patterns detected. Empty array [] if none.\n- \"final_tweet\": (string) The tweet text. If action is \"pass\", copy the ORIGINAL tweet exactly. If \"rewrite\", provide improved version. If \"reject\", use empty string \"\".\n- \"action\": (string) One of exactly: \"pass\", \"rewrite\", \"reject\"\n\n**COMMON MISTAKES TO AVOID:**\n- Do NOT wrap the JSON in ```json``` code blocks\n- Do NOT add any explanation or analysis text before or after the JSON\n- Do NOT use single quotes - use double quotes for all JSON keys and values\n- Do NOT put integers in quotes (scores must be numbers like 8, not strings like \"8\")\n- Do NOT forget to escape line breaks in final_tweet with \\n\n- Do NOT leave trailing commas in arrays or objects\n- \"issues\" and \"fatigue_violations\" MUST be arrays, even if empty: use [] not \"none\"\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        31408,
+        16112
+      ],
+      "id": "2e935ef9-79d9-479c-97d3-071a8d8c2ea8",
+      "name": "Self-Critique",
+      "retryOnFail": true,
+      "maxTries": 2
+    },
+    {
+      "parameters": {
+        "jsCode": "// PROCESS CRITIQUE v5.1 - References Parse AI Generate Tweet for clean data\nconst input = $input.first().json;\nconst prefetch = $('Data Prefetch').first().json;\n\n// Self-Critique output - handle Agent wrapping\nconst critiqueOutput = input.output || input;\n\n// Initialize defaults\nlet scores = { scroll_stop: 7, human_voice: 7, freshness: 7 };\nlet avgScore = 7;\nlet fatigueViolations = [];\nlet issues = [];\nlet action = 'pass';\nlet tweet = '';\n\n// Check if structured output (object) or text output (string)\nif (typeof critiqueOutput === 'object' && critiqueOutput !== null) {\n  if (critiqueOutput.scores) {\n    scores = {\n      scroll_stop: critiqueOutput.scores.scroll_stop || 7,\n      human_voice: critiqueOutput.scores.human_voice || 7,\n      freshness: critiqueOutput.scores.freshness || 7,\n      strategy_fit: critiqueOutput.scores.strategy_fit || 7\n    };\n  }\n  avgScore = critiqueOutput.average_score || Math.round((scores.scroll_stop + scores.human_voice + scores.freshness + scores.strategy_fit) / 4);\n  fatigueViolations = Array.isArray(critiqueOutput.fatigue_violations) ? critiqueOutput.fatigue_violations : [];\n  issues = Array.isArray(critiqueOutput.issues) ? critiqueOutput.issues : [];\n  action = critiqueOutput.action || 'pass';\n  tweet = critiqueOutput.final_tweet || '';\n} else {\n  const outputStr = String(critiqueOutput || '');\n  const scoreMatch = outputStr.match(/SCORE:\\s*(\\d+)/i);\n  avgScore = scoreMatch ? parseInt(scoreMatch[1]) : 7;\n  const actionMatch = outputStr.match(/ACTION:\\s*(pass|rewrite|reject)/i);\n  action = actionMatch ? actionMatch[1].toLowerCase() : 'pass';\n  const finalMatch = outputStr.match(/FINAL_TWEET:\\s*([\\s\\S]*?)$/i);\n  tweet = finalMatch ? finalMatch[1].trim() : '';\n}\n\n// Clean tweet line breaks\ntweet = tweet.replace(/\\\\n/g, '\\n');\ntweet = tweet.replace(/^[\"'\\[\\]]+|[\"'\\[\\]]+$/g, '').replace(/\\n{3,}/g, '\\n\\n').trim();\n\n// ============================================================\n// GET ORIGINAL TWEET FROM PARSE NODE (not raw Agent output)\n// ============================================================\nconst genOutput = $('Parse AI Generate Tweet')?.first()?.json?.output;\n\n// ALWAYS use original tweet when action is 'pass'\n// Self-Critique often reformats incorrectly (removes 'i', collapses line breaks)\nif (action === 'pass' && genOutput?.tweet) {\n  tweet = genOutput.tweet;\n} else if (!tweet && genOutput?.tweet) {\n  tweet = genOutput.tweet;\n}\n\n// Get hook type from parsed generate output\nlet hookType = 'value';\nlet ammoUsed = '';\nif (genOutput && typeof genOutput === 'object') {\n  hookType = genOutput.type || 'value';\n  ammoUsed = genOutput.ammo_used || '';\n}\n\n// CTA detection\nconst hasSynta = /synta/i.test(tweet);\nconst hasCTA = /synta\\.io|\\bdm\\b|\\breply\\b|\\bcomment\\b/i.test(tweet);\n\n// SMART FATIGUE HANDLING\nconst killPatterns = prefetch.kill_patterns || [];\nlet hasKillPattern = false;\nlet hasFatigueWarning = false;\n\nfor (const violation of fatigueViolations) {\n  const lowerViolation = violation.toLowerCase();\n  if (killPatterns.some(kp => lowerViolation.includes(String(kp).toLowerCase()))) {\n    hasKillPattern = true;\n    break;\n  } else {\n    hasFatigueWarning = true;\n  }\n}\n\n// WEEKLY KILL PATTERNS - from weeklyAnalysis\nconst weeklyKillPatterns = prefetch.weekly_kill || [];\nif (!hasKillPattern) {\n  for (const violation of fatigueViolations) {\n    const lowerViolation = violation.toLowerCase();\n    if (weeklyKillPatterns.some(kp => lowerViolation.includes(String(kp).toLowerCase()))) {\n      hasKillPattern = true;\n      break;\n    }\n  }\n}\n\n// ANTI-SLOP CHECK - treat anti_slop_alerts as kill patterns\nconst antiSlopAlerts = prefetch.weekly_anti_slop_alerts || '';\nif (!hasKillPattern && antiSlopAlerts) {\n  const slopPatterns = antiSlopAlerts.toLowerCase().split('\\\\n')\n    .filter(line => line.includes('stop:') || line.includes('urgent:'))\n    .map(line => line.replace(/^(stop|urgent):\\\\s*/i, '').trim())\n    .filter(p => p.length > 3);\n  const tweetLower = tweet.toLowerCase();\n  for (const pattern of slopPatterns) {\n    if (tweetLower.includes(pattern)) {\n      hasKillPattern = true;\n      fatigueViolations.push('Anti-slop alert: ' + pattern);\n      break;\n    }\n  }\n}\n\nlet adjustedScore = avgScore;\nif (hasFatigueWarning && !hasKillPattern) {\n  adjustedScore = Math.max(1, avgScore - 2);\n}\n\nlet shouldPass = false;\nlet adjustedAction = action;\n\nif (hasKillPattern) {\n  adjustedAction = 'reject';\n  shouldPass = false;\n} else if (avgScore >= 8 && tweet.length > 10) {\n  shouldPass = true;\n  adjustedAction = 'pass';\n  adjustedScore = avgScore;\n} else if (adjustedScore < 6) {\n  adjustedAction = 'reject';\n  shouldPass = false;\n} else if (adjustedScore < 7) {\n  adjustedAction = action === 'reject' ? 'reject' : 'rewrite';\n  shouldPass = false;\n} else if (tweet.length > 10) {\n  shouldPass = true;\n  adjustedAction = 'pass';\n}\n\nlet rejectionReason = null;\nif (!shouldPass) {\n  if (hasKillPattern) {\n    rejectionReason = 'KILL pattern: ' + fatigueViolations.join(', ');\n  } else if (adjustedScore < 7 && hasFatigueWarning) {\n    rejectionReason = 'Fatigue warning (-2 penalty): ' + fatigueViolations.join(', ') + ' | adjusted: ' + adjustedScore;\n  } else if (adjustedScore < 7) {\n    rejectionReason = 'Score ' + adjustedScore + '/10 below threshold';\n  } else if (!tweet || tweet.length < 10) {\n    rejectionReason = 'No valid tweet content';\n  }\n}\n\n// ============================================================\n// PDF BRIEF PASSTHROUGH - Pull from parsed output\n// ============================================================\nlet pdfBrief = null;\nif (genOutput && genOutput.pdf_brief && typeof genOutput.pdf_brief === 'object') {\n  pdfBrief = genOutput.pdf_brief;\n}\n\nreturn {\n  json: {\n    tweet_content: tweet,\n    hook_type: hookType,\n    ammo_used: ammoUsed,\n    scores: scores,\n    original_score: avgScore,\n    adjusted_score: adjustedScore,\n    average_score: adjustedScore,\n    fatigue_violations: fatigueViolations,\n    has_kill_pattern: hasKillPattern,\n    has_fatigue_warning: hasFatigueWarning,\n    issues: issues,\n    original_action: action,\n    action: adjustedAction,\n    should_pass: shouldPass,\n    rejection_reason: rejectionReason,\n    has_cta: hasCTA,\n    cta_type: hasCTA ? (hasSynta ? 'synta' : 'engagement') : 'none',\n    synta_mentioned: hasSynta,\n    pdf_brief: pdfBrief,\n    format: genOutput?.format || 'unknown',\n    is_thread: genOutput?.is_thread || false,\n    posts: genOutput?.posts || [tweet],\n    post_count: genOutput?.post_count || 1,\n    attempt_number: prefetch.attempt_number || 1,\n    max_attempts: prefetch.max_attempts || 3,\n    time_slot: prefetch.time || 'unknown',\n    generation_mode: prefetch.mode || 'exploit',\n    synta_required: prefetch.synta_required || false,\n    status: 'processing',\n    created_at: new Date().toISOString()\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        31760,
+        16112
+      ],
+      "id": "d039399a-31f1-4202-a1d1-83338ce29a0a",
+      "name": "Process Critique"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl4D2XM7hBzowLJI",
+          "mode": "list",
+          "cachedResultName": "pendingContent",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "id": "={{ $json.id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        32672,
+        16016
+      ],
+      "id": "b13ee199-d90c-4f86-96e2-9fd0737111b6",
+      "name": "Get Saved Record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cta-check",
+              "leftValue": "={{ $json.cta_data }}",
+              "rightValue": "=true",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        32880,
+        16032
+      ],
+      "id": "0b871d74-6989-4192-a0a5-30befc3b5070",
+      "name": "Has CTA?"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"scores\": {\n    \"scroll_stop\": 8,\n    \"human_voice\": 9,\n    \"freshness\": 7,\n    \"strategy_fit\": 8\n  },\n  \"average_score\": 8,\n  \"issues\": [],\n  \"fatigue_violations\": [],\n  \"final_tweet\": \"i spent 3 hours debugging a workflow yesterday.\\n\\nturns out i forgot to connect one node.\\n\\nthe simplest mistakes cost the most time.\",\n  \"action\": \"pass\"\n}\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        31552,
+        16352
+      ],
+      "id": "302a328b-01b3-487a-964b-0a1878c19dd6",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "critique-pass-check",
+              "leftValue": "={{ $json.should_pass }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        31984,
+        16128
+      ],
+      "id": "0d8725db-2d8b-4759-a31f-3d7f49f37a52",
+      "name": "Critique Gate"
+    },
+    {
+      "parameters": {
+        "chatId": "=7049994855",
+        "text": "=\u26a0\ufe0f **SLOT SKIPPED: {{ $json.time_slot }}**\n\nFailed {{ $json.max_attempts }} attempts.\n\n**Last rejection:** {{ $json.final_rejection_reason || $json.rejection_reason || 'Unknown' }}\n\n**Attempt history:**\n- Critique score: {{ $json.average_score }}/10\n- Similarity: {{ $json.similarity_status || 'not checked' }}\n- Action: {{ $json.action }}\n\nThe system will try again at the next scheduled slot.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        32432,
+        16480
+      ],
+      "id": "18eadbbd-e686-479f-86ab-41503df13434",
+      "name": "Skip Slot Notify",
+      "webhookId": "YOUR_WEBHOOKID_HERE",
+      "credentials": {
+        "telegramApi": {
+          "id": "19UDgjkzawcl04p4",
+          "name": "Telegram Twitter Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// INCREMENT ATTEMPT - Prepare for retry\nconst current = $json.attempt_number || 1;\n\nreturn {\n  json: {\n    attempt_number: current + 1,\n    previous_rejection: $json.final_rejection_reason || $json.rejection_reason || 'Unknown',\n    time: $json.time_slot,\n    slot_number: $json.slot_number || 1,\n    mode: $json.generation_mode,\n    synta_required: $json.synta_required || false\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32432,
+        16288
+      ],
+      "id": "c81992e1-8c9f-4a30-9a1a-309801b2323e",
+      "name": "Increment Attempt"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "attempt-check",
+              "leftValue": "={{ $json.attempt_number }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        32208,
+        16288
+      ],
+      "id": "e7a64c7a-63f9-49a9-850b-8d1e277f8dfb",
+      "name": "Attempt Check"
+    },
+    {
+      "parameters": {
+        "model": "openai/o4-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        31408,
+        16352
+      ],
+      "id": "ac97c4d5-769a-4465-bad5-572c0c91be38",
+      "name": "GPT-4o-mini",
+      "credentials": {
+        "openRouterApi": {
+          "id": "srSg7y6z8CLIxyxo",
+          "name": "OpenRouter - X Bot Brain Picker"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "moonshotai/kimi-k2.5",
+        "options": {
+          "maxTokens": 16000,
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        33328,
+        16432
+      ],
+      "id": "1208423e-101a-4aab-91b0-9c82dfa6c7e6",
+      "name": "Kimi K2.6",
+      "credentials": {
+        "openRouterApi": {
+          "id": "srSg7y6z8CLIxyxo",
+          "name": "OpenRouter - X Bot Brain Picker"
+        }
+      },
+      "notes": "\ud83e\udde0 LLM for HTML generation\n\n**Model:** Claude 3.5 Sonnet\n**Max Tokens:** 16,000\n**Temp:** 0.7\n\n**Why Sonnet:**\n- Excellent at HTML/CSS\n- Follows structured output\n- High token limit for full docs"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        29488,
+        15360
+      ],
+      "id": "82d9afed-91f3-428b-8dd0-7b74ca9e5b14",
+      "name": "7am Wildcard"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        29488,
+        15552
+      ],
+      "id": "7f8ba0a1-2372-4612-b336-eabeb7181c27",
+      "name": "9am Exploit"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        29488,
+        15744
+      ],
+      "id": "eddad077-dd4b-4ac9-8339-42cbdad33912",
+      "name": "12pm Experiment"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 14
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        29488,
+        15936
+      ],
+      "id": "e6533238-ea9d-4012-bc24-8ef9ffc2cb30",
+      "name": "2pm Exploit"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 16
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        29488,
+        16128
+      ],
+      "id": "17da2473-427e-4cf7-ac86-f5e35b5c4978",
+      "name": "4pm Synta CTA"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 19
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        29488,
+        16320
+      ],
+      "id": "6b62c4ef-957b-4c5f-b829-86efe1d88127",
+      "name": "7pm Wildcard"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 21
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        29488,
+        16512
+      ],
+      "id": "193ef044-48e3-41b3-bc37-c2c528a4d6f8",
+      "name": "9pm Exploit"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 23
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        29488,
+        16704
+      ],
+      "id": "9460a41e-e7eb-45d1-9efb-c2b2205915d9",
+      "name": "11pm Experiment"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: { time: '4pm', slot_number: 5, mode: 'exploit', synta_required: true, has_cta: true } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        29712,
+        16128
+      ],
+      "id": "16da066a-2a4c-4e12-a10e-e9c485816fb4",
+      "name": "4pm Context"
+    },
+    {
+      "parameters": {
+        "numberInputs": 8
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        29936,
+        15936
+      ],
+      "id": "e26ea41b-698d-4380-adf9-c95bdc475fc3",
+      "name": "Merge All Slots"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl4D2XM7hBzowLJI",
+          "mode": "list",
+          "cachedResultName": "pendingContent",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "filterByFormula": "AND({Status} = \"posted\", {Account} = 'jb')",
+        "returnAll": false,
+        "limit": 14,
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "posted_at",
+              "direction": "desc"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        30160,
+        15648
+      ],
+      "id": "a45c33fd-e3a8-463e-84b9-1f22b5df8f26",
+      "name": "Get Recent Tweets",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl7JyyQrSFvxMRe4",
+          "mode": "list",
+          "cachedResultName": "learningPatterns",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "filterByFormula": "{account} = \"jb\"",
+        "returnAll": false,
+        "limit": 1,
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "weekEnd",
+              "direction": "desc"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        30160,
+        15840
+      ],
+      "id": "d0b9758d-e610-471c-bc1e-6cad9662d2af",
+      "name": "Get Learning Patterns",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblm1XeOMMjhF1Eb6",
+          "mode": "list",
+          "cachedResultName": "dailyResearch",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "returnAll": false,
+        "limit": 1,
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "Created At",
+              "direction": "desc"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        30160,
+        16032
+      ],
+      "id": "63117060-6b61-4898-99a1-3f4bf30716a3",
+      "name": "Get Daily Research",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// DATA PREFETCH v4.6\n\n// ============================================================\n// SYNTA BRAND SHEET - COPY/PASTE UPDATES HERE\n// ============================================================\nconst SYNTA_BRAND_INFO = `\n# Synta X Account Knowledge Base\n\n## Overview\nSynta creates production ready n8n workflows from plain english. User types possible workflow idea -> synta asks questions -> Synta Creates plan -> user confirms plan -> synta creates workflow -> deploys to your n8n workflow -> starts self healing process where synta triggers and debugs your workflow to fully complete it. \n\n## Who We Are\nSynta is the true no-code layer for n8n workflow automation. It turns plain English into production-ready n8n workflows with autonomous self-healing.\n\n## Core Problem We Solve\n\"No-code\" platforms like n8n are a lie. Within minutes, users hit JavaScript nodes, complex APIs, and JSON manipulation. Businesses face two bad choices: learn to code (months) or hire agencies ($3K-$20K+). Synta eliminates both.\n\n## What Makes Synta Different\n\n### 1. Self-Healing Workflows (Our Superpower)\nAfter deployment, Synta automatically:\n- Triggers your workflow to test it\n- Captures any errors in real-time\n- Feeds errors to AI for analysis\n- Searches the web for documented fixes\n- Applies the fix automatically\n- Re-tests until it works\n\nNo other tool does this. It's like having a senior developer watching your workflows 24/7.\n\n### 2. MCP Integration - this is how you use it via cursor + claue code\nDirect connection to your n8n instance via Model Context Protocol can be used with Claude, ChatGPT, Cursor and antigravity. No copy-paste JSON. Build, deploy, and debug without leaving the conversation.\n\n### 3. Multi-Agent Intelligence\nNot a ChatGPT wrapper. We use:\n- Claude for planning (best reasoning)\n- Perplexity for research (best search)\n- Custom models for generation (best accuracy)\n- Web search for error resolution (real-world fixes)\n\n## Key Stats\n- 10-15 minutes vs 5-6 hours (manual workflow building)\n- 3x time savings validated by customers\n- 400+ n8n nodes indexed\n- 300-400+ trigger types supported\n- 25000+ production workflows in backend\n\n## Key Messaging Pillars\n\n**1. The No-Code Lie**\n\"No-code\" tools still require code. We're the actual no-code solution.\n\n**2. Self-Healing = Zero Babysitting**\nWorkflows that debug themselves. Deploy and forget.\n\n**3. Speed to Value**\nMinutes, not hours. No learning curve.\n\n**4. Agency Alternative**\nGet agency-quality automation without agency prices or timelines.\n\n**5. MCP is the Future**\nDirect AI-to-tool integration. No more copy-paste workflows.\n\n## Competitor Positioning (for context, not attacks)\n- vs. Native n8n AI: We do complete workflows + self-healing, not just suggestions\n- vs. ChatGPT/Claude raw: We have indexed docs, MCP deployment, autonomous debugging\n- vs. Agencies: We're instant and self-serve, not weeks and thousands of dollars\n`;\n// ============================================================\n// END SYNTA BRAND SHEET\n// ============================================================\n\n// ============================================================\n// CTA POST INSTRUCTIONS - For engagement-driving posts\n// ============================================================\nconst CTA_INSTRUCTIONS = `\n\ud83c\udfaf **THIS IS A CTA POST - MUST INCLUDE LEAD MAGNET OFFER**\n\nYour tweet MUST end with a call-to-action offering something valuable in exchange for engagement.\n\n**CTA FORMULA:**\n1. Hook with a valuable insight or teaser\n2. Deliver real value (tip, framework, insight)\n3. End with: \"Comment [X] below and I'll send you [valuable thing]\"\n\n**WHAT TO OFFER:**\n- PDF guide (\"my complete automation playbook\")\n- Template (\"the exact workflow I use\")\n- Checklist (\"my 10-point automation audit\")\n- Framework (\"the system that saved me 20hrs/week\")\n- Case study (\"how I built this step-by-step\")\n\n**CTA EXAMPLES:**\n- \"Comment 'GUIDE' and I'll DM you the full PDF\"\n- \"Reply 'SEND' for the complete template\"\n- \"Comment 'YES' and I'll share the exact workflow\"\n- \"Drop a \ud83d\udd25 and I'll send you the breakdown\"\n\n**RULES:**\n- CTA must be the LAST line of the tweet\n- Keep the offer specific and valuable\n- Make the action simple (one word comment)\n- The offer should relate to the tweet's topic\n`;\n// ============================================================\n// END CTA INSTRUCTIONS\n// ============================================================\n\nlet context = {};\ntry {\n  // Read slot context from Merge All Slots (NOT Merge which has Airtable data)\n  context = $('Merge All Slots').first().json;\n} catch (e) {\n  // Default context for testing without Merge All Slots node\n  context = {\n    time: '12pm',\n    slot_number: 3,\n    mode: 'experiment',\n    synta_required: false\n  };\n}\n\n// Get attempt number from loop (default to 1)\nlet attemptNumber = 1;\ntry {\n  attemptNumber = $('Increment Attempt')?.first()?.json?.attempt_number || 1;\n} catch (e) {\n  attemptNumber = 1;\n}\n\n// Get recent tweets\nlet recentTweets = '';\ntry {\n  const tweets = $('Get Recent Tweets').all();\n  recentTweets = tweets\n    .slice(0, 7)\n    .map(r => (r.json.tweet_content || '').substring(0, 400))\n    .filter(t => t && t.length > 10)\n    .join('\\n\\n---\\n\\n');\n} catch (e) {\n  recentTweets = '[No recent tweets found]';\n}\n\n// Get learning patterns\nlet fatigueSignals = '';\nlet winningHooks = '';\nlet killPatterns = [];\nlet exploitPatterns = [];\nlet learningFields = {};\ntry {\n  const patterns = $('Get Learning Patterns').first().json;\n  const fields = patterns.fields || patterns;\n  learningFields = fields;\n  fatigueSignals = fields.fatigueSignals || '- Anti-consultant messaging (overused)\\n- Arrow bullet lists (\u2192)\\n- \"game changer\" phrases';\n  winningHooks = fields.winningHooks || '- Personal build stories\\n- Technical deep dives\\n- Vulnerable failure admissions';\n  \n  // Parse kill and exploit patterns for enforcement\n  try { killPatterns = JSON.parse(fields.kill || '[]'); } catch (e) { killPatterns = []; }\n  try { exploitPatterns = JSON.parse(fields.exploit || '[]'); } catch (e) { exploitPatterns = []; }\n} catch (e) {\n  fatigueSignals = '- Avoid repetitive structures';\n  winningHooks = '- Personal stories work best';\n}\n\n// ============================================\n// FORMAT SELECTOR - Data-driven format selection\n// ============================================\nconst FORMAT_CONFIG = {\n  short_punchy:  { weight: 15, posts: 1, spec: 'Max 280 chars, 2-3 lines, pure impact, no line breaks' },\n  medium_story:  { weight: 20, posts: 1, spec: '5-8 lines, personal story arc (setup > tension > lesson)' },\n  long_insight:  { weight: 10, posts: 1, spec: '10-15 lines, framework or deep analysis, structured with natural breaks' },\n  question:      { weight: 10, posts: 1, spec: '1-3 lines ending with a genuine question that sparks debate' },\n  list:          { weight: 10, posts: 1, spec: 'Hook line + 3-5 items (use numbers or dashes, NOT arrows)' },\n  hot_take:      { weight: 10, posts: 1, spec: 'Strong controversial opinion, 2-4 lines, must take a clear side' },\n  before_after:  { weight: 5,  posts: 1, spec: 'Show transformation/contrast, use before/after framing' },\n  bold_claim:    { weight: 5,  posts: 1, spec: 'Prediction or claim with specific number, 2-4 lines' },\n  thread:        { weight: 20, posts: 0, spec: '' }\n};\nconst FORMAT_TYPES = Object.keys(FORMAT_CONFIG);\nconst defaultWeights = Object.fromEntries(Object.entries(FORMAT_CONFIG).map(([k, v]) => [k, v.weight]));\nconst weights = { ...defaultWeights };\n\n// Adjust weights from learning data\nlet formatPerf = {};\ntry { formatPerf = JSON.parse(learningFields.formatPerformance || '{}'); } catch(e) {}\nfor (const [format, data] of Object.entries(formatPerf)) {\n  if (weights[format] !== undefined) {\n    if (data.avgScore > 70) weights[format] = Math.round(weights[format] * 1.5);\n    if (data.avgScore < 40) weights[format] = Math.max(2, Math.round(weights[format] * 0.3));\n  }\n}\n\n// Mode adjustments\nif (context.mode === 'exploit') {\n  // Boost proven formats\n  for (const [fmt, data] of Object.entries(formatPerf)) {\n    if (data.avgScore > 70 && weights[fmt] !== undefined) weights[fmt] = Math.round(weights[fmt] * 1.5);\n  }\n} else if (context.mode === 'experiment' || context.mode === 'wildcard') {\n  // Boost underexplored formats\n  for (const fmt of FORMAT_TYPES) {\n    if (!formatPerf[fmt] || (formatPerf[fmt] && formatPerf[fmt].posts < 3)) {\n      weights[fmt] = Math.round((weights[fmt] || 10) * 1.8);\n    }\n  }\n}\n\n// CTA slot adjustments\nif (context.has_cta) {\n  weights.medium_story = Math.round(weights.medium_story * 1.8);\n  weights.thread = Math.round(weights.thread * 1.8);\n  weights.short_punchy = Math.round(weights.short_punchy * 0.4);\n}\n\n// Weighted random selection\nconst totalWeight = Object.values(weights).reduce((a, b) => a + b, 0);\nlet random = Math.random() * totalWeight;\nlet selectedFormat = 'medium_story';\nfor (const [format, weight] of Object.entries(weights)) {\n  random -= weight;\n  if (random <= 0) { selectedFormat = format; break; }\n}\ncontext.target_format = selectedFormat;\n\n// Thread post count selection (weighted: shorter threads more likely)\nconst THREAD_POST_WEIGHTS = { 2: 40, 3: 25, 4: 15, 5: 10, 6: 5, 7: 5 };\nlet threadPostCount = 1;\nif (context.target_format === 'thread') {\n  const tEntries = Object.entries(THREAD_POST_WEIGHTS);\n  const tTotal = tEntries.reduce((s, [_, w]) => s + w, 0);\n  let tRand = Math.random() * tTotal;\n  for (const [count, w] of tEntries) {\n    tRand -= w;\n    if (tRand <= 0) { threadPostCount = parseInt(count); break; }\n  }\n}\n\n// Dynamic thread spec generator\nfunction getThreadSpec(n) {\n  const roles = ['hook', 'context/setup', 'evidence/proof', 'insight/analysis', 'deeper point'];\n  const labels = [];\n  for (let i = 0; i < n; i++) {\n    if (i === 0) labels.push('Post 1: hook/scroll-stopper');\n    else if (i === n - 1) labels.push('Post ' + (i+1) + ': conclusion/CTA');\n    else labels.push('Post ' + (i+1) + ': ' + roles[Math.min(i, roles.length-1)]);\n  }\n  return n + ' posts separated by ---THREAD_BREAK---. ' + labels.join('. ') + '. Each post under 280 chars';\n}\n\n// Get daily research ammo\nlet timeSlotAmmo = '';\ntry {\n  const research = $('Get Daily Research').first().json;\n  const fields = research.fields || research;\n  const ammoMap = {\n    '7am': fields['7am Ammo'] || 'Early morning value - share something genuinely useful',\n    '9am': fields['9am Ammo'] || 'News/trends - react to something happening in the industry',\n    '12pm': fields['12pm Ammo'] || 'Lunch wisdom - quick actionable tip or hot take',\n    '2pm': fields['2pm Ammo'] || 'Knowledge share - practical how-to content',\n    '4pm': fields['4pm Ammo'] || 'Synta angle - weave product into a real story',\n    '7pm': fields['7pm Ammo'] || 'Evening reflection - personal story or lesson learned',\n    '9pm': fields['9pm Ammo'] || 'Bookmark-worthy - deep insight worth saving',\n    '11pm': fields['11pm Ammo'] || 'Late night experiment - try something unexpected'\n  };\n  timeSlotAmmo = ammoMap[context.time] || 'Share a personal automation story';\n  \n  if (fields['Viral Posts']) {\n    timeSlotAmmo += '\\n\\n**VIRAL INSPIRATION:**\\n' + fields['Viral Posts'].substring(0, 600);\n  }\n} catch (e) {\n  timeSlotAmmo = 'Share a personal automation story with specific numbers';\n}\n\n// ============================================================\n// Get weekly analysis data (performance insights)\n// ============================================================\nlet weeklyAnalysis = {};\nlet weeklyWinningStructures = '';\nlet weeklyTopicPerformance = '';\nlet weeklyTimeSlotInsights = '';\nlet weeklyAntiSlopAlerts = '';\nlet weeklyEmergingOpps = '';\nlet weeklyExploit = [];\nlet weeklyExplore = [];\nlet weeklyReduce = [];\nlet weeklyKill = [];\nlet weeklyDiversityScore = 0;\nlet weeklyTopPerformers = '';\nlet weeklyWorstPerformers = '';\ntry {\n  const wa = $('Get weeklyAnalysis').first().json;\n  const waFields = wa.fields || wa;\n  weeklyAnalysis = {\n    summary: waFields.summary || '',\n    avgEngagementRate: waFields.avgEngagementRate || 0,\n    avgCompositeScore: waFields.avgCompositeScore || 0,\n    diversityScore: waFields.diversityScore || 0,\n  };\n  weeklyWinningStructures = waFields.winningStructures || '';\n  weeklyTopicPerformance = waFields.topicPerformance || '';\n  weeklyTimeSlotInsights = waFields.timeSlotInsights || '';\n  weeklyAntiSlopAlerts = waFields.antiSlopAlerts || '';\n  weeklyEmergingOpps = waFields.emergingOpportunities || '';\n  weeklyTopPerformers = waFields.topPerformers || '';\n  weeklyWorstPerformers = waFields.worstPerformers || '';\n  weeklyDiversityScore = waFields.diversityScore || 0;\n  try { weeklyExploit = JSON.parse(waFields.exploit || '[]'); } catch (e) { weeklyExploit = []; }\n  try { weeklyExplore = JSON.parse(waFields.explore || '[]'); } catch (e) { weeklyExplore = []; }\n  try { weeklyReduce = JSON.parse(waFields.reduce || '[]'); } catch (e) { weeklyReduce = []; }\n  try { weeklyKill = JSON.parse(waFields.kill || '[]'); } catch (e) { weeklyKill = []; }\n} catch (e) {\n  weeklyAnalysis = { summary: '[No weekly analysis available]' };\n}\n\n// ============================================================\n// Get weekly research rollup data\n// ============================================================\nlet dominantThemes = '';\nlet persistentTrends = '';\nlet bestHooksThisWeek = '';\nlet bestFormatsThisWeek = '';\nlet contentGaps = '';\nlet freshestAmmo = '';\nlet weeklyFatigueWarnings = '';\nlet emergingPatterns = '';\nlet weeklyNarrative = '';\nlet competitorMoves = '';\nlet breakingNewsRelevant = '';\ntry {\n  const wrr = $('Get weeklyReasearchRollup').first().json;\n  const wrrFields = wrr.fields || wrr;\n  dominantThemes = wrrFields.dominant_themes || '';\n  persistentTrends = wrrFields.persistent_trends || '';\n  bestHooksThisWeek = wrrFields.best_hooks_this_week || '';\n  bestFormatsThisWeek = wrrFields.best_formats_this_week || '';\n  contentGaps = wrrFields.unfilled_content_gaps || '';\n  freshestAmmo = wrrFields.freshest_verified_ammo || '';\n  weeklyFatigueWarnings = wrrFields.fatigue_warnings || '';\n  emergingPatterns = wrrFields.emerging_patterns || '';\n  weeklyNarrative = wrrFields.weekly_narrative_summary || '';\n  competitorMoves = wrrFields.competitor_moves || '';\n  breakingNewsRelevant = wrrFields.breaking_news_still_relevant || '';\n} catch (e) {\n  dominantThemes = '[No weekly research rollup available]';\n}\n\nreturn {\n  json: {\n    time: context.time || '12pm',\n    slot_number: context.slot_number || 3,\n    mode: context.mode || 'experiment',\n    synta_required: context.synta_required || false,\n    synta_context: context.synta_required ? SYNTA_BRAND_INFO : '',\n    has_cta: context.has_cta || false,\n    cta_context: context.has_cta ? CTA_INSTRUCTIONS : '',\n    attempt_number: attemptNumber,\n    max_attempts: 3,\n    recent_tweets: recentTweets,\n    fatigue_signals: fatigueSignals,\n    winning_hooks: winningHooks,\n    time_slot_ammo: timeSlotAmmo,\n    kill_patterns: killPatterns,\n    exploit_patterns: exploitPatterns,\n    target_format: context.target_format || 'medium_story',\n    is_thread: context.target_format === 'thread',\n    format_specs: Object.entries(FORMAT_CONFIG).map(([k, v]) => {\n      if (k === 'thread') return '- thread: ' + getThreadSpec(threadPostCount);\n      return '- ' + k + ': ' + v.spec;\n    }).join('\\n'),\n    thread_post_count: threadPostCount,\n    weekly_summary: weeklyAnalysis.summary || '',\n    weekly_avg_engagement: weeklyAnalysis.avgEngagementRate || 0,\n    weekly_avg_score: weeklyAnalysis.avgCompositeScore || 0,\n    weekly_diversity_score: weeklyDiversityScore,\n    weekly_winning_structures: weeklyWinningStructures,\n    weekly_topic_performance: weeklyTopicPerformance,\n    weekly_time_slot_insights: weeklyTimeSlotInsights,\n    weekly_anti_slop_alerts: weeklyAntiSlopAlerts,\n    weekly_emerging_opportunities: weeklyEmergingOpps,\n    weekly_top_performers: weeklyTopPerformers,\n    weekly_worst_performers: weeklyWorstPerformers,\n    weekly_exploit: weeklyExploit,\n    weekly_explore: weeklyExplore,\n    weekly_reduce: weeklyReduce,\n    weekly_kill: weeklyKill,\n    dominant_themes: dominantThemes,\n    persistent_trends: persistentTrends,\n    best_hooks_this_week: bestHooksThisWeek,\n    best_formats_this_week: bestFormatsThisWeek,\n    content_gaps: contentGaps,\n    freshest_ammo: freshestAmmo,\n    weekly_fatigue_warnings: weeklyFatigueWarnings,\n    emerging_patterns: emergingPatterns,\n    weekly_narrative: weeklyNarrative,\n    competitor_moves: competitorMoves,\n    breaking_news_relevant: breakingNewsRelevant,\n    prefetch_timestamp: new Date().toISOString()\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        30608,
+        16032
+      ],
+      "id": "748d72ab-8918-40d1-8da6-8fc90c3f2b36",
+      "name": "Data Prefetch"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: { time: '7am', slot_number: 1, mode: 'wildcard', synta_required: false } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        29712,
+        15360
+      ],
+      "id": "fd4f2d1f-462d-40b4-bfb8-3d3a50030184",
+      "name": "7am Context1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: { time: '9am', slot_number: 2, mode: 'exploit', synta_required: true } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        29712,
+        15552
+      ],
+      "id": "8928aa0b-47b8-480d-991e-49c5b2474831",
+      "name": "9am Context1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: { time: '12pm', slot_number: 3, mode: 'experiment', synta_required: false } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        29712,
+        15744
+      ],
+      "id": "08f57974-724c-4f99-b8fd-55d107bb22a4",
+      "name": "12pm Context1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: { time: '2pm', slot_number: 4, mode: 'exploit', synta_required: true } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        29712,
+        15936
+      ],
+      "id": "8b190fd0-ac28-4ea7-a35e-4bcadc669608",
+      "name": "2pm Context1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: { time: '7pm', slot_number: 6, mode: 'wildcard', synta_required: false } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        29712,
+        16320
+      ],
+      "id": "e8b9d513-dcce-4f34-8aad-c1eca4c07085",
+      "name": "7pm Context1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: { time: '9pm', slot_number: 7, mode: 'exploit', synta_required: true } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        29712,
+        16512
+      ],
+      "id": "cf83a595-ffc8-4946-b33f-cc27686b12b0",
+      "name": "9pm Context1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return { json: { time: '11pm', slot_number: 8, mode: 'experiment', synta_required: false } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        29712,
+        16704
+      ],
+      "id": "418cb6be-806a-4c1a-a7a8-921e19990bc0",
+      "name": "11pm Context1"
+    },
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        30416,
+        15984
+      ],
+      "id": "3c701557-b90d-4921-8fa9-eb1b4f4551fd",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.5",
+        "options": {
+          "maxTokens": 3000,
+          "temperature": 0.8
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        30912,
+        16464
+      ],
+      "id": "95acf157-14f7-48dd-aadc-956147c3def8",
+      "name": "Sonnet 4.5",
+      "credentials": {
+        "openRouterApi": {
+          "id": "srSg7y6z8CLIxyxo",
+          "name": "OpenRouter - X Bot Brain Picker"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse AI Generate Tweet output - preserves line breaks\nconst raw = $input.first().json.output;\n\n// Catch empty/null responses from LLM\nif (!raw || (typeof raw === 'string' && raw.trim() === '')) {\n  throw new Error('LLM returned empty response - retry needed');\n}\n\nlet parsed;\nif (typeof raw === 'string') {\n  const cleaned = raw.replace(/```json\\s*/g, '').replace(/```\\s*/g, '').trim();\n  parsed = JSON.parse(cleaned);\n} else if (typeof raw === 'object' && raw !== null) {\n  parsed = raw;\n} else {\n  throw new Error('No valid output from AI Generate Tweet');\n}\n\nlet tweet = parsed.tweet || '';\nconst type = parsed.type || 'value';\nconst ammoUsed = parsed.ammo_used || '';\nconst pdfBrief = parsed.pdf_brief || null;\n\n// Normalize line breaks - handle literal \\\\n that didn't get parsed\ntweet = tweet.replace(/\\\\n/g, '\\n');\n// Clean up excessive line breaks (3+ \u2192 2)\ntweet = tweet.replace(/\\n{3,}/g, '\\n\\n');\ntweet = tweet.trim();\n\nif (!tweet || tweet.length < 10) {\n  throw new Error('LLM returned empty or too-short tweet');\n}\n\n// Format extraction\nconst format = parsed.format || 'unknown';\nconst isThread = format.startsWith('thread_');\nlet posts = [];\nif (isThread && tweet.includes('---THREAD_BREAK---')) {\n  posts = tweet.split('---THREAD_BREAK---').map(p => p.trim()).filter(p => p.length > 0);\n} else {\n  posts = [tweet];\n}\n\nconst hasSynta = /synta/i.test(tweet);\nconst hasCTA = /synta\\(?\\.\\)?io|\\bdm\\b|\\breply\\b|\\bcomment\\b/i.test(tweet);\n\nconst output = {\n  tweet,\n  type,\n  format: format,\n  is_thread: isThread,\n  posts: posts,\n  post_count: posts.length,\n  ammo_used: ammoUsed,\n  pdf_brief: pdfBrief,\n  has_synta: hasSynta,\n  has_cta: hasCTA,\n  cta_type: hasCTA ? (hasSynta ? 'synta' : 'engagement') : 'none'\n};\n\nif (pdfBrief && typeof pdfBrief === 'object') {\n  output.pdf_brief = {\n    title: pdfBrief.title || '',\n    subtitle: pdfBrief.subtitle || '',\n    sections: Array.isArray(pdfBrief.sections) ? pdfBrief.sections : [],\n    key_deliverables: Array.isArray(pdfBrief.key_deliverables) ? pdfBrief.key_deliverables : [],\n    target_word_count: pdfBrief.target_word_count || 1500,\n    tone: pdfBrief.tone || 'educational'\n  };\n}\n\nreturn { json: { output } };\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        31184,
+        16112
+      ],
+      "id": "db89ceb8-cf61-4836-90e0-93364c923c65",
+      "name": "Parse AI Generate Tweet"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl4D2XM7hBzowLJI",
+          "mode": "list",
+          "cachedResultName": "pendingContent",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "critique_score": "={{ $json.critique_score }}",
+            "attempt_number": "={{ $json.attempt_number }}",
+            "tweet_content": "={{ $json.tweet_content }}",
+            "status": "={{ $json.status }}",
+            "created_at": "={{$now.format('YYYY-MM-DD')}}",
+            "time_slot": "={{ $json.time_slot }}",
+            "generation_mode": "={{ $json.generation_mode }}",
+            "hook_type": "={{ $json.hook_type }}",
+            "rejection_reason": "={{ $json.rejection_reason }}",
+            "cta_data": "={{ $json.has_cta }}",
+            "cta_context": "={{ $json.cta_context }}",
+            "Account": "jb",
+            "post_count": "={{ $json.post_count }}",
+            "is_thread": "={{ $json.is_thread }}",
+            "content_format": "={{ $json.content_format }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "tweet_content",
+              "displayName": "tweet_content",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Account",
+              "displayName": "Account",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "ww",
+                  "value": "ww"
+                },
+                {
+                  "name": "jb",
+                  "value": "jb"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "processing",
+                  "value": "processing"
+                },
+                {
+                  "name": "posted",
+                  "value": "posted"
+                },
+                {
+                  "name": "rejected",
+                  "value": "rejected"
+                },
+                {
+                  "name": "failed",
+                  "value": "failed"
+                },
+                {
+                  "name": "ready",
+                  "value": "ready"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "posted_at",
+              "displayName": "posted_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "time_slot",
+              "displayName": "time_slot",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "7am",
+                  "value": "7am"
+                },
+                {
+                  "name": "9am",
+                  "value": "9am"
+                },
+                {
+                  "name": "12pm",
+                  "value": "12pm"
+                },
+                {
+                  "name": "2pm",
+                  "value": "2pm"
+                },
+                {
+                  "name": "4pm",
+                  "value": "4pm"
+                },
+                {
+                  "name": "7pm",
+                  "value": "7pm"
+                },
+                {
+                  "name": "9pm",
+                  "value": "9pm"
+                },
+                {
+                  "name": "11pm",
+                  "value": "11pm"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "generation_mode",
+              "displayName": "generation_mode",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "wildcard",
+                  "value": "wildcard"
+                },
+                {
+                  "name": "exploit",
+                  "value": "exploit"
+                },
+                {
+                  "name": "experiment",
+                  "value": "experiment"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "hook_type",
+              "displayName": "hook_type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "value",
+                  "value": "value"
+                },
+                {
+                  "name": "story",
+                  "value": "story"
+                },
+                {
+                  "name": "hottake",
+                  "value": "hottake"
+                },
+                {
+                  "name": "confession",
+                  "value": "confession"
+                },
+                {
+                  "name": "discovery",
+                  "value": "discovery"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "content_format",
+              "displayName": "content_format",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "is_thread",
+              "displayName": "is_thread",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "post_count",
+              "displayName": "post_count",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "critique_score",
+              "displayName": "critique_score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cta_data",
+              "displayName": "cta_data",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "rejection_reason",
+              "displayName": "rejection_reason",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "cta_context",
+              "displayName": "cta_context",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "attempt_number",
+              "displayName": "attempt_number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "typefully_id",
+              "displayName": "typefully_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": false
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        32432,
+        16032
+      ],
+      "id": "d282c5cd-cfbf-4fbe-849e-5ddf7be304ae",
+      "name": "Save to Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// PREPARE FOR AIRTABLE v1.0 - Maps Process Critique output to Airtable schema\nconst input = $input.first().json;\n\nreturn {\n  json: {\n    // Core content\n    tweet_content: input.tweet_content,\n    \n    // Metadata - map to exact Airtable column names\n    status: input.status || 'processing',\n    time_slot: input.time_slot,\n    generation_mode: input.generation_mode,\n    hook_type: input.hook_type,\n    \n    // Scores - map average_score to critique_score\n    critique_score: input.average_score || input.adjusted_score || 0,\n    \n    // Tracking\n    attempt_number: input.attempt_number || 1,\n    rejection_reason: input.rejection_reason || null,\n    \n    // Timestamps\n    created_at: input.created_at || new Date().toISOString(),\n    \n    // CTA fields - map cta_type to CTA Type format\n    'CTA Type': input.cta_type || 'none',\n    'Tweet Content': input.tweet_content,  // Duplicate for Post to Twitter\n    \n    // Pass through for downstream nodes\n    should_pass: input.should_pass,\n    synta_mentioned: input.synta_mentioned,\n    has_cta: input.has_cta,\n    scores: input.scores,\n    fatigue_violations: input.fatigue_violations,\n    \n    // CTA context - stringify pdf_brief for Airtable storage\n    cta_context: input.pdf_brief ? JSON.stringify(input.pdf_brief) : '',\n    \n    // Format fields\n    content_format: input.format || 'unknown',\n    is_thread: input.is_thread || false,\n    post_count: input.post_count || 1,\n    posts: input.posts || [input.tweet_content]\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32208,
+        16032
+      ],
+      "id": "2b0f1bd6-b71d-4675-9edb-398bea038b0f",
+      "name": "PREPARE FOR AIRTABLE"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblipcEGTgumBSY2t",
+          "mode": "list",
+          "cachedResultName": "weeklyAnalysis",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "returnAll": false,
+        "limit": 1,
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "created_at",
+              "direction": "desc"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        30160,
+        16224
+      ],
+      "id": "6fa56cfe-825b-4e91-aa97-66d9e71dec68",
+      "name": "Get weeklyAnalysis",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appX3qB44SH5Svkay",
+          "mode": "list",
+          "cachedResultName": "X Research Base"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbl3XWmvDr1uetuXw",
+          "mode": "list",
+          "cachedResultName": "weeklyResearchRollup",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "returnAll": false,
+        "limit": 1,
+        "options": {},
+        "sort": {
+          "property": [
+            {
+              "field": "created_at",
+              "direction": "desc"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        30160,
+        16416
+      ],
+      "id": "7b88df6c-41ab-42b3-8f2e-3e2dfaca12ec",
+      "name": "Get weeklyReasearchRollup",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Post to Twitter": {
+      "main": [
+        [
+          {
+            "node": "Typefully Error Handler",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Typefully Error Handler": {
+      "main": [
+        [
+          {
+            "node": "Success or Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Success or Failure": {
+      "main": [
+        [
+          {
+            "node": "Update Posted",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Failure Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract & Format CTA Data": {
+      "main": [
+        [
+          {
+            "node": "Generate HTML Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generate HTML Content",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate HTML Content": {
+      "main": [
+        [
+          {
+            "node": "Convert HTML to PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert HTML to PDF": {
+      "main": [
+        [
+          {
+            "node": "Upload to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Share PDF Publicly",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Share PDF Publicly": {
+      "main": [
+        [
+          {
+            "node": "Format final output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Tweet Draft": {
+      "main": [
+        [
+          {
+            "node": "Update Airtable1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format final output": {
+      "main": [
+        [
+          {
+            "node": "Create Tweet Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Airtable1": {
+      "main": [
+        [
+          {
+            "node": "Send Complete Notice1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Complete Notice1": {
+      "main": [
+        [
+          {
+            "node": "Send Dm Creation1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Generate Tweet": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Generate Tweet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Self-Critique": {
+      "main": [
+        [
+          {
+            "node": "Process Critique",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Critique": {
+      "main": [
+        [
+          {
+            "node": "Critique Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Saved Record": {
+      "main": [
+        [
+          {
+            "node": "Has CTA?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has CTA?": {
+      "main": [
+        [
+          {
+            "node": "Post to Twitter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract & Format CTA Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Critique Gate": {
+      "main": [
+        [
+          {
+            "node": "PREPARE FOR AIRTABLE",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Attempt Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Attempt": {
+      "main": [
+        [
+          {
+            "node": "AI Generate Tweet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attempt Check": {
+      "main": [
+        [
+          {
+            "node": "Increment Attempt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip Slot Notify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4o-mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Self-Critique",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kimi K2.6": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate HTML Content",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "7am Wildcard": {
+      "main": [
+        [
+          {
+            "node": "7am Context1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "9am Exploit": {
+      "main": [
+        [
+          {
+            "node": "9am Context1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "12pm Experiment": {
+      "main": [
+        [
+          {
+            "node": "12pm Context1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2pm Exploit": {
+      "main": [
+        [
+          {
+            "node": "2pm Context1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4pm Synta CTA": {
+      "main": [
+        [
+          {
+            "node": "4pm Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "7pm Wildcard": {
+      "main": [
+        [
+          {
+            "node": "7pm Context1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "9pm Exploit": {
+      "main": [
+        [
+          {
+            "node": "9pm Context1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "11pm Experiment": {
+      "main": [
+        [
+          {
+            "node": "11pm Context1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4pm Context": {
+      "main": [
+        [
+          {
+            "node": "Merge All Slots",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Merge All Slots": {
+      "main": [
+        [
+          {
+            "node": "Get Learning Patterns",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Daily Research",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Recent Tweets",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get weeklyAnalysis",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get weeklyReasearchRollup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Recent Tweets": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Learning Patterns": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Get Daily Research": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Data Prefetch": {
+      "main": [
+        [
+          {
+            "node": "AI Generate Tweet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "7am Context1": {
+      "main": [
+        [
+          {
+            "node": "Merge All Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "9am Context1": {
+      "main": [
+        [
+          {
+            "node": "Merge All Slots",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "12pm Context1": {
+      "main": [
+        [
+          {
+            "node": "Merge All Slots",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "2pm Context1": {
+      "main": [
+        [
+          {
+            "node": "Merge All Slots",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "7pm Context1": {
+      "main": [
+        [
+          {
+            "node": "Merge All Slots",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "9pm Context1": {
+      "main": [
+        [
+          {
+            "node": "Merge All Slots",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "11pm Context1": {
+      "main": [
+        [
+          {
+            "node": "Merge All Slots",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Data Prefetch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sonnet 4.5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Generate Tweet",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Generate Tweet": {
+      "main": [
+        [
+          {
+            "node": "Self-Critique",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Airtable": {
+      "main": [
+        [
+          {
+            "node": "Get Saved Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PREPARE FOR AIRTABLE": {
+      "main": [
+        [
+          {
+            "node": "Save to Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get weeklyAnalysis": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Get weeklyReasearchRollup": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "rNbwKO00WlrMdWEc",
+    "timezone": "Europe/London",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 23
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "activeVersionId": null,
+  "versionCounter": 160,
+  "triggerCount": 8,
+  "shared": [
+    {
+      "updatedAt": "2026-02-13T11:36:24.879Z",
+      "createdAt": "2026-02-13T11:36:24.879Z",
+      "role": "workflow:owner",
+      "workflowId": "naR4xSia0_pL2kLyF5Kje",
+      "projectId": "3PTcJ2mMcVduDkV6",
+      "project": {
+        "updatedAt": "2025-04-23T19:12:24.962Z",
+        "createdAt": "2025-04-23T19:10:00.223Z",
+        "id": "3PTcJ2mMcVduDkV6",
+        "name": "YOUR_CREDENTIAL_HERE",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "c59b8fe8-021b-47c6-bde5-5b2ca7aae876"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

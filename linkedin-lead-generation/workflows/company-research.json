@@ -1,0 +1,1272 @@
+{
+  "updatedAt": "2025-10-04T13:47:31.175Z",
+  "createdAt": "2025-08-31T15:50:45.640Z",
+  "name": "Company Research",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appM31OKQZtVVzbS8",
+          "mode": "list",
+          "cachedResultName": "Lead Intelligence",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblXRRZ1vHPbevxQT",
+          "mode": "list",
+          "cachedResultName": "Lead Intelligence",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "filterByFormula": "AND({Ready for Enrichment} = TRUE(), {Email Validated} != TRUE(), {Processing Status} = \"ready_for_outreach\")",
+        "options": {}
+      },
+      "id": "104d7ea0-b997-4073-a598-4efa3a817210",
+      "name": "\ud83c\udfaf Fetch Leads Ready for Enrichment",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -3200,
+        176
+      ],
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// \ud83c\udfaf Enhanced Lead Enrichment Processor\nconst items = $input.all();\n\nif (!items || items.length === 0) {\n  return [{\n    json: {\n      message: 'No leads ready for enrichment',\n      timestamp: new Date().toISOString(),\n      leads_processed: 0\n    }\n  }];\n}\n\nconsole.log(`\ud83c\udfaf Processing ${items.length} leads for comprehensive enrichment`);\n\nconst enrichmentQueue = [];\nlet validLeadsCount = 0;\n\nfor (const item of items) {\n  const lead = item.json.fields || item.json;\n  \n  // Enhanced validation for required fields\n  const hasEmail = lead['Email'] && lead['Email'].trim() !== '';\n  const hasName = lead['Full Name'] && lead['Full Name'].trim() !== '';\n  const hasCompany = lead['Company Name'] && lead['Company Name'].trim() !== '';\n  const hasLinkedIn = lead['Personal LinkedIn URL'] && lead['Personal LinkedIn URL'].trim() !== '';\n  \n  if (!hasEmail || !hasName || !hasCompany) {\n    console.log(`\u26a0\ufe0f Skipping lead ${lead['Full Name'] || 'Unknown'} - missing critical data (Email: ${hasEmail}, Name: ${hasName}, Company: ${hasCompany})`);\n    continue;\n  }\n  \n  validLeadsCount++;\n  \n  // Prepare comprehensive enrichment data\n  const enrichmentData = {\n    // Core identifiers\n    record_id: lead.id || lead['Record ID'],\n    apollo_id: lead['Apollo ID'],\n    session_id: lead['Session ID'],\n    \n    // Contact information\n    full_name: lead['Full Name'],\n    first_name: lead['First Name'],\n    last_name: lead['Last Name'],\n    email: lead['Email'],\n    phone: lead['Phone'] || '',\n    \n    // Professional information\n    job_title: lead['Job Title'],\n    seniority_level: lead['Seniority Level'],\n    personal_linkedin_url: lead['Personal LinkedIn URL'],\n    \n    // Company information\n    company_name: lead['Company Name'],\n    company_website: lead['Company Website'] || '',\n    company_linkedin: lead['Company LinkedIn'] || '',\n    company_industry: lead['Company Industry'],\n    company_size: parseInt(lead['Company Size']) || 0,\n    company_revenue: parseFloat(lead['Company Revenue']) || 0,\n    funding_status: lead['Funding Status'],\n    country: lead['Country'],\n    \n    // Current processing status\n    processing_status: lead['Processing Status'],\n    search_type: lead['Search Type'],\n    search_priority: lead['Search Priority'],\n    current_email_status: lead['Email Status'],\n    current_email_confidence: parseInt(lead['Email Confidence']) || 0,\n    outreach_priority: lead['Outreach Priority'],\n    data_quality: lead['Data Quality'],\n    \n    // Service context\n    target_industry: lead['Target Industry'],\n    outreach_focus: lead['Outreach Focus'],\n    service_offering: lead['Service Offering'],\n    \n    // Enrichment tracking\n    enrichment_timestamp: new Date().toISOString(),\n    enrichment_phase: 'email_validation',\n    enrichment_batch_id: `batch_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,\n    \n    // Validation flags\n    has_linkedin: hasLinkedIn,\n    has_company_website: lead['Company Website'] && lead['Company Website'].trim() !== '',\n    needs_email_validation: true,\n    needs_linkedin_scraping: hasLinkedIn,\n    needs_company_research: true,\n    needs_website_analysis: lead['Company Website'] && lead['Company Website'].trim() !== ''\n  };\n  \n  enrichmentQueue.push({ json: enrichmentData });\n}\n\nconsole.log(`\u2705 Prepared ${validLeadsCount} valid leads for enrichment pipeline`);\nconsole.log(`\u274c Skipped ${items.length - validLeadsCount} leads due to missing data`);\n\n// Add batch summary\nif (enrichmentQueue.length > 0) {\n  enrichmentQueue.push({\n    json: {\n      batch_summary: true,\n      total_leads_processed: items.length,\n      valid_leads_for_enrichment: validLeadsCount,\n      skipped_leads: items.length - validLeadsCount,\n      batch_id: enrichmentQueue[0].json.enrichment_batch_id,\n      timestamp: new Date().toISOString(),\n      next_phase: 'email_validation'\n    }\n  });\n}\n\nreturn enrichmentQueue;"
+      },
+      "id": "2628e852-16e5-42a2-9b0b-11e3f09d04eb",
+      "name": "\ud83d\udd04 Enhanced Lead Enrichment Processor",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2960,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "61a36a3c-b0f4-4ea5-a8fd-20b69095d44b",
+              "leftValue": "={{ $json.batch_summary === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -2704,
+        176
+      ],
+      "id": "d2b540dc-20be-452a-9dea-563215561df0",
+      "name": "\ud83d\udd0d Filter Leads Only"
+    },
+    {
+      "parameters": {
+        "jsCode": "// \ud83d\udd04 Domain Extractor for Apollo Enrichment\nconst items = $input.all();\n\nif (!items || items.length === 0) {\n  return [{\n    json: {\n      error: 'No LinkedIn company data received',\n      success: false\n    }\n  }];\n}\n\nconst processedResults = [];\nconst domainsArray = [];\n\nfor (const item of items) {\n  const data = item.json;\n  \n  // Extract domain from company website\n  let domain = '';\n  const website = data.linkedin_company_website || data.company_website || '';\n  \n  if (website) {\n    try {\n      // Remove protocol and www\n      domain = website.replace(/^https?:\\/\\//i, '')\n                    .replace(/^www\\./i, '')\n                    .split('/')[0]\n                    .split('?')[0];\n      \n      if (domain && domain.includes('.')) {\n        domainsArray.push(domain);\n      }\n    } catch (error) {\n      console.log(`Failed to extract domain from: ${website}`);\n    }\n  }\n  \n  const enrichedData = {\n    ...data,\n    extracted_domain: domain,\n    ready_for_apollo_enrichment: domain ? true : false\n  };\n  \n  processedResults.push({ json: enrichedData });\n}\n\n// Create batch request for Apollo (max 10 domains per request)\nconst batchResults = [];\nfor (let i = 0; i < domainsArray.length; i += 10) {\n  const batch = domainsArray.slice(i, i + 10);\n  batchResults.push({\n    json: {\n      company_domains_array: batch,\n      batch_number: Math.floor(i / 10) + 1,\n      total_domains: batch.length,\n      apollo_enrichment_ready: true\n    }\n  });\n}\n\nconsole.log(`\ud83d\udd04 Prepared ${batchResults.length} Apollo enrichment batches for ${domainsArray.length} domains`);\n\nreturn batchResults.length > 0 ? batchResults : processedResults;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2416,
+        176
+      ],
+      "id": "77c54b4f-a004-4556-b3d0-f5d01b8fa398",
+      "name": "\ud83d\udd04 Domain Extractor for Apollo Enrichment"
+    },
+    {
+      "parameters": {
+        "jsCode": "// \ud83c\udfe2 Advanced Apollo Company Enrichment Formatter\nconst items = $input.all();\n\nif (!items || items.length === 0) {\n  return [{\n    json: {\n      error: 'No Apollo enrichment data received',\n      success: false,\n      apollo_enrichment_complete: false\n    }\n  }];\n}\n\nconst formattedResults = [];\n\nfor (const item of items) {\n  const data = item.json;\n  \n  // Check if we have valid Apollo enrichment data\n  if (data.organizations && Array.isArray(data.organizations) && data.organizations.length > 0) {\n    console.log(`\ud83c\udfe2 Processing Apollo enrichment data for ${data.organizations.length} companies`);\n    \n    for (const company of data.organizations) {\n      // === CORE COMPANY INFORMATION ===\n      const coreInfo = {\n        apollo_company_id: company.id || '',\n        company_name: company.name || '',\n        primary_domain: company.primary_domain || '',\n        website_url: company.website_url || '',\n        industry: company.industry || '',\n        founded_year: company.founded_year || null,\n        estimated_employees: company.estimated_num_employees || 0\n      };\n      \n      // === CONTACT INFORMATION ===\n      const contactInfo = {\n        primary_phone: company.primary_phone?.number || company.phone || '',\n        sanitized_phone: company.sanitized_phone || '',\n        linkedin_url: company.linkedin_url || '',\n        linkedin_uid: company.linkedin_uid || '',\n        twitter_url: company.twitter_url || '',\n        facebook_url: company.facebook_url || '',\n        blog_url: company.blog_url || '',\n        crunchbase_url: company.crunchbase_url || ''\n      };\n      \n      // === BUSINESS INTELLIGENCE ===\n      const businessIntel = {\n        languages: company.languages || [],\n        publicly_traded: company.publicly_traded_symbol ? true : false,\n        stock_symbol: company.publicly_traded_symbol || '',\n        stock_exchange: company.publicly_traded_exchange || '',\n        alexa_ranking: company.alexa_ranking || null,\n        logo_url: company.logo_url || ''\n      };\n      \n      // === ADVANCED KEYWORD ANALYSIS ===\n      const keywords = company.keywords || [];\n      \n      // Categorize keywords for better targeting\n      const keywordCategories = {\n        technology_keywords: [],\n        service_keywords: [],\n        industry_keywords: [],\n        government_keywords: [],\n        security_keywords: [],\n        automation_keywords: [],\n        process_keywords: []\n      };\n      \n      keywords.forEach(keyword => {\n        const lowerKeyword = keyword.toLowerCase();\n        \n        // Technology indicators\n        if (lowerKeyword.includes('it ') || lowerKeyword.includes('software') || \n            lowerKeyword.includes('tech') || lowerKeyword.includes('system') ||\n            lowerKeyword.includes('data') || lowerKeyword.includes('cloud')) {\n          keywordCategories.technology_keywords.push(keyword);\n        }\n        \n        // Service indicators\n        else if (lowerKeyword.includes('service') || lowerKeyword.includes('support') ||\n                lowerKeyword.includes('consulting') || lowerKeyword.includes('solution')) {\n          keywordCategories.service_keywords.push(keyword);\n        }\n        \n        // Government/Federal indicators\n        else if (lowerKeyword.includes('government') || lowerKeyword.includes('federal') ||\n                lowerKeyword.includes('gsa') || lowerKeyword.includes('contract')) {\n          keywordCategories.government_keywords.push(keyword);\n        }\n        \n        // Security indicators\n        else if (lowerKeyword.includes('security') || lowerKeyword.includes('classified') ||\n                lowerKeyword.includes('defense') || lowerKeyword.includes('nsa')) {\n          keywordCategories.security_keywords.push(keyword);\n        }\n        \n        // Automation opportunities\n        else if (lowerKeyword.includes('automat') || lowerKeyword.includes('integrat') ||\n                lowerKeyword.includes('workflow') || lowerKeyword.includes('process')) {\n          keywordCategories.automation_keywords.push(keyword);\n        }\n        \n        // Process indicators\n        else if (lowerKeyword.includes('management') || lowerKeyword.includes('operation') ||\n                lowerKeyword.includes('admin') || lowerKeyword.includes('procurement')) {\n          keywordCategories.process_keywords.push(keyword);\n        }\n        \n        // Industry-specific\n        else {\n          keywordCategories.industry_keywords.push(keyword);\n        }\n      });\n      \n      // === AUTOMATION OPPORTUNITY ANALYSIS ===\n      const automationOpportunities = [];\n      const painPointIndicators = [];\n      \n      // Analyze keywords for automation opportunities\n      if (keywordCategories.process_keywords.length > 0) {\n        automationOpportunities.push('Process Automation');\n        painPointIndicators.push('Manual process management');\n      }\n      \n      if (keywordCategories.government_keywords.length > 0) {\n        automationOpportunities.push('Government Contract Management');\n        painPointIndicators.push('Complex compliance requirements');\n      }\n      \n      if (keywordCategories.technology_keywords.length > 3) {\n        automationOpportunities.push('IT Infrastructure Automation');\n        painPointIndicators.push('Complex technology stack management');\n      }\n      \n      if (company.estimated_num_employees > 50) {\n        automationOpportunities.push('Employee Workflow Automation');\n        painPointIndicators.push('Scaling operational challenges');\n      }\n      \n      // === LEAD QUALIFICATION SCORING ===\n      let apolloQualificationScore = 0;\n      \n      // Company size scoring (30 points max)\n      const empCount = company.estimated_num_employees || 0;\n      if (empCount >= 11 && empCount <= 200) apolloQualificationScore += 30;\n      else if (empCount >= 201 && empCount <= 500) apolloQualificationScore += 25;\n      else if (empCount >= 51 && empCount <= 100) apolloQualificationScore += 20;\n      else if (empCount >= 1 && empCount <= 50) apolloQualificationScore += 15;\n      \n      // Data completeness (25 points max)\n      if (company.phone || company.primary_phone) apolloQualificationScore += 5;\n      if (company.linkedin_url) apolloQualificationScore += 5;\n      if (company.founded_year) apolloQualificationScore += 3;\n      if (keywords.length >= 20) apolloQualificationScore += 7;\n      if (keywords.length >= 10) apolloQualificationScore += 5;\n      \n      // Technology sophistication (20 points max)\n      if (keywordCategories.technology_keywords.length >= 5) apolloQualificationScore += 15;\n      else if (keywordCategories.technology_keywords.length >= 3) apolloQualificationScore += 10;\n      else if (keywordCategories.technology_keywords.length >= 1) apolloQualificationScore += 5;\n      \n      if (keywordCategories.automation_keywords.length > 0) apolloQualificationScore += 5;\n      \n      // Business maturity (15 points max)\n      const currentYear = new Date().getFullYear();\n      const companyAge = company.founded_year ? currentYear - company.founded_year : 0;\n      if (companyAge >= 10) apolloQualificationScore += 10;\n      else if (companyAge >= 5) apolloQualificationScore += 7;\n      else if (companyAge >= 2) apolloQualificationScore += 5;\n      \n      if (company.publicly_traded_symbol) apolloQualificationScore += 5;\n      \n      // Service complexity (10 points max)\n      if (keywordCategories.service_keywords.length >= 3) apolloQualificationScore += 10;\n      else if (keywordCategories.service_keywords.length >= 1) apolloQualificationScore += 5;\n      \n      // === PERSONALIZATION INSIGHTS ===\n      const personalizationInsights = {\n        primary_focus_areas: [\n          ...keywordCategories.technology_keywords.slice(0, 3),\n          ...keywordCategories.service_keywords.slice(0, 2)\n        ],\n        automation_talking_points: automationOpportunities.slice(0, 3),\n        pain_point_indicators: painPointIndicators.slice(0, 3),\n        company_maturity: companyAge >= 10 ? 'established' : companyAge >= 5 ? 'mature' : 'growing',\n        complexity_level: keywords.length >= 30 ? 'high' : keywords.length >= 15 ? 'medium' : 'basic'\n      };\n      \n      // === OUTREACH STRATEGY RECOMMENDATIONS ===\n      const outreachStrategy = {\n        best_contact_method: company.linkedin_url ? 'LinkedIn + Email' : 'Email',\n        conversation_starters: [\n          `I noticed ${company.name} specializes in ${keywordCategories.service_keywords[0] || keywordCategories.industry_keywords[0] || 'your industry'}`,\n          `Your ${empCount}-person team likely faces ${painPointIndicators[0] || 'operational scaling challenges'}`,\n          `Companies like yours in ${company.industry} often benefit from ${automationOpportunities[0] || 'process automation'}`\n        ].filter(starter => !starter.includes('undefined')),\n        value_proposition: `Help ${company.name} automate ${automationOpportunities[0] || 'key processes'} to scale more efficiently`,\n        timing_indicators: companyAge <= 5 ? 'high_growth_phase' : empCount >= 50 ? 'scaling_phase' : 'optimization_phase'\n      };\n      \n      // === COMPILE FINAL ENRICHED DATA ===\n      const enrichedCompanyData = {\n        // Original data preservation\n        ...data,\n        \n        // Core company information\n        ...coreInfo,\n        \n        // Contact information\n        ...contactInfo,\n        \n        // Business intelligence\n        ...businessIntel,\n        \n        // Advanced analysis\n        apollo_keywords_total: keywords.length,\n        apollo_keywords_categorized: keywordCategories,\n        apollo_raw_keywords: keywords,\n        \n        // Qualification and scoring\n        apollo_qualification_score: apolloQualificationScore,\n        apollo_company_age: companyAge,\n        apollo_complexity_level: personalizationInsights.complexity_level,\n        \n        // Automation opportunities\n        automation_opportunities_detected: automationOpportunities,\n        pain_points_indicated: painPointIndicators,\n        \n        // Personalization data\n        personalization_insights: personalizationInsights,\n        outreach_strategy: outreachStrategy,\n        \n        // Data quality indicators\n        apollo_data_completeness: Math.round(((company.phone ? 1 : 0) + \n                                            (company.linkedin_url ? 1 : 0) + \n                                            (company.founded_year ? 1 : 0) + \n                                            (keywords.length >= 10 ? 1 : 0) + \n                                            (company.industry ? 1 : 0)) / 5 * 100),\n        \n        // Processing metadata\n        apollo_enrichment_complete: true,\n        apollo_processing_timestamp: new Date().toISOString(),\n        apollo_data_quality: apolloQualificationScore >= 70 ? 'excellent' : \n                           apolloQualificationScore >= 50 ? 'good' : \n                           apolloQualificationScore >= 30 ? 'fair' : 'limited'\n      };\n      \n      formattedResults.push({ json: enrichedCompanyData });\n      \n      console.log(`\u2705 Formatted Apollo data for ${company.name} (Score: ${apolloQualificationScore}/100)`);\n    }\n    \n  } else {\n    // Handle cases with no Apollo data\n    const fallbackData = {\n      ...data,\n      apollo_enrichment_complete: false,\n      apollo_enrichment_error: 'No company data returned from Apollo API',\n      apollo_qualification_score: 0,\n      apollo_data_quality: 'none',\n      needs_manual_research: true\n    };\n    \n    formattedResults.push({ json: fallbackData });\n  }\n}\n\nconsole.log(`\ud83c\udfe2 Processed ${formattedResults.length} Apollo-enriched company profiles`);\nconsole.log(`\u2705 High-quality profiles: ${formattedResults.filter(r => r.json.apollo_qualification_score >= 70).length}`);\nconsole.log(`\u26a1 Good-quality profiles: ${formattedResults.filter(r => r.json.apollo_qualification_score >= 50).length}`);\n\nreturn formattedResults;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1856,
+        176
+      ],
+      "id": "dbb9b380-8df7-4d76-b56d-02cfb2c1ffb6",
+      "name": "\ud83c\udfe2 Advanced Apollo Company Enrichment Formatter"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appM31OKQZtVVzbS8",
+          "mode": "list",
+          "cachedResultName": "Lead Intelligence",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblXRRZ1vHPbevxQT",
+          "mode": "list",
+          "cachedResultName": "Lead Intelligence",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Company Name": "={{ $json.company_name }}",
+            "Company Website": "={{ $json.company_website }}",
+            "Company LinkedIn": "={{ $json.company_linkedin }}",
+            "Company Industry": "={{ $json.company_industry }}",
+            "Company Size": "={{ $json.company_size }}",
+            "Company Revenue": "={{ $json.company_revenue }}",
+            "Business Description": "={{ $json.business_description }}",
+            "Pain Points Detected": "={{ $json.pain_points_detected }}",
+            "Opportunities Identified": "={{ $json.opportunities_identified }}",
+            "Final Lead Score": "={{ $json.final_lead_score }}",
+            "Automation Fit": "={{ $json.automation_fit }}",
+            "Quick Pitch": "={{ $json.quick_pitch }}",
+            "Data Quality": "={{ $json.data_quality }}",
+            "Outreach Priority": "={{ $json.outreach_priority }}",
+            "Ready for Outreach": "={{ $json.ready_for_outreach }}",
+            "Business Research Complete": true,
+            "Processing Status": "ready_for_outreach",
+            "id": "={{ $json.record_id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Apollo ID",
+              "displayName": "Apollo ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Session ID",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Search Type",
+              "displayName": "Search Type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "funded_companies",
+                  "value": "funded_companies"
+                },
+                {
+                  "name": "high_growth_companies",
+                  "value": "high_growth_companies"
+                },
+                {
+                  "name": "tech_ready_companies",
+                  "value": "tech_ready_companies"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Search Priority",
+              "displayName": "Search Priority",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "high",
+                  "value": "high"
+                },
+                {
+                  "name": "medium",
+                  "value": "medium"
+                },
+                {
+                  "name": "low",
+                  "value": "low"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Email Status",
+              "displayName": "Email Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "verified",
+                  "value": "verified"
+                },
+                {
+                  "name": "likely",
+                  "value": "likely"
+                },
+                {
+                  "name": "unverified",
+                  "value": "unverified"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Email Confidence",
+              "displayName": "Email Confidence",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Job Title",
+              "displayName": "Job Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Seniority Level",
+              "displayName": "Seniority Level",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "c_suite",
+                  "value": "c_suite"
+                },
+                {
+                  "name": "vp",
+                  "value": "vp"
+                },
+                {
+                  "name": "director",
+                  "value": "director"
+                },
+                {
+                  "name": "manager",
+                  "value": "manager"
+                },
+                {
+                  "name": "individual_contributor",
+                  "value": "individual_contributor"
+                },
+                {
+                  "name": "C-Level",
+                  "value": "C-Level"
+                },
+                {
+                  "name": "VP",
+                  "value": "VP"
+                },
+                {
+                  "name": "Individual Contributor",
+                  "value": "Individual Contributor"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Personal LinkedIn URL",
+              "displayName": "Personal LinkedIn URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company Website",
+              "displayName": "Company Website",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company LinkedIn",
+              "displayName": "Company LinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company Industry",
+              "displayName": "Company Industry",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company Size",
+              "displayName": "Company Size",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company Revenue",
+              "displayName": "Company Revenue",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Funding Status",
+              "displayName": "Funding Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "recently_funded",
+                  "value": "recently_funded"
+                },
+                {
+                  "name": "growth_stage",
+                  "value": "growth_stage"
+                },
+                {
+                  "name": "tech_adoption",
+                  "value": "tech_adoption"
+                },
+                {
+                  "name": "private",
+                  "value": "private"
+                },
+                {
+                  "name": "unknown",
+                  "value": "unknown"
+                },
+                {
+                  "name": "Seed",
+                  "value": "Seed"
+                },
+                {
+                  "name": "Series A",
+                  "value": "Series A"
+                },
+                {
+                  "name": "Private",
+                  "value": "Private"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Country",
+              "displayName": "Country",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Processing Status",
+              "displayName": "Processing Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "apollo_complete",
+                  "value": "apollo_complete"
+                },
+                {
+                  "name": "linkedin_scraping",
+                  "value": "linkedin_scraping"
+                },
+                {
+                  "name": "ai_analysis",
+                  "value": "ai_analysis"
+                },
+                {
+                  "name": "ready_for_outreach",
+                  "value": "ready_for_outreach"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Collection Timestamp",
+              "displayName": "Collection Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Data Quality",
+              "displayName": "Data Quality",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "high",
+                  "value": "high"
+                },
+                {
+                  "name": "medium",
+                  "value": "medium"
+                },
+                {
+                  "name": "low",
+                  "value": "low"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Outreach Priority",
+              "displayName": "Outreach Priority",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "high",
+                  "value": "high"
+                },
+                {
+                  "name": "medium",
+                  "value": "medium"
+                },
+                {
+                  "name": "low",
+                  "value": "low"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Best Approach",
+              "displayName": "Best Approach",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "LinkedIn DM",
+                  "value": "LinkedIn DM"
+                },
+                {
+                  "name": "Email",
+                  "value": "Email"
+                },
+                {
+                  "name": "Phone",
+                  "value": "Phone"
+                },
+                {
+                  "name": "Research contacts first",
+                  "value": "Research contacts first"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ready for Outreach",
+              "displayName": "Ready for Outreach",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Business Description",
+              "displayName": "Business Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Pain Points Detected",
+              "displayName": "Pain Points Detected",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Opportunities Identified",
+              "displayName": "Opportunities Identified",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Personalized Message",
+              "displayName": "Personalized Message",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Final Lead Score",
+              "displayName": "Final Lead Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Automation Fit",
+              "displayName": "Automation Fit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Quick Pitch",
+              "displayName": "Quick Pitch",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Target Industry",
+              "displayName": "Target Industry",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Outreach Focus",
+              "displayName": "Outreach Focus",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Service Offering",
+              "displayName": "Service Offering",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ready for Enrichment",
+              "displayName": "Ready for Enrichment",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email Validated",
+              "displayName": "Email Validated",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Business Research Complete",
+              "displayName": "Business Research Complete",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ready for SendSpark",
+              "displayName": "Ready for SendSpark",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Ready to Send",
+              "displayName": "Ready to Send",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2,
+      "position": [
+        -1184,
+        176
+      ],
+      "id": "2f6c1dfd-3c45-4570-b8cb-eab57b426336",
+      "name": "\ud83d\udcca Update Airtable with Complete Enrichment Data",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.telegram_message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -496,
+        176
+      ],
+      "id": "4c76f6db-2cfe-4fbe-a4d7-5fcfe247aa0b",
+      "name": "Send a text message",
+      "webhookId": "YOUR_WEBHOOKID_HERE",
+      "credentials": {
+        "telegramApi": {
+          "id": "EMYdSCihMCukxOcQ",
+          "name": "We Love Noz API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// \ud83d\udcf1 Prepare Telegram Notification Summary - CORRECTED\nconst items = $input.all();\n\nif (!items || items.length === 0) {\n  return [{\n    json: {\n      telegram_message: \"\u274c No enrichment data available for notification\",\n      success: false\n    }\n  }];\n}\n\n// Remove duplicates by Record ID and get unique companies\nconst uniqueCompanies = [];\nconst seenRecordIds = new Set();\n\nitems.forEach(item => {\n  const recordId = item.json.id || item.json.fields?.['Record ID'] || '';\n  if (recordId && !seenRecordIds.has(recordId)) {\n    seenRecordIds.add(recordId);\n    uniqueCompanies.push(item.json.fields || item.json);\n  }\n});\n\n// Calculate summary statistics\nconst totalCompanies = uniqueCompanies.length;\nconst highPriorityCount = uniqueCompanies.filter(company => company['Outreach Priority'] === 'high').length;\nconst readyForOutreachCount = uniqueCompanies.filter(company => company['Ready for Outreach'] === true).length;\nconst excellentFitCount = uniqueCompanies.filter(company => company['Automation Fit'] === 'excellent').length;\n\n// Calculate average score\nconst totalScore = uniqueCompanies.reduce((sum, company) => sum + (company['Final Lead Score'] || 0), 0);\nconst averageScore = totalCompanies > 0 ? Math.round(totalScore / totalCompanies) : 0;\n\n// Get top 3 companies by score\nconst topCompanies = uniqueCompanies\n  .filter(company => company['Final Lead Score'] >= 85)\n  .sort((a, b) => (b['Final Lead Score'] || 0) - (a['Final Lead Score'] || 0))\n  .slice(0, 3)\n  .map(company => `\u2022 ${company['Company Name'] || 'Unknown'} (${company['Final Lead Score'] || 0}/100)`)\n  .join('\\n');\n\nconst topCompaniesList = topCompanies || '\u2022 No companies scored above 85 points';\n\n// Count companies with business descriptions\nconst companiesWithDescriptions = uniqueCompanies.filter(company => \n  company['Business Description'] && company['Business Description'].length > 100\n).length;\n\nconst telegramMessage = `\ud83d\ude80 **COMPANY ENRICHMENT COMPLETE** \ud83d\ude80\n\n\ud83d\udcac **READY FOR OUTREACH** \ud83d\udcac\n\n\ud83d\udcca **Results:**\n\u2022 Companies Processed: ${totalCompanies}\n\u2022 High Priority: ${highPriorityCount}\n\u2022 Ready for Outreach: ${readyForOutreachCount}\n\u2022 Excellent Automation Fit: ${excellentFitCount}\n\n\ud83c\udfaf **Top Performers:**\n${topCompaniesList}\n\n\ud83d\udcc8 **Quality:**\n\u2022 Average Score: ${averageScore}/100\n\u2022 Business Descriptions: ${companiesWithDescriptions}\n\n\u2705 **Next:** Ready for outreach agent workflow\n\n\u23f0 ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })}`;\n\nreturn [{\n  json: {\n    telegram_message: telegramMessage,\n    total_companies: totalCompanies,\n    high_priority_count: highPriorityCount,\n    ready_for_outreach_count: readyForOutreachCount,\n    excellent_fit_count: excellentFitCount,\n    average_score: averageScore,\n    companies_with_descriptions: companiesWithDescriptions,\n    processing_complete: true\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -800,
+        176
+      ],
+      "id": "971a1e8f-d7b6-49bd-b5ad-4f3a7e17c8d1",
+      "name": "\ud83d\udcf1 Prepare Telegram Notification Summary"
+    },
+    {
+      "parameters": {
+        "jsCode": "// \ud83d\udd04 FIXED Comprehensive Data Enrichment Processor - v14.0 - APOLLO ONLY FLOW\nconst items = $input.all();\n\nif (!items || items.length === 0) {\n  return [{\n    json: {\n      error: 'No Apollo enrichment data received',\n      success: false\n    }\n  }];\n}\n\nconsole.log(`\ud83d\udd04 Processing ${items.length} Apollo formatter items`);\n\n// === GET ORIGINAL LEADS DATA FOR MATCHING ===\nconst originalLeads = $('\ud83c\udfaf Fetch Leads Ready for Enrichment').all();\nconsole.log(`\ud83d\udccb Found ${originalLeads.length} original leads for matching`);\n\n// Create lookup map for original leads\nconst leadsLookup = {};\noriginalLeads.forEach((lead, index) => {\n  const leadData = lead.json.fields || lead.json;\n  const companyName = leadData['Company Name'] || '';\n  const companyWebsite = leadData['Company Website'] || '';\n  const recordId = lead.json.id || leadData.id || '';\n  \n  console.log(`\ud83d\udcdd Lead ${index}: ${leadData['Full Name']} at ${companyName} (ID: ${recordId})`);\n  \n  // Create multiple lookup keys for better matching\n  const lookupKeys = [\n    companyName.toLowerCase().trim(),\n    companyWebsite.toLowerCase().replace(/https?:\\/\\//, '').replace(/\\/$/, ''),\n    companyName.toLowerCase().replace(/,?\\s*(inc|llc|corp|corporation|ltd|limited)\\.?$/i, '').trim()\n  ].filter(key => key.length > 0);\n  \n  lookupKeys.forEach(key => {\n    if (!leadsLookup[key]) { // Prevent overwriting - first match wins\n      leadsLookup[key] = {\n        record_id: recordId,\n        full_name: leadData['Full Name'] || '',\n        first_name: leadData['First Name'] || '',\n        last_name: leadData['Last Name'] || '',\n        email: leadData['Email'] || '',\n        job_title: leadData['Job Title'] || '',\n        seniority_level: leadData['Seniority Level'] || '',\n        personal_linkedin_url: leadData['Personal LinkedIn URL'] || '',\n        company_name: companyName,\n        company_website: companyWebsite,\n        original_lead_data: leadData\n      };\n    }\n  });\n});\n\nconsole.log(`\ud83d\udd0d Created ${Object.keys(leadsLookup).length} lookup keys for matching`);\n\nconst consolidatedProfiles = [];\nconst processedCompanies = new Set(); // Track processed companies to avoid duplicates\n\nfor (const item of items) {\n  try {\n    const data = item.json;\n    \n    console.log(`\ud83d\udd0d Processing Apollo formatter item with keys:`, Object.keys(data).slice(0, 10));\n    \n    // === EXTRACT APOLLO ORGANIZATIONS ===\n    const apolloOrganizations = data.organizations || [];\n    console.log(`\ud83d\udcca Found ${apolloOrganizations.length} Apollo organizations in this item`);\n    \n    // === PROCESS EACH APOLLO ORGANIZATION (AVOID DUPLICATES) ===\n    for (const org of apolloOrganizations) {\n      \n      // Skip if we've already processed this company\n      const companyId = org.id || '';\n      if (processedCompanies.has(companyId)) {\n        console.log(`\u23ed\ufe0f Skipping duplicate company: ${org.name} (${companyId})`);\n        continue;\n      }\n      processedCompanies.add(companyId);\n      \n      // Extract Apollo organization data\n      const apolloOrgData = {\n        apollo_company_id: org.id || '',\n        apollo_company_name: org.name || '',\n        apollo_website: org.website_url || '',\n        apollo_linkedin: org.linkedin_url || '',\n        apollo_phone: org.phone || (org.primary_phone?.number || ''),\n        apollo_industry: org.industry || '',\n        apollo_employee_count: org.estimated_num_employees || 0,\n        apollo_revenue: org.organization_revenue || 0,\n        apollo_revenue_printed: org.organization_revenue_printed || '',\n        apollo_founded_year: org.founded_year || null,\n        apollo_description: org.short_description || '',\n        apollo_keywords: org.keywords || [],\n        apollo_logo_url: org.logo_url || '',\n        apollo_primary_domain: org.primary_domain || ''\n      };\n      \n      console.log(`\ud83c\udfe2 Processing Apollo org: ${apolloOrgData.apollo_company_name}`);\n      \n      // === FIND MATCHING ORIGINAL LEAD ===\n      let matchedLead = null;\n      const apolloLookupKeys = [\n        apolloOrgData.apollo_company_name.toLowerCase().trim(),\n        apolloOrgData.apollo_website.toLowerCase().replace(/https?:\\/\\//, '').replace(/\\/$/, ''),\n        apolloOrgData.apollo_primary_domain.toLowerCase(),\n        apolloOrgData.apollo_company_name.toLowerCase().replace(/,?\\s*(inc|llc|corp|corporation|ltd|limited)\\.?$/i, '').trim()\n      ].filter(key => key.length > 0);\n      \n      for (const key of apolloLookupKeys) {\n        if (leadsLookup[key]) {\n          matchedLead = leadsLookup[key];\n          console.log(`\u2705 Matched Apollo company \"${apolloOrgData.apollo_company_name}\" to lead \"${matchedLead.full_name}\" (${matchedLead.record_id})`);\n          break;\n        }\n      }\n      \n      if (!matchedLead) {\n        console.log(`\u26a0\ufe0f No original lead match found for: ${apolloOrgData.apollo_company_name} - SKIPPING`);\n        continue; // Skip companies that don't match original leads\n      }\n      \n      // === CREATE COMPREHENSIVE BUSINESS DESCRIPTION ===\n      let businessDescription = '';\n      let descriptionSource = 'generated';\n      \n      if (apolloOrgData.apollo_description && apolloOrgData.apollo_description.length > 50) {\n        businessDescription = apolloOrgData.apollo_description;\n        descriptionSource = 'apollo';\n        console.log(`\ud83d\udcdd Using Apollo description for ${apolloOrgData.apollo_company_name}`);\n      } else if (apolloOrgData.apollo_keywords.length > 0) {\n        // Generate description from keywords\n        const companyName = apolloOrgData.apollo_company_name || 'This company';\n        const industry = apolloOrgData.apollo_industry || 'business';\n        const employeeCount = apolloOrgData.apollo_employee_count || 0;\n        const size = employeeCount > 0 ? `${employeeCount} employees` : 'a dedicated team';\n        const founded = apolloOrgData.apollo_founded_year ? `Founded in ${apolloOrgData.apollo_founded_year}, ` : '';\n        const topKeywords = apolloOrgData.apollo_keywords.slice(0, 4).join(', ');\n        \n        businessDescription = `${founded}${companyName} is a ${industry} company with ${size}. Their expertise includes ${topKeywords}. They focus on providing quality solutions and services to their clients.`;\n        descriptionSource = 'generated';\n        console.log(`\ud83e\udd16 Generated description for ${apolloOrgData.apollo_company_name}`);\n      }\n      \n      // === ADVANCED KEYWORD ANALYSIS ===\n      const keywordAnalysis = {\n        technology_keywords: apolloOrgData.apollo_keywords.filter(k => \n          k.toLowerCase().includes('tech') || k.toLowerCase().includes('software') || \n          k.toLowerCase().includes('cloud') || k.toLowerCase().includes('system') ||\n          k.toLowerCase().includes('platform') || k.toLowerCase().includes('digital') ||\n          k.toLowerCase().includes('it ') || k.toLowerCase().includes('data') ||\n          k.toLowerCase().includes('cyber') || k.toLowerCase().includes('ai')\n        ),\n        automation_keywords: apolloOrgData.apollo_keywords.filter(k => \n          k.toLowerCase().includes('automation') || k.toLowerCase().includes('workflow') || \n          k.toLowerCase().includes('process') || k.toLowerCase().includes('integration') ||\n          k.toLowerCase().includes('optimize') || k.toLowerCase().includes('efficiency')\n        ),\n        government_keywords: apolloOrgData.apollo_keywords.filter(k => \n          k.toLowerCase().includes('government') || k.toLowerCase().includes('federal') || \n          k.toLowerCase().includes('gsa') || k.toLowerCase().includes('contract') ||\n          k.toLowerCase().includes('defense') || k.toLowerCase().includes('classified')\n        ),\n        service_keywords: apolloOrgData.apollo_keywords.filter(k => \n          k.toLowerCase().includes('service') || k.toLowerCase().includes('support') || \n          k.toLowerCase().includes('consulting') || k.toLowerCase().includes('solution') ||\n          k.toLowerCase().includes('management') || k.toLowerCase().includes('advisory')\n        ),\n        security_keywords: apolloOrgData.apollo_keywords.filter(k => \n          k.toLowerCase().includes('security') || k.toLowerCase().includes('cyber') || \n          k.toLowerCase().includes('compliance') || k.toLowerCase().includes('risk') ||\n          k.toLowerCase().includes('protection') || k.toLowerCase().includes('secure')\n        )\n      };\n      \n      // === CALCULATE LEAD SCORES ===\n      let finalLeadScore = 0;\n      \n      // Company size score (25%)\n      const employeeCount = apolloOrgData.apollo_employee_count || 0;\n      if (employeeCount >= 11 && employeeCount <= 200) finalLeadScore += 25;\n      else if (employeeCount >= 1 && employeeCount <= 50) finalLeadScore += 20;\n      else if (employeeCount >= 201) finalLeadScore += 15;\n      else finalLeadScore += 5;\n      \n      // Data completeness score (25%)\n      let completenessScore = 0;\n      if (apolloOrgData.apollo_company_name) completenessScore += 5;\n      if (businessDescription.length > 200) completenessScore += 10;\n      else if (businessDescription.length > 100) completenessScore += 8;\n      else if (businessDescription.length > 50) completenessScore += 6;\n      if (apolloOrgData.apollo_keywords.length >= 20) completenessScore += 5;\n      else if (apolloOrgData.apollo_keywords.length >= 10) completenessScore += 3;\n      if (apolloOrgData.apollo_phone) completenessScore += 2;\n      if (apolloOrgData.apollo_revenue > 0) completenessScore += 2;\n      finalLeadScore += completenessScore;\n      \n      // Industry relevance (20%)\n      const industry = apolloOrgData.apollo_industry.toLowerCase();\n      if (industry.includes('technology') || industry.includes('software') || industry.includes('information')) {\n        finalLeadScore += 20;\n      } else if (industry.includes('financial') || industry.includes('healthcare') || industry.includes('professional')) {\n        finalLeadScore += 15;\n      } else if (industry.includes('manufacturing') || industry.includes('retail') || industry.includes('consulting')) {\n        finalLeadScore += 10;\n      } else {\n        finalLeadScore += 5;\n      }\n      \n      // Automation readiness (20%)\n      const totalAutomationIndicators = keywordAnalysis.technology_keywords.length + \n                                       keywordAnalysis.automation_keywords.length + \n                                       keywordAnalysis.service_keywords.length;\n      \n      if (totalAutomationIndicators >= 15) finalLeadScore += 20;\n      else if (totalAutomationIndicators >= 10) finalLeadScore += 16;\n      else if (totalAutomationIndicators >= 6) finalLeadScore += 12;\n      else if (totalAutomationIndicators >= 3) finalLeadScore += 8;\n      else if (totalAutomationIndicators >= 1) finalLeadScore += 4;\n      else finalLeadScore += 1;\n      \n      // Data source quality bonus (10%)\n      let dataSourceBonus = 0;\n      if (apolloOrgData.apollo_keywords.length >= 30) dataSourceBonus += 5;\n      else if (apolloOrgData.apollo_keywords.length >= 15) dataSourceBonus += 3;\n      if (businessDescription.length > 300) dataSourceBonus += 3;\n      if (apolloOrgData.apollo_revenue > 0) dataSourceBonus += 2;\n      finalLeadScore += dataSourceBonus;\n      \n      // === AUTOMATION FIT ASSESSMENT ===\n      let automationFit = 'limited';\n      if (totalAutomationIndicators >= 15 && employeeCount >= 20) automationFit = 'excellent';\n      else if (totalAutomationIndicators >= 10 && employeeCount >= 10) automationFit = 'good';\n      else if (totalAutomationIndicators >= 5 || employeeCount >= 5) automationFit = 'fair';\n      \n      // === PAIN POINTS IDENTIFICATION ===\n      const painPoints = [];\n      \n      if (employeeCount >= 100) {\n        painPoints.push('Enterprise-scale coordination and communication challenges');\n      } else if (employeeCount >= 50) {\n        painPoints.push('Large team coordination and communication challenges');\n      } else if (employeeCount >= 20) {\n        painPoints.push('Growing operational complexity and manual bottlenecks');\n      } else if (employeeCount >= 10) {\n        painPoints.push('Process standardization and efficiency needs');\n      } else {\n        painPoints.push('Resource optimization and growth scaling challenges');\n      }\n      \n      // Industry-specific pain points\n      if (industry.includes('technology') || industry.includes('software')) {\n        painPoints.push('Complex technology integration and maintenance overhead');\n      } else if (industry.includes('financial')) {\n        painPoints.push('Regulatory compliance and reporting complexity');\n      } else if (keywordAnalysis.government_keywords.length > 0) {\n        painPoints.push('Federal compliance and procurement complexity');\n      }\n      \n      // === AUTOMATION OPPORTUNITIES ===\n      const opportunities = [];\n      \n      if (employeeCount >= 20) {\n        opportunities.push('Employee workflow and communication automation');\n      }\n      if (keywordAnalysis.service_keywords.length >= 3) {\n        opportunities.push('Service delivery and client management automation');\n      }\n      if (keywordAnalysis.technology_keywords.length >= 5) {\n        opportunities.push('Technology integration and system optimization');\n      }\n      if (keywordAnalysis.government_keywords.length > 0) {\n        opportunities.push('Government compliance and reporting automation');\n      }\n      if (keywordAnalysis.security_keywords.length >= 2) {\n        opportunities.push('Security monitoring and compliance automation');\n      }\n      \n      // Default opportunities\n      if (opportunities.length === 0) {\n        opportunities.push('Process optimization and operational efficiency automation');\n      }\n      \n      // === OUTREACH READINESS ASSESSMENT ===\n      const isReadyForOutreach = finalLeadScore >= 40 && \n                                apolloOrgData.apollo_company_name && \n                                businessDescription.length > 50;\n      \n      const outreachPriority = finalLeadScore >= 75 ? 'high' : \n                              finalLeadScore >= 55 ? 'medium' : 'low';\n      \n      const dataQuality = finalLeadScore >= 70 ? 'high' : \n                         finalLeadScore >= 50 ? 'medium' : 'low';\n      \n      // === COMPILE ENRICHED COMPANY PROFILE ===\n      const enrichedProfile = {\n        // === PRESERVE ORIGINAL LEAD DATA ===\n        record_id: matchedLead.record_id,\n        full_name: matchedLead.full_name,\n        first_name: matchedLead.first_name,\n        last_name: matchedLead.last_name,\n        email: matchedLead.email,\n        job_title: matchedLead.job_title,\n        seniority_level: matchedLead.seniority_level,\n        personal_linkedin_url: matchedLead.personal_linkedin_url,\n        \n        // === CONSOLIDATED COMPANY DATA ===\n        company_name: apolloOrgData.apollo_company_name,\n        company_website: apolloOrgData.apollo_website,\n        company_linkedin: apolloOrgData.apollo_linkedin,\n        company_phone: apolloOrgData.apollo_phone,\n        company_industry: apolloOrgData.apollo_industry,\n        company_size: employeeCount,\n        company_revenue: apolloOrgData.apollo_revenue,\n        company_revenue_display: apolloOrgData.apollo_revenue_printed,\n        founded_year: apolloOrgData.apollo_founded_year,\n        \n        // === COMPREHENSIVE BUSINESS DESCRIPTION ===\n        business_description: businessDescription,\n        apollo_company_id: apolloOrgData.apollo_company_id,\n        \n        // === ANALYSIS AND INSIGHTS ===\n        pain_points_detected: painPoints.slice(0, 2).join('; '),\n        opportunities_identified: opportunities.slice(0, 3).join('; '),\n        \n        // === SCORING AND ASSESSMENT ===\n        final_lead_score: Math.round(finalLeadScore),\n        automation_fit: automationFit,\n        \n        // === OUTREACH READINESS ===\n        ready_for_outreach: isReadyForOutreach,\n        outreach_priority: outreachPriority,\n        best_approach: 'LinkedIn DM',\n        data_quality: dataQuality,\n        \n        // === QUICK REFERENCE FOR OUTREACH TEAM ===\n        quick_pitch: `${matchedLead.full_name} at ${apolloOrgData.apollo_company_name} - ${employeeCount} employees in ${industry} - ${automationFit} automation fit`,\n        \n        // === ENRICHMENT METADATA ===\n        enrichment_complete: true,\n        enrichment_timestamp: new Date().toISOString(),\n        processing_version: '14.0_apollo_only_no_duplicates',\n        \n        // === DATA SOURCES SUMMARY ===\n        data_sources: ['apollo_organization'],\n        \n        // === KEYWORD INTELLIGENCE FOR OUTREACH ===\n        keyword_categories: {\n          technology: keywordAnalysis.technology_keywords.slice(0, 5),\n          automation: keywordAnalysis.automation_keywords.slice(0, 3),\n          government: keywordAnalysis.government_keywords.slice(0, 3),\n          services: keywordAnalysis.service_keywords.slice(0, 5),\n          security: keywordAnalysis.security_keywords.slice(0, 3)\n        },\n        \n        // === ENRICHMENT QUALITY METRICS ===\n        enrichment_quality: {\n          apollo_data_available: true,\n          linkedin_data_available: false,\n          business_description_source: descriptionSource,\n          total_keywords: apolloOrgData.apollo_keywords.length,\n          automation_indicators: totalAutomationIndicators,\n          data_completeness_score: Math.round(completenessScore),\n          original_lead_matched: true\n        }\n      };\n      \n      consolidatedProfiles.push({ json: enrichedProfile });\n      \n      console.log(`\u2705 Enriched: ${apolloOrgData.apollo_company_name} - Lead: ${matchedLead.full_name} (${matchedLead.record_id}) - Score: ${Math.round(finalLeadScore)}`);\n    }\n    \n  } catch (error) {\n    console.error(`\u274c Error processing Apollo item:`, error.message);\n    consolidatedProfiles.push({ \n      json: { \n        error: `Comprehensive enrichment failed: ${error.message}`,\n        original_data: item.json,\n        processing_version: '14.0_apollo_only_no_duplicates'\n      } \n    });\n  }\n}\n\nconsole.log(`\ud83d\ude80 COMPREHENSIVE ENRICHMENT COMPLETE (APOLLO ONLY, NO DUPLICATES):`);\nconsole.log(`   \ud83d\udcca Total Processed: ${consolidatedProfiles.length}`);\nconsole.log(`   \ud83d\udd25 High Priority: ${consolidatedProfiles.filter(p => p.json.outreach_priority === 'high').length}`);\nconsole.log(`   \u26a1 Medium Priority: ${consolidatedProfiles.filter(p => p.json.outreach_priority === 'medium').length}`);\nconsole.log(`   \ud83d\ude80 Ready for Outreach: ${consolidatedProfiles.filter(p => p.json.ready_for_outreach).length}`);\nconsole.log(`   \ud83c\udd94 With Original Lead Match: ${consolidatedProfiles.filter(p => p.json.record_id).length}`);\nconsole.log(`   \ud83d\udcc8 Average Score: ${Math.round(consolidatedProfiles.reduce((sum, p) => sum + (p.json.final_lead_score || 0), 0) / consolidatedProfiles.length)}`);\n\nreturn consolidatedProfiles;"
+      },
+      "id": "d3aa05be-2b0d-473a-9060-8e817f1fa2a9",
+      "name": "\ud83d\udd04 Comprehensive Data Enrichment Processor",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1488,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -3440,
+        176
+      ],
+      "id": "20b22e68-5488-42d9-b0cf-3d3214b98e5b",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "YOUR_URL_HERE",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Cache-Control",
+              "value": "no-cache"
+            },
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "x-api-key",
+              "value": "gIcd798JfSoDDwHsPpUq_A"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"domains\": {{ JSON.stringify($json.company_domains_array) }}\n}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2144,
+        176
+      ],
+      "id": "5ba84b7b-58f0-4f60-aebc-cc768ddd1e2c",
+      "name": "\ud83c\udfe2 Apollo Company Scraper",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\ude80 Company Enrichment System Setup Guide\n\n**WHAT THIS SYSTEM DOES:**\nThis workflow enriches leads with comprehensive company data using Apollo's direct API. It takes leads marked \"Ready for Enrichment\" and adds detailed business intelligence including:\n- Company size, revenue, and industry data\n- Contact information (phone, social media, websites)\n- 200+ business keywords and categorization\n- Automation opportunity analysis\n- Lead qualification scoring (0-100 points)\n- Personalized outreach strategies\n\n**BEFORE YOU START:**\n1. You need an Apollo.io account with API access\n2. Leads must be in Airtable with \"Ready for Enrichment = TRUE\"\n3. Company websites/domains are required for enrichment\n4. The system processes leads in batches (max 10 domains per API call)\n\n**SETUP STEPS:**\n1. Get Apollo API Key (see next note)\n2. Update API credentials in workflow\n3. Test with small batch first\n4. Configure Airtable field mappings\n5. Run and monitor results",
+        "height": 560,
+        "width": 600,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -4192,
+        -768
+      ],
+      "id": "4756ccc3-2759-49b2-a0c7-a47a66ab0052",
+      "name": "Setup Guide Main"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udd11 Apollo API Setup - REQUIRED\n\n**GET APOLLO API KEY:**\n1. Go to apollo.io and sign up/login\n2. Navigate to Settings > API Keys\n3. Create a new API key or copy existing one\n4. Note: You need a paid Apollo plan for bulk enrichment API access\n\n**UPDATE IN WORKFLOW:**\nFind the \"\ud83c\udfe2 Apify Apollo Company Scraper\" node (it's actually Apollo direct API, not Apify):\n- **API Endpoint:** `https://api.apollo.io/api/v1/organizations/bulk_enrich`\n- **Method:** POST\n- **Header:** `x-api-key: YOUR_APOLLO_API_KEY`\n- **Current Key:** `gIcd798JfSoDDwHsPpUq_A` (replace with your key)\n\n**IMPORTANT NOTES:**\n- This is Apollo's DIRECT API, not through Apify\n- Bulk enrichment requires Apollo's paid plan\n- Each API call can enrich up to 10 domains\n- Cost: Varies by Apollo plan (typically $0.10-0.50 per enrichment)\n- Rate limits apply (check Apollo documentation)\n\n**TESTING:**\nStart with 1-2 domains to test your API key works before processing large batches.",
+        "height": 624,
+        "width": 600,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2976,
+        -1168
+      ],
+      "id": "37d0a1b2-1c43-4fc3-99af-ddaae8c902d4",
+      "name": "Apollo API Setup"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83c\udfaf How The Company Enrichment Works\n\n**WORKFLOW OVERVIEW:**\n1. **Manual Trigger:** Workflow starts when manually executed\n2. **Lead Fetching:** Pulls leads from Airtable with specific filters:\n   - `Ready for Enrichment = TRUE`\n   - `Email Validated != TRUE`\n   - `Processing Status = \"apollo_complete\"`\n3. **Data Validation:** Validates required fields (Email, Name, Company)\n4. **Domain Extraction:** Extracts clean domains from company websites\n5. **Apollo API Call:** Sends domains to Apollo bulk enrichment API\n6. **Data Processing:** Advanced formatting and analysis of Apollo response\n7. **Airtable Update:** Stores enriched data back to Airtable\n\n**KEY FEATURES:**\n- **Batch Processing:** Handles up to 10 domains per API call\n- **Smart Domain Extraction:** Cleans URLs to get proper domains\n- **Advanced Analysis:** 200+ keywords categorized by type\n- **Qualification Scoring:** 100-point lead quality assessment\n- **Automation Detection:** Identifies process improvement opportunities\n- **Personalization:** Generates conversation starters and value props",
+        "height": 512,
+        "width": 600,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -4800,
+        -80
+      ],
+      "id": "96952296-f5c7-4e1e-b1aa-d0ea6daeac18",
+      "name": "System Workflow"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83c\udfe2 Apollo Enrichment Details\n\n**APOLLO API ENDPOINT:**\n`POST https://api.apollo.io/api/v1/organizations/bulk_enrich`\n\n**REQUEST FORMAT:**\n```json\n{\n  \"domains\": [\"company1.com\", \"company2.com\", ...]\n}\n```\n\n**RESPONSE DATA INCLUDES:**\n- **Core Info:** Company name, domain, industry, founded year\n- **Size Data:** Employee count, revenue estimates\n- **Contact Info:** Phone numbers, social media URLs\n- **Business Intel:** Keywords (200+), languages, stock info\n- **Technology Stack:** Software and tools used\n- **Social Presence:** LinkedIn, Twitter, Facebook URLs\n\n**ADVANCED PROCESSING:**\n- **Keyword Categorization:** Technology, Services, Government, Security\n- **Automation Analysis:** Process improvement opportunities\n- **Lead Scoring:** 100-point qualification system\n- **Personalization:** Conversation starters and value propositions\n\n**QUALITY SCORING FACTORS:**\n- Company size (30 points) - Sweet spot: 11-200 employees\n- Data completeness (25 points) - Phone, LinkedIn, keywords\n- Technology sophistication (20 points) - Tech keyword analysis\n- Business maturity (15 points) - Company age, public status\n- Service complexity (10 points) - Service diversity",
+        "height": 704,
+        "width": 600,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -4192,
+        -192
+      ],
+      "id": "0447731f-cfb5-4fad-99bb-996f502caa35",
+      "name": "Apollo Enrichment Details"
+    },
+    {
+      "parameters": {
+        "content": "## \u26a0\ufe0f Important Notes & Limitations\n\n**APOLLO API REQUIREMENTS:**\n- Paid Apollo plan required for bulk enrichment API\n- Rate limits apply (check your plan limits)\n- Cost per enrichment varies by plan\n- Some domains may not return data\n\n**DATA QUALITY CONSIDERATIONS:**\n- Not all companies will have complete data\n- Keyword analysis depends on Apollo's database\n- Some domains may be blocked or unavailable\n- Results quality varies by company size and web presence\n\n**WORKFLOW LIMITATIONS:**\n- Manual trigger only (not automated)\n- Processes leads marked \"Ready for Enrichment\"\n- Requires company websites/domains\n- Maximum 10 domains per API call\n\n**TROUBLESHOOTING:**\n- If API fails: Check Apollo API key and credits\n- If no data: Verify domains are valid and accessible\n- If errors: Check Apollo API documentation for limits\n- Monitor Apollo dashboard for usage and billing\n\n**COST MANAGEMENT:**\n- Test with small batches first\n- Monitor Apollo API usage\n- Consider filtering leads by company size/quality\n- Track enrichment success rates",
+        "height": 720,
+        "width": 600,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3584,
+        -1264
+      ],
+      "id": "2889b007-f31c-40b6-8f31-51b8ab1631aa",
+      "name": "Important Notes"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\ude80 Quick Start Checklist\n\n**BEFORE FIRST RUN:**\n\u2610 1. Get Apollo.io paid account with API access\n\u2610 2. Generate Apollo API key from Settings > API Keys\n\u2610 3. Update API key in \"\ud83c\udfe2 Apify Apollo Company Scraper\" node\n\u2610 4. Verify Airtable connection and field mappings\n\u2610 5. Test with 1-2 leads first\n\n**FOR EACH ENRICHMENT RUN:**\n\u2610 1. Mark leads as \"Ready for Enrichment = TRUE\" in Airtable\n\u2610 2. Ensure leads have company websites/domains\n\u2610 3. Execute workflow manually\n\u2610 4. Monitor execution for errors\n\u2610 5. Check Airtable for enriched data\n\n**SUCCESS INDICATORS:**\n\u2705 Apollo API responds with company data\n\u2705 Domains are properly extracted from websites\n\u2705 Keywords and scoring data are populated\n\u2705 Airtable is updated with enriched fields\n\u2705 \"Business Research Complete\" is set to TRUE\n\n**IF SOMETHING FAILS:**\n\ud83d\udd0d Check Apollo API key is valid and has credits\n\ud83d\udd0d Verify domains are accessible (not blocked)\n\ud83d\udd0d Review n8n execution logs for errors\n\ud83d\udd0d Check Apollo API rate limits and usage\n\ud83d\udd0d Ensure Airtable field mappings are correct",
+        "height": 608,
+        "width": 600,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -4800,
+        -704
+      ],
+      "id": "4d674f66-8e12-41cf-b226-0b4dd806123c",
+      "name": "Quick Start Checklist"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83c\udfaf SECTION 1: LEAD INTAKE & VALIDATION\n**Key Nodes: Manual Trigger \u2192 Airtable Fetch \u2192 Lead Processor \u2192 Filter**\n\n**WHAT HAPPENS:**\n1. **Automatic Trigger** - Workflow starts when Email Verified\n2. **\ud83c\udfaf Fetch Leads Ready for Enrichment** - Pulls leads from Airtable with strict filters:\n   - `Ready for Enrichment = TRUE`\n   - `Email Validated != TRUE`\n   - `Processing Status = \"apollo_complete\"`\n3. **\ud83d\udd04 Enhanced Lead Enrichment Processor** - Validates and prepares lead data\n4. **\ud83d\udd0d Filter Leads Only** - Removes batch summary items, keeps only valid leads\n\n**CRITICAL VALIDATION:**\n- **Required Fields:** Email, Full Name, Company Name\n- **Company Website:** Essential for domain extraction\n- **Data Quality Check:** Skips leads missing critical information\n- **Batch Tracking:** Creates unique batch IDs for processing\n\n**PREPARATION PROCESS:**\n- Validates all required fields are present\n- Creates enrichment flags for different data needs\n- Generates batch metadata for tracking\n- Logs skipped leads with specific reasons\n- Prepares leads for domain extraction phase\n\n**SUCCESS CRITERIA:**\nOnly leads with complete essential data proceed to enrichment, preventing API waste and ensuring high success rates.",
+        "height": 992,
+        "width": 1080,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3584,
+        -528
+      ],
+      "id": "cb324347-0222-446a-ac0c-2b65434d5fb1",
+      "name": "Section 1: Lead Intake (Corrected)"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83c\udfe2 SECTION 2: APOLLO DIRECT API ENRICHMENT\n**Key Nodes: Domain Extractor \u2192 Apollo API Call \u2192 Data Formatter**\n\n**THE ACTUAL PROCESS:**\n1. **\ud83d\udd04 Domain Extractor** - Cleans and prepares company domains\n   - Extracts domains from company websites\n   - Removes protocols (http/https) and www prefixes\n   - Batches domains for API efficiency (max 10 per call)\n\n2. **\ud83c\udfe2 Apollo Company Enrichment** - **DIRECT APOLLO API CALL** (NOT Apify)\n   - **API Endpoint:** `https://api.apollo.io/api/v1/organizations/bulk_enrich`\n   - **Method:** POST with domain array\n   - **Authentication:** `x-api-key` header with Apollo API key\n   - **Current Key:** `gIcd798JfSoDDwHsPpUq_A` (needs updating)\n   - **Batch Size:** Maximum 10 domains per request\n\n3. **\ud83c\udfe2 Advanced Apollo Formatter** - Transforms raw API response into intelligence\n   - **200+ Keywords** categorized by type (Technology, Services, Government)\n   - **Company Intelligence:** Size, revenue, industry, founding year\n   - **Contact Data:** Phone, LinkedIn, social media URLs\n   - **Business Analysis:** Automation opportunities and pain points\n\n**IMPORTANT CORRECTION:**\nDespite the node name mentioning \"Apify\", this workflow uses Apollo's DIRECT API, not Apify actors. Users need a paid Apollo.io account with API access.",
+        "height": 992,
+        "width": 824,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2496,
+        -528
+      ],
+      "id": "5fd1b114-ae05-434c-8ce4-679be59efe32",
+      "name": "Section 2: Apollo API (Corrected)"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcca SECTION 3: ADVANCED ANALYSIS & STORAGE\n**Key Nodes: Data Processing \u2192 Qualification Scoring \u2192 Airtable Update**\n\n**SOPHISTICATED DATA PROCESSING:**\n1. **Advanced Keyword Analysis** - 200+ business keywords categorized into:\n   - **Technology Keywords:** IT, software, cloud, systems\n   - **Service Keywords:** Consulting, support, solutions\n   - **Government Keywords:** Federal, GSA, contracts\n   - **Security Keywords:** Defense, classified, NSA\n   - **Automation Keywords:** Process, workflow, integration\n   - **Industry Keywords:** Sector-specific terms\n\n2. **100-Point Qualification Scoring System:**\n   - **Company Size (30 pts):** Sweet spot 11-200 employees\n   - **Data Completeness (25 pts):** Phone, LinkedIn, keywords, founding\n   - **Technology Sophistication (20 pts):** Tech keyword density\n   - **Business Maturity (15 pts):** Company age, public status\n   - **Service Complexity (10 pts):** Service diversity\n\n3. **Automation Opportunity Analysis:**\n   - **Process Automation:** Manual workflow identification\n   - **Government Contract Management:** Compliance automation\n   - **IT Infrastructure:** Technology stack optimization\n   - **Employee Workflows:** Scaling operational efficiency\n\n4. **Personalization Engine:**\n   - **Conversation Starters:** Company-specific talking points\n   - **Value Propositions:** Tailored automation benefits\n   - **Pain Point Identification:** Business challenge analysis\n   - **Outreach Strategy:** Best contact methods and timing\n\n**FINAL AIRTABLE STORAGE:**\nUpdates 15+ fields including qualification scores, automation opportunities, personalized messaging, and sets `Business Research Complete = TRUE`.",
+        "height": 1072,
+        "width": 744,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1664,
+        -608
+      ],
+      "id": "8bf2a2d4-d64a-4658-b166-1e5b2a7e475f",
+      "name": "Section 3: Analysis & Storage (Corrected)"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udcf1 FINAL NOTIFICATION: READY FOR OUTREACH\n**Key Nodes: Telegram Message Preparation \u2192 Send Notification**\n\n**WHAT HAPPENS:**\n1. **\ud83d\udcf1 Prepare Telegram Notification Summary** - Creates comprehensive completion message\n2. **Send a text message** - Sends notification to Telegram chat\n\n**TELEGRAM SETUP REQUIRED:**\n- **Chat ID:** `7049994855` (update with your chat ID)\n- **Telegram Credentials:** \"We Love Noz API\" (update with your bot)\n- **Bot Token:** Required for sending messages\n\n**NOTIFICATION INCLUDES:**\n- **\ud83d\udcca Processing Results:** Total companies, high priority count\n- **\ud83c\udfaf Quality Metrics:** Ready for outreach, excellent automation fit\n- **\ud83d\udcc8 Performance Stats:** Average score, business descriptions found\n- **\ud83d\ude80 Top Performers:** Companies scoring 85+ points\n- **\u23f0 Timestamp:** Eastern Time completion time\n\n\n**TO CUSTOMIZE:**\n1. Replace Chat ID with your Telegram chat\n2. Update Telegram bot credentials\n3. Modify message format if needed\n4. Test notification before production use",
+        "height": 864,
+        "width": 744,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -912,
+        -400
+      ],
+      "id": "f0a72a88-d35f-4b5f-a6ed-24904674fa89",
+      "name": "Final Notification: Ready for Outreach"
+    },
+    {
+      "parameters": {
+        "content": "## Add api key\n",
+        "height": 240,
+        "width": 224,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2208,
+        112
+      ],
+      "id": "10f0d75c-2697-4ed1-abc7-295a83a7f48d",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "\ud83c\udfaf Fetch Leads Ready for Enrichment": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udd04 Enhanced Lead Enrichment Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udd04 Enhanced Lead Enrichment Processor": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udd0d Filter Leads Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udd0d Filter Leads Only": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udd04 Domain Extractor for Apollo Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udd04 Domain Extractor for Apollo Enrichment": {
+      "main": [
+        [
+          {
+            "node": "\ud83c\udfe2 Apollo Company Scraper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83c\udfe2 Advanced Apollo Company Enrichment Formatter": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udd04 Comprehensive Data Enrichment Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udcca Update Airtable with Complete Enrichment Data": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udcf1 Prepare Telegram Notification Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udcf1 Prepare Telegram Notification Summary": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udd04 Comprehensive Data Enrichment Processor": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udcca Update Airtable with Complete Enrichment Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "\ud83c\udfaf Fetch Leads Ready for Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83c\udfe2 Apollo Company Scraper": {
+      "main": [
+        [
+          {
+            "node": "\ud83c\udfe2 Advanced Apollo Company Enrichment Formatter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "activeVersionId": null,
+  "versionCounter": 22,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-08-31T15:50:45.640Z",
+      "createdAt": "2025-08-31T15:50:45.640Z",
+      "role": "workflow:owner",
+      "workflowId": "9The2TPS3vpXUJoL",
+      "projectId": "3PTcJ2mMcVduDkV6",
+      "project": {
+        "updatedAt": "2025-04-23T19:12:24.962Z",
+        "createdAt": "2025-04-23T19:10:00.223Z",
+        "id": "3PTcJ2mMcVduDkV6",
+        "name": "YOUR_CREDENTIAL_HERE",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "c59b8fe8-021b-47c6-bde5-5b2ca7aae876"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

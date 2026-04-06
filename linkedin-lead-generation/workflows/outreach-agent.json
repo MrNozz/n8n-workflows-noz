@@ -1,0 +1,1933 @@
+{
+  "updatedAt": "2025-10-05T18:44:14.798Z",
+  "createdAt": "2025-08-31T15:49:42.120Z",
+  "name": "Outreach Agent",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// \ud83e\udd16 Initialize AI Outreach Orchestration - FIXED TO MATCH WORKING PATTERN\n// This should receive the output from \"\ud83c\udfaf Process AI Outreach Campaign Form Data\"\n\nconst campaignData = $input.first().json;\nconst sessionId = campaignData.session_id || Math.random().toString(36).substr(2, 9);\nconst timestamp = new Date().toISOString();\n\n// Extract campaign configuration from processed form data\nconst campaignConfig = campaignData.campaign_config || {};\nconst sendsparkConfig = campaignData.sendspark_config || { enabled: false };\nconst aiInstructions = campaignData.ai_instructions || {};\nconst airtableConfig = campaignData.airtable_config || {};\n\n// Build enhanced orchestration context that matches the working workflow\nconst outreachContext = {\n  // Session Management\n  session_id: sessionId,\n  campaign_name: campaignData.campaign_name || 'AI Outreach Campaign',\n  workflow_start: timestamp,\n  trigger_source: campaignData.trigger_source || 'wizard_form_submission',\n  workflow_stage: 'orchestration_ready',\n  \n  // Campaign Configuration (from processed form)\n  campaign_config: {\n    batch_size: campaignConfig.batch_size || 1,\n    campaign_focus: campaignConfig.campaign_focus || 'premium_prospects',\n    campaign_type: sendsparkConfig.enabled ? 'video_enhanced' : 'email_only',\n    video_enabled: sendsparkConfig.enabled || false,\n    video_threshold: sendsparkConfig.video_threshold || 80,\n    target_industry: campaignConfig.target_industry || null,\n    priority_level: campaignConfig.priority_level || 'high',\n    additional_instructions: campaignConfig.additional_instructions || '',\n    \n    // User Selection Context (from form processing)\n    user_selections: campaignConfig.user_selections || {}\n  },\n  \n  // SendSpark Configuration (from processed form)\n  sendspark_config: sendsparkConfig,\n  \n  // AI Instructions (from processed form)\n  ai_instructions: {\n    primary_objective: aiInstructions.primary_objective || `Execute ${campaignData.campaign_name || 'Smart Outreach Campaign'} with ${sendsparkConfig.enabled ? 'video-enhanced' : 'email-only'} personalized outreach`,\n    \n    processing_strategy: aiInstructions.processing_strategy || {\n      high_value_leads: sendsparkConfig.enabled ? 'Create SendSpark videos + premium emails' : 'Focus on premium email personalization',\n      medium_value_leads: 'Standard personalized email outreach',\n      lead_prioritization: campaignConfig.priority_level || 'high',\n      industry_focus: campaignConfig.target_industry ? `Focus on ${campaignConfig.target_industry} industry prospects` : 'Cross-industry approach'\n    },\n    \n    messaging_guidelines: aiInstructions.messaging_guidelines || {\n      tone: campaignConfig.campaign_focus === 'quick_wins' ? 'Direct and action-oriented' : 'Professional and relationship-building',\n      personalization_level: campaignConfig.campaign_focus === 'premium_prospects' ? 'Deep research-based' : 'Standard company-based',\n      call_to_action: campaignConfig.campaign_focus === 'quick_wins' ? 'Meeting request' : 'Value-driven conversation starter',\n      additional_context: campaignConfig.additional_instructions || 'Follow standard best practices'\n    },\n    \n    success_metrics: aiInstructions.success_metrics || {\n      target_response_rate: campaignConfig.campaign_focus === 'premium_prospects' ? '15-25%' : '12-20%',\n      expected_meetings: Math.round((campaignConfig.batch_size || 1) * 0.15),\n      video_creation_target: sendsparkConfig.enabled ? Math.round((campaignConfig.batch_size || 15) * 0.4) : 0\n    }\n  },\n  \n  // Airtable Configuration (from processed form)\n  airtable_config: airtableConfig,\n  \n  // Orchestration Brief\n  orchestration_brief: {\n    objective: `Execute ${campaignData.campaign_name || 'Smart Outreach Campaign'} with ${sendsparkConfig.enabled ? 'video-enhanced' : 'email-only'} personalized outreach`,\n    campaign_type: sendsparkConfig.enabled ? 'Premium Video Campaign' : 'Standard Email Campaign',\n    batch_size: campaignConfig.batch_size || 1,\n    target_industry: campaignConfig.target_industry || 'All Industries',\n    \n    available_specialists: [\n      'Lead Intelligence Agent',\n      'Personalization Strategist Agent',\n      ...(sendsparkConfig.enabled ? ['SendSpark Video Creator Agent'] : []),\n      'Email Optimization Agent',\n      'Outreach Coordinator Agent',\n      'Performance Analytics Agent'\n    ],\n    \n    data_sources: ['Airtable Leads', 'Company Intelligence', 'Industry Analysis', 'Performance Metrics'],\n    target_channels: [\n      ...(sendsparkConfig.enabled ? ['SendSpark Video'] : []),\n      'Gmail Email',\n      'LinkedIn DM'\n    ],\n    outreach_types: [\n      ...(sendsparkConfig.enabled ? ['VIDEO_ENHANCED'] : []),\n      'PERSONALIZED_EMAIL',\n      'MULTI_TOUCH_SEQUENCE'\n    ]\n  },\n  \n  // Lead Selection Criteria (from processed form)\n  lead_criteria: {\n    min_lead_score: 60,\n    required_fields: ['Email', 'Company Name', 'Business Description'],\n    email_status: 'verified',\n    ready_for_sendspark: sendsparkConfig.enabled,\n    ready_to_send: true,\n    target_industry: campaignConfig.target_industry,\n    batch_limit: campaignConfig.batch_size || 1\n  },\n  \n  // Routing Decision\n  routing_decision: {\n    use_sendspark: sendsparkConfig.enabled || false,\n    video_threshold: sendsparkConfig.video_threshold || 80,\n    processing_mode: sendsparkConfig.enabled ? 'video_enhanced' : 'email_only'\n  },\n  \n  // Workflow Routing\n  next_steps: {\n    fetch_leads: true,\n    ai_processing: true,\n    sendspark_integration: sendsparkConfig.enabled || false,\n    email_drafting: true,\n    progress_tracking: true\n  }\n};\n\nconsole.log(`\ud83e\udd16 AI Outreach Orchestration Initialized - Session: ${sessionId}`);\nconsole.log(`   \ud83c\udfaf Campaign: ${outreachContext.campaign_name}`);\nconsole.log(`   \ud83d\udcca Configured Batch Size: ${campaignConfig.batch_size || 15}`);\nconsole.log(`   \ud83c\udfaf Campaign Focus: ${campaignConfig.campaign_focus || 'premium_prospects'}`);\nconsole.log(`   \ud83c\udfa5 SendSpark: ${sendsparkConfig.enabled ? 'ENABLED' : 'DISABLED'}`);\nconsole.log(`   \ud83c\udfaf Processing Mode: ${outreachContext.routing_decision.processing_mode}`);\nconsole.log(`   \ud83c\udfed Target Industry: ${campaignConfig.target_industry || 'All Industries'}`);\n\nreturn [{ json: outreachContext }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1488,
+        1776
+      ],
+      "id": "9177c0bb-1aca-4922-85ed-531ea9787b9f",
+      "name": "\ud83e\udd16 Initialize AI Outreach Orchestration"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=## CURRENT LEAD PROCESSING\n**Lead:** {{ $json.lead['Full Name'] }} at {{ $json.lead['Company Name'] }}\n**Email:** {{ $json.lead.Email }}\n**Job Title:** {{ $json.lead['Job Title'] }}\n**Industry:** {{ $json.lead['Company Industry'] }}\n**Company Size:** {{ $json.lead['Company Size'] }} employees\n**Lead Score:** {{ $json.lead['Final Lead Score'] }}\n**Email Confidence:** {{ $json.lead['Email Confidence'] }}%\n**Seniority Level:** {{ $json.lead['Seniority Level'] }}\n**Processing Tier:** {{ $json.current_lead_context.processing_tier }}\n\n## BUSINESS INTELLIGENCE\n**Business Description:** {{ $json.lead['Business Description'] }}\n**Service Offering:** {{ $json.lead['Service Offering'] }}\n**Target Industry:** {{ $json.lead['Target Industry'] }}\n**Company Website:** {{ $json.lead['Company Website'] }}\n**Personal LinkedIn:** {{ $json.lead['Personal LinkedIn URL'] }}\n**Funding Status:** {{ $json.lead['Funding Status'] }}\n\n## SENDSPARK VIDEO STATUS (CRITICAL FOR EMAIL LOGIC)\n**SendSpark Enabled:** {{ $json.sendspark_status.enabled }}\n**Video Created:** {{ $json.lead.sendspark_integration.video_created }}\n**Video Valid:** {{ $json.sendspark_config.enabled }}\n**Video URL:** {{ $json.lead.sendspark_integration.video_url }}\n\n## CAMPAIGN CONTEXT\n**Campaign Name:** {{ $json.campaign_name }}\n**Session ID:** {{ $json.session_id }}\n**Processing Mode:** {{ $json.routing_decision.processing_mode }}\n**Current Lead:** {{ $json.lead_index }} of {{ $json.total_leads }}\n**Workflow Stage:** {{ $json.workflow_stage }}\n**Processing Timestamp:** {{ $json.processing_timestamp }}\n\n## PROCESSING CONTEXT\n**Recommended Approach:** {{ $json.current_lead_context.recommended_approach }}\n**Technical Detail Level:** {{ $json.current_lead_context.technical_detail_level }}\n**SendSpark Eligible:** {{ $json.current_lead_context.sendspark_eligible }}\n**SendSpark Video Available:** {{ $json.current_lead_context.sendspark_video_available }}\n\n## SUCCESS TARGETS\n**Target Response Rate:** {{ $json.success_targets.target_response_rate }}\n**Expected Meetings:** {{ $json.success_targets.expected_meetings }}\n**Personalization Quality:** {{ $json.success_targets.personalization_quality }}\n\n---\n\n**Your Mission:** Coordinate your specialist team to create ONE personalized 90-word cold outreach email for {{ $json.lead['Full Name'] }}.\n\n## AGENT COORDINATION INSTRUCTIONS\n\n### **STEP 1: Get Company Information (ALWAYS FIRST)**\nCall \"AI Automation Services Handbook\" to retrieve:\n- Company name and service offerings\n- **Sender name for email signature**\n- Company website and contact details\n\n### **STEP 2: Lead Analysis (ALWAYS)**\nCall \"Lead Intelligence Agent\" with parameters:\n- analysis_focus: \"Analyze {{ $json.lead['Company Name'] }} for outreach personalization\"\n- personalization_goals: \"Identify key pain points and value propositions for {{ $json.lead['Service Offering'] }} business\"\n- industry_context: \"{{ $json.lead['Company Industry'] }} industry insights and challenges\"\n- session_id: \"{{ $json.session_id }}\"\n\nCall \"Personalization Strategist Agent\" with parameters:\n- industry_focus: \"{{ $json.lead['Company Industry'] }} industry considerations\"\n- company_size_context: \"{{ $json.lead['Company Size'] }}-person company organizational insights\"\n- pain_points: \"Business challenges for {{ $json.lead['Service Offering'] }} companies in {{ $json.lead['Company Industry'] }}\"\n- conversion_goals: \"Generate meetings and responses from C-Level prospects\"\n- session_id: \"{{ $json.session_id }}\"\n\n### **STEP 3: Video Decision (CONDITIONAL LOGIC)**\n**CRITICAL: Check SendSpark Status First**\n\n**IF SendSpark Enabled = true ({{ $json.sendspark_status.enabled }}):**\nCall \"SendSpark Decision Agent\" with parameters:\n- lead_score: {{ $json.lead['Final Lead Score'] }}\n- seniority_level: \"{{ $json.lead['Seniority Level'] }}\"\n- company_name: \"{{ $json.lead['Company Name'] }}\"\n- company_website: \"{{ $json.lead['Company Website'] }}\"\n- contact_name: \"{{ $json.lead['Full Name'] }}\"\n- contact_email: \"{{ $json.lead.Email }}\"\n- job_title: \"{{ $json.lead['Job Title'] }}\"\n- video_created: {{ $json.lead.sendspark_integration.video_created }}\n- video_valid: {{ $json.sendspark_config.enabled }}\n- video_url: \"{{ $json.lead.sendspark_integration.video_url }}\"\n\n**IF SendSpark Enabled = false:**\nSkip SendSpark Decision Agent entirely. Email will have NO video reference.\n\n### **STEP 4: Email Creation (ALWAYS)**\nCall \"Email Creator Agent\" with parameters:\n- lead_first_name: \"{{ $json.lead['Full Name'].split(' ')[0] }}\"\n- company_name: \"{{ $json.lead['Company Name'] }}\"\n- company_industry: \"{{ $json.lead['Company Industry'] }}\"\n- service_offering: \"{{ $json.lead['Service Offering'] }}\"\n- business_description: \"{{ $json.lead['Business Description'] }}\"\n- seniority_level: \"{{ $json.lead['Seniority Level'] }}\"\n- sendspark_enabled: {{ $json.sendspark_status.enabled }}\n- video_available: {{ $json.lead.sendspark_integration.video_created }}\n- video_valid: {{ $json.sendspark_config.enabled }}\n- video_url: \"{{ $json.lead.sendspark_integration.video_url }}\"\n\n**Pass all intelligence from previous agents to Email Creator**\n\n### **STEP 5: Delivery & Tracking (ALWAYS)**\nCall \"Create Gmail Draft Tool\" with parameters:\n- To_Email: {{ $json.lead.Email }}\n- Subject: Use subject line from Email Creator Agent\n- Message: Use email body from Email Creator Agent\n\nCall \"Update Airtable Tool\" with parameters:\n- Email__using_to_match_: {{ $json.lead.Email }}\n- Ready_to_Send: true\n\n## EMAIL REQUIREMENTS (CRITICAL)\nThe final email MUST follow this structure:\n1. **Subject:** \"[First Name], quick idea for [pain point/opportunity]\"\n2. **Opener:** \"Hey [First Name], I noticed [specific observation]\"\n3. **Pain Point:** Point out specific business challenge\n4. **Solution:** Brief mention of how you help\n5. **Video Line (CONDITIONAL):** \n   - **ONLY IF SendSpark enabled AND valid video:** \"I recorded a quick 2\u20133 minute video walking through this in more detail \u2014 you can watch it here [VIDEO_URL].\"\n   - **OTHERWISE:** Skip video line entirely\n6. **CTA:** \"Curious to hear your thoughts,\" or \"Worth a look?\"\n7. **Signature:** Sender name from handbook\n\n**Word Limit:** Under 90 words total\n**Tone:** Friendly, simple, no jargon\n**Video Logic:** Only mention if SendSpark enabled AND video exists\n\n**Processing Priority:** This is a {{ $json.current_lead_context.processing_tier }} lead (Score: {{ $json.lead['Final Lead Score'] }}) requiring {{ $json.current_lead_context.recommended_approach }} approach.\n\n**Execute the 5-step coordination sequence and create the perfect personalized email!**",
+        "options": {
+          "systemMessage": "=You are the Master Outreach Orchestrator - the conductor of a specialized AI team that creates personalized cold outreach emails.\n\n## YOUR ROLE\nCoordinate specialist agents to create ONE personalized email per lead, then STOP.\n\n## AGENT COORDINATION SEQUENCE\n\n### STEP 1: Get Company Information (ALWAYS FIRST)\n- Call \"AI Automation Services Handbook\" to get:\n  - Your company details and service offerings\n  - SENDER NAME (critical for email signature)\n  - Company website and contact information\n\n### STEP 2: Lead Analysis (ALWAYS)\n- Call \"Lead Intelligence Agent\" for deep company and prospect analysis\n- Call \"Personalization Strategist Agent\" for messaging strategy\n\n### STEP 3: Video Decision (CONDITIONAL)\n- **ONLY IF SendSpark is enabled:** Call \"SendSpark Decision Agent\"\n- **IF SendSpark disabled:** Skip video agent entirely - email will have NO video reference\n\n### STEP 4: Email Creation (ALWAYS)\n- Call \"Email Creator Agent\" with all gathered intelligence\n- Ensure video logic is handled correctly based on SendSpark status\n\n### STEP 5: Delivery & Tracking (ALWAYS)\n- Call \"Create Gmail Draft Tool\" with proper recipient and content\n- Call \"Update Airtable Tool\" to mark lead as processed\n\n## CRITICAL VIDEO LOGIC\n- **IF SendSpark disabled:** Never mention video in email\n- **IF SendSpark enabled BUT no valid video:** Never mention video in email\n- **ONLY mention video IF:** SendSpark enabled AND valid video URL exists\n\n## COORDINATION RULES\n1. Always get sender name from AI Automation Services Handbook first\n2. Pass relevant context between agents in sequence\n3. Handle video logic conditionally based on SendSpark status\n4. Create exactly ONE email per lead following 90-word structure\n5. STOP after Gmail draft creation and Airtable update\n\n## SUCCESS CRITERIA\n- Lead gets personalized 90-word email with proper structure\n- Video only mentioned if SendSpark enabled AND video exists\n- Sender name included from company handbook\n- Gmail draft sent to lead's email address\n- Airtable updated with completion status"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -208,
+        1760
+      ],
+      "id": "af17fb39-1b97-4ee3-9df0-ed182d9480f5",
+      "name": "\ud83c\udfaf Master Outreach Orchestrator"
+    },
+    {
+      "parameters": {
+        "description": "Strategic thinking tool for complex outreach orchestration, agent coordination, and lead processing decisions. Use this to plan your approach before coordinating specialist agents.\n\n## THINKING FOCUS AREAS\n\n### 1. LEAD ASSESSMENT & STRATEGY\n- Analyze lead quality and processing tier\n- Determine optimal personalization approach\n- Assess video eligibility and integration strategy\n- Plan technical detail level based on seniority\n\n### 2. AGENT COORDINATION PLANNING\n- Map out the optimal sequence of agent calls\n- Identify key information to pass between agents\n- Plan contingencies for tool failures\n- Determine success criteria for each step\n- **CRITICAL: Plan to get sender name from AI Automation Services Handbook**\n\n### 3. PERSONALIZATION STRATEGY\n- Analyze business description depth and quality\n- Identify key pain points and value propositions\n- Plan industry-specific messaging approach\n- Determine optimal tone and communication style\n\n### 4. VIDEO INTEGRATION LOGIC (CRITICAL)\n- **Check SendSpark enabled status FIRST**\n- **IF SendSpark disabled: Plan email WITHOUT any video reference**\n- **IF SendSpark enabled: Check if valid video exists**\n- **Only plan video integration if BOTH conditions true**\n- Plan video URL vs no video logic\n\n### 5. EXECUTION PLANNING\n- Plan Gmail draft configuration\n- Prepare Airtable update parameters\n- **Ensure sender name is retrieved from handbook**\n- Anticipate potential errors or edge cases\n- Define success metrics for this lead\n\n## STRATEGIC QUESTIONS TO CONSIDER\n- What makes this lead unique and how can we leverage that?\n- Which agents will provide the most value for this lead tier?\n- **Is SendSpark enabled for this campaign?**\n- **Does this lead have a valid video available?**\n- **Should video be mentioned in the email or not?**\n- What's the optimal sequence to maximize email quality?\n- **Who is the sender (get from handbook)?**\n- Are there any risks or challenges to anticipate?\n\n## CRITICAL REMINDERS\n- **ALWAYS get sender name from AI Automation Services Handbook**\n- **NEVER mention video unless SendSpark enabled AND video exists**\n- **Plan email structure based on video availability**\n- **Ensure 90-word limit compliance**\n\nUse this thinking space to plan your orchestration strategy before executing the agent coordination sequence."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        2160
+      ],
+      "id": "d934151f-1340-45f6-9fd9-d625de9e3ea6",
+      "name": "\ud83e\udde0 Think Tool"
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To_Email', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -176,
+        1984
+      ],
+      "id": "d8c2367c-04e0-4961-ae0b-479b4c3568e8",
+      "name": "\ud83d\udce7 Create Gmail Draft Tool",
+      "webhookId": "YOUR_WEBHOOKID_HERE",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "h6Ah1h013F5wEKFK",
+          "name": "Test Account (RA)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appM31OKQZtVVzbS8",
+          "mode": "list",
+          "cachedResultName": "Lead Intelligence",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblXRRZ1vHPbevxQT",
+          "mode": "list",
+          "cachedResultName": "Lead Intelligence",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "YOUR_EMAIL_HERE",
+            "Ready to Send": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Ready_to_Send', ``, 'boolean') }}",
+            "Draft Created": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Draft_Created', ``, 'boolean') }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Apollo ID",
+              "displayName": "Apollo ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Session ID",
+              "displayName": "Session ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Search Type",
+              "displayName": "Search Type",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "funded_companies",
+                  "value": "funded_companies"
+                },
+                {
+                  "name": "high_growth_companies",
+                  "value": "high_growth_companies"
+                },
+                {
+                  "name": "tech_ready_companies",
+                  "value": "tech_ready_companies"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Search Priority",
+              "displayName": "Search Priority",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "high",
+                  "value": "high"
+                },
+                {
+                  "name": "medium",
+                  "value": "medium"
+                },
+                {
+                  "name": "low",
+                  "value": "low"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email Status",
+              "displayName": "Email Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "verified",
+                  "value": "verified"
+                },
+                {
+                  "name": "likely",
+                  "value": "likely"
+                },
+                {
+                  "name": "unverified",
+                  "value": "unverified"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Email Confidence",
+              "displayName": "Email Confidence",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Job Title",
+              "displayName": "Job Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Seniority Level",
+              "displayName": "Seniority Level",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "c_suite",
+                  "value": "c_suite"
+                },
+                {
+                  "name": "vp",
+                  "value": "vp"
+                },
+                {
+                  "name": "director",
+                  "value": "director"
+                },
+                {
+                  "name": "manager",
+                  "value": "manager"
+                },
+                {
+                  "name": "individual_contributor",
+                  "value": "individual_contributor"
+                },
+                {
+                  "name": "C-Level",
+                  "value": "C-Level"
+                },
+                {
+                  "name": "VP",
+                  "value": "VP"
+                },
+                {
+                  "name": "Individual Contributor",
+                  "value": "Individual Contributor"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Personal LinkedIn URL",
+              "displayName": "Personal LinkedIn URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Company Website",
+              "displayName": "Company Website",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Company LinkedIn",
+              "displayName": "Company LinkedIn",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Company Industry",
+              "displayName": "Company Industry",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Company Size",
+              "displayName": "Company Size",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Company Revenue",
+              "displayName": "Company Revenue",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Funding Status",
+              "displayName": "Funding Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "recently_funded",
+                  "value": "recently_funded"
+                },
+                {
+                  "name": "growth_stage",
+                  "value": "growth_stage"
+                },
+                {
+                  "name": "tech_adoption",
+                  "value": "tech_adoption"
+                },
+                {
+                  "name": "private",
+                  "value": "private"
+                },
+                {
+                  "name": "unknown",
+                  "value": "unknown"
+                },
+                {
+                  "name": "Seed",
+                  "value": "Seed"
+                },
+                {
+                  "name": "Series A",
+                  "value": "Series A"
+                },
+                {
+                  "name": "Private",
+                  "value": "Private"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Country",
+              "displayName": "Country",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Processing Status",
+              "displayName": "Processing Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "apollo_complete",
+                  "value": "apollo_complete"
+                },
+                {
+                  "name": "linkedin_scraping",
+                  "value": "linkedin_scraping"
+                },
+                {
+                  "name": "ai_analysis",
+                  "value": "ai_analysis"
+                },
+                {
+                  "name": "ready_for_outreach",
+                  "value": "ready_for_outreach"
+                },
+                {
+                  "name": "email_drafted",
+                  "value": "email_drafted"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Collection Timestamp",
+              "displayName": "Collection Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Data Quality",
+              "displayName": "Data Quality",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "high",
+                  "value": "high"
+                },
+                {
+                  "name": "medium",
+                  "value": "medium"
+                },
+                {
+                  "name": "low",
+                  "value": "low"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Outreach Priority",
+              "displayName": "Outreach Priority",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "high",
+                  "value": "high"
+                },
+                {
+                  "name": "medium",
+                  "value": "medium"
+                },
+                {
+                  "name": "low",
+                  "value": "low"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Best Approach",
+              "displayName": "Best Approach",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "LinkedIn DM",
+                  "value": "LinkedIn DM"
+                },
+                {
+                  "name": "Email",
+                  "value": "Email"
+                },
+                {
+                  "name": "Phone",
+                  "value": "Phone"
+                },
+                {
+                  "name": "Research contacts first",
+                  "value": "Research contacts first"
+                },
+                {
+                  "name": "Email First",
+                  "value": "Email First"
+                },
+                {
+                  "name": "LinkedIn + Email",
+                  "value": "LinkedIn + Email"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ready for Outreach",
+              "displayName": "Ready for Outreach",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Business Description",
+              "displayName": "Business Description",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Pain Points Detected",
+              "displayName": "Pain Points Detected",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Opportunities Identified",
+              "displayName": "Opportunities Identified",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Personalized Message",
+              "displayName": "Personalized Message",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Final Lead Score",
+              "displayName": "Final Lead Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Automation Fit",
+              "displayName": "Automation Fit",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Quick Pitch",
+              "displayName": "Quick Pitch",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Target Industry",
+              "displayName": "Target Industry",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Outreach Focus",
+              "displayName": "Outreach Focus",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Service Offering",
+              "displayName": "Service Offering",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ready for Enrichment",
+              "displayName": "Ready for Enrichment",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Email Validated",
+              "displayName": "Email Validated",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Business Research Complete",
+              "displayName": "Business Research Complete",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ready for SendSpark",
+              "displayName": "Ready for SendSpark",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Ready to Send",
+              "displayName": "Ready to Send",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Draft Created",
+              "displayName": "Draft Created",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -304,
+        2176
+      ],
+      "id": "d43423c5-94c5-4055-928a-b95b7422700a",
+      "name": "\ud83d\udccb Update Airtable Tool",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appM31OKQZtVVzbS8",
+          "mode": "list",
+          "cachedResultName": "Lead Intelligence",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblXRRZ1vHPbevxQT",
+          "mode": "list",
+          "cachedResultName": "Lead Intelligence",
+          "cachedResultUrl": "YOUR_CACHEDRESULTURL_HERE"
+        },
+        "filterByFormula": "={{ $json.airtable_config.filter_formula }}",
+        "returnAll": false,
+        "limit": "={{ $json.campaign_config.batch_size }}",
+        "options": {
+          "fields": "={{ $json.airtable_config.required_fields }}"
+        },
+        "sort": {
+          "property": [
+            {
+              "field": "={{ $json.airtable_config.sort_by }}",
+              "direction": "={{ $json.airtable_config.sort_direction }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -1216,
+        1776
+      ],
+      "id": "9086d335-fc2c-4ba8-8e1a-2b62dc2bba0e",
+      "name": "Search records",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "K4gvRCfR7JWXPL1K",
+          "name": "N8N - Agent-n - Main Integration"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "sonar",
+        "messages": {
+          "message": [
+            {
+              "content": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('message0_Text', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        2544
+      ],
+      "id": "fb0d37a6-92ec-42ea-b23a-117165069304",
+      "name": "Message a model in Perplexity",
+      "credentials": {
+        "perplexityApi": {
+          "id": "gzKUYss25vIdMeow",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "\ud83d\ude80 AI Outreach Campaign Wizard",
+        "formDescription": "Launch your personalized outreach campaign with AI-powered messaging and optional SendSpark videos. Our intelligent system will craft compelling messages tailored to each prospect.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "\ud83c\udfaf Campaign Name",
+              "placeholder": "e.g., Q4 High-Value Tech Prospects, Holiday Sales Push",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "\ud83d\udcca How many leads do you want to contact?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "\ud83d\udcdd Test Run (1-5 leads) - Test Flow"
+                  },
+                  {
+                    "option": "\ud83e\uddea Pilot Campaign (10-15 leads) - Test messaging"
+                  },
+                  {
+                    "option": "\ud83c\udfaf Focused Outreach (20-30 leads) - Quality focused"
+                  },
+                  {
+                    "option": "\ud83d\udcc8 Standard Campaign (35-50 leads) - Balanced approach"
+                  },
+                  {
+                    "option": "\ud83d\ude80 Volume Push (60-75 leads) - Maximum reach"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "\ud83c\udfaf What's your primary campaign goal?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "\ud83d\udc8e Premium Prospects - Target high-value decision makers"
+                  },
+                  {
+                    "option": "\u26a1 Quick Wins - Fast responses and meetings"
+                  },
+                  {
+                    "option": "\ud83d\udcca Strategic Growth - Long-term relationship building"
+                  },
+                  {
+                    "option": "\ud83c\udfaf Industry Specific - Targeted vertical outreach"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "\ud83c\udfa5 Include personalized SendSpark videos?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "\ud83c\udfac Yes - Create videos for high-value prospects (Premium)"
+                  },
+                  {
+                    "option": "\ud83d\udce7 No - Email-only campaign (Standard)"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "\ud83c\udfe2 SendSpark Workspace ID",
+              "placeholder": "e.g., w1dnne4qcatrajzwy4wacx9mf8tym0kd (Required for videos)"
+            },
+            {
+              "fieldLabel": "\ud83d\udcf9 SendSpark Campaign ID",
+              "placeholder": "e.g., wcefasgigm11e6tsau4x4k3qqigakogf (Your dynamic campaign)"
+            },
+            {
+              "fieldLabel": "\ud83d\udd11 SendSpark API Key",
+              "placeholder": "Your API key from SendSpark settings"
+            },
+            {
+              "fieldLabel": "\ud83d\udd10 SendSpark API Secret",
+              "placeholder": "Your API secret from SendSpark settings"
+            },
+            {
+              "fieldLabel": "\u2b50 Video creation threshold (lead score)",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "\ud83d\udd25 90+ - Only for exceptional prospects"
+                  },
+                  {
+                    "option": "\u2b50 80+ - High-value prospects (Recommended)"
+                  },
+                  {
+                    "option": "\ud83d\udcc8 70+ - Good prospects with potential"
+                  },
+                  {
+                    "option": "\ud83c\udfaf 60+ - All qualified prospects"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "\ud83d\udcdd Additional Campaign Instructions",
+              "fieldType": "textarea",
+              "placeholder": "Any specific messaging focus, pain points to address, or special requirements for this campaign..."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -2048,
+        1776
+      ],
+      "id": "2390b713-18bd-425b-9448-80ecc7c8ae1b",
+      "name": "\ud83c\udfaf Smart Outreach Campaign Form",
+      "webhookId": "YOUR_WEBHOOKID_HERE"
+    },
+    {
+      "parameters": {
+        "jsCode": "// \ud83c\udfaf Process AI Outreach Campaign Form Data - FIXED FOR ACTUAL DATA\nconst formData = $input.first().json;\nconst sessionId = Math.random().toString(36).substr(2, 9);\nconst timestamp = new Date().toISOString();\n\nconsole.log('\ud83d\ude80 Processing Outreach Campaign Form:', formData);\n\n// Extract form fields with emoji-enhanced field names\nconst campaignName = formData['\ud83c\udfaf Campaign Name'] || 'AI Outreach Campaign';\n\n// Extract batch size from descriptive dropdown text\nconst batchSizeText = formData['\ud83d\udcca How many leads do you want to contact?'] || '';\nlet batchSize = 15;\nif (batchSizeText.includes('1-5')) batchSize = 1;\nelse if (batchSizeText.includes('10-15')) batchSize = 15;\nelse if (batchSizeText.includes('20-30')) batchSize = 30;\nelse if (batchSizeText.includes('35-50')) batchSize = 50;\nelse if (batchSizeText.includes('60-75')) batchSize = 75;\n\n// Extract campaign goal from dropdown\nconst campaignGoalText = formData['\ud83c\udfaf What\\'s your primary campaign goal?'] || '';\nlet campaignFocus = 'premium_prospects';\nlet priorityLevel = 'high';\nif (campaignGoalText.includes('Premium Prospects')) {\n  campaignFocus = 'premium_prospects';\n  priorityLevel = 'high';\n} else if (campaignGoalText.includes('Quick Wins')) {\n  campaignFocus = 'quick_wins';\n  priorityLevel = 'urgent';\n} else if (campaignGoalText.includes('Strategic Growth')) {\n  campaignFocus = 'strategic_growth';\n  priorityLevel = 'medium';\n} else if (campaignGoalText.includes('Industry Specific')) {\n  campaignFocus = 'industry_specific';\n  priorityLevel = 'high';\n}\n\n// Extract SendSpark preference\nconst sendSparkText = formData['\ud83c\udfa5 Include personalized SendSpark videos?'] || '';\nconst includeSendSpark = sendSparkText.includes('Yes');\nconst campaignType = includeSendSpark ? 'video_enhanced' : 'email_only';\n\n// Extract video threshold from dropdown\nconst videoThresholdText = formData['\u2b50 Video creation threshold (lead score)'] || '';\nlet videoThreshold = 80;\nif (videoThresholdText.includes('90+')) videoThreshold = 90;\nelse if (videoThresholdText.includes('80+')) videoThreshold = 80;\nelse if (videoThresholdText.includes('70+')) videoThreshold = 70;\nelse if (videoThresholdText.includes('60+')) videoThreshold = 60;\n\n// Extract target industry\nconst targetIndustryText = formData['\ud83c\udfed Target Industry (Optional)'] || '';\nlet targetIndustry = null;\nlet industryFilter = '';\n\nif (targetIndustryText && !targetIndustryText.includes('All Industries')) {\n  if (targetIndustryText.includes('Technology')) {\n    targetIndustry = 'technology';\n    industryFilter = 'OR(FIND(\"technology\", LOWER({Company Industry})) > 0, FIND(\"software\", LOWER({Company Industry})) > 0, FIND(\"saas\", LOWER({Company Industry})) > 0, FIND(\"information technology\", LOWER({Company Industry})) > 0)';\n  } else if (targetIndustryText.includes('Healthcare')) {\n    targetIndustry = 'healthcare';\n    industryFilter = 'OR(FIND(\"healthcare\", LOWER({Company Industry})) > 0, FIND(\"medical\", LOWER({Company Industry})) > 0, FIND(\"pharmaceutical\", LOWER({Company Industry})) > 0, FIND(\"biotechnology\", LOWER({Company Industry})) > 0)';\n  } else if (targetIndustryText.includes('Financial')) {\n    targetIndustry = 'financial_services';\n    industryFilter = 'OR(FIND(\"financial\", LOWER({Company Industry})) > 0, FIND(\"banking\", LOWER({Company Industry})) > 0, FIND(\"fintech\", LOWER({Company Industry})) > 0, FIND(\"financial services\", LOWER({Company Industry})) > 0)';\n  } else if (targetIndustryText.includes('E-commerce')) {\n    targetIndustry = 'ecommerce';\n    industryFilter = 'OR(FIND(\"ecommerce\", LOWER({Company Industry})) > 0, FIND(\"retail\", LOWER({Company Industry})) > 0, FIND(\"e-commerce\", LOWER({Company Industry})) > 0, FIND(\"consumer goods\", LOWER({Company Industry})) > 0)';\n  } else if (targetIndustryText.includes('Manufacturing')) {\n    targetIndustry = 'manufacturing';\n    industryFilter = 'OR(FIND(\"manufacturing\", LOWER({Company Industry})) > 0, FIND(\"industrial\", LOWER({Company Industry})) > 0, FIND(\"electrical\", LOWER({Company Industry})) > 0)';\n  } else if (targetIndustryText.includes('Education')) {\n    targetIndustry = 'education';\n    industryFilter = 'OR(FIND(\"education\", LOWER({Company Industry})) > 0, FIND(\"learning\", LOWER({Company Industry})) > 0, FIND(\"university\", LOWER({Company Industry})) > 0, FIND(\"e-learning\", LOWER({Company Industry})) > 0)';\n  } else if (targetIndustryText.includes('Construction')) {\n    targetIndustry = 'construction';\n    industryFilter = 'OR(FIND(\"construction\", LOWER({Company Industry})) > 0, FIND(\"real estate\", LOWER({Company Industry})) > 0, FIND(\"building\", LOWER({Company Industry})) > 0, FIND(\"architecture\", LOWER({Company Industry})) > 0)';\n  }\n}\n\nconst additionalInstructions = formData['\ud83d\udcdd Additional Campaign Instructions'] || '';\n\n// SendSpark configuration with updated field names\nconst sendsparkConfig = includeSendSpark ? {\n  enabled: true,\n  workspace_id: formData['\ud83c\udfe2 SendSpark Workspace ID'] || null,\n  campaign_id: formData['\ud83d\udcf9 SendSpark Campaign ID'] || null,\n  api_key: formData['\ud83d\udd11 SendSpark API Key'] || null,\n  api_secret: formData['\ud83d\udd10 SendSpark API Secret'] || null,\n  video_threshold: videoThreshold\n} : {\n  enabled: false\n};\n\n// Build Airtable filter - FIXED FOR ACTUAL DATA VALUES\n// Based on CSV analysis: Processing Status = \"ready_for_outreach\", boolean fields use \"checked\"\nlet airtableFilter = 'AND({Processing Status} = \"ready_for_outreach\", {Email Status} = \"verified\", {Email Confidence} >= 75)';\n\n// Add lead score filter if we have scores (many records have empty scores)\nif (campaignFocus === 'premium_prospects') {\n  airtableFilter = `AND(${airtableFilter.slice(4, -1)}, {Final Lead Score} >= 80)`;\n} else {\n  // For other campaigns, be more flexible with scoring\n  airtableFilter = `AND(${airtableFilter.slice(4, -1)}, OR({Final Lead Score} >= 60, {Final Lead Score} = BLANK()))`;\n}\n\n// Add industry filter if specified\nif (industryFilter) {\n  airtableFilter = `AND(${airtableFilter.slice(4, -1)}, ${industryFilter})`;\n}\n\n// Add campaign focus specific filters\nif (campaignFocus === 'quick_wins') {\n  airtableFilter = `AND(${airtableFilter.slice(4, -1)}, {Email Confidence} >= 85, OR({Seniority Level} = \"C-Level\", {Seniority Level} = \"VP\"))`;\n} else if (campaignFocus === 'strategic_growth') {\n  airtableFilter = `AND(${airtableFilter.slice(4, -1)}, {Company Size} >= 20, OR({Funding Status} = \"Series A\", {Funding Status} = \"Series B\", {Funding Status} = \"Private\", {Funding Status} = \"Seed\"))`;\n}\n\n// Build comprehensive campaign context for AI agent\nconst campaignContext = {\n  // Session Management\n  session_id: sessionId,\n  campaign_name: campaignName,\n  workflow_start: timestamp,\n  trigger_source: 'wizard_form_submission',\n  workflow_stage: 'leads_selected',\n  \n  // Campaign Configuration\n  campaign_config: {\n    batch_size: batchSize,\n    campaign_focus: campaignFocus,\n    campaign_type: campaignType,\n    video_enabled: includeSendSpark,\n    video_threshold: videoThreshold,\n    target_industry: targetIndustry,\n    priority_level: priorityLevel,\n    additional_instructions: additionalInstructions,\n    \n    // User Selection Context\n    user_selections: {\n      batch_selection: batchSizeText,\n      goal_selection: campaignGoalText,\n      video_selection: sendSparkText,\n      threshold_selection: videoThresholdText,\n      industry_selection: targetIndustryText\n    }\n  },\n  \n  // SendSpark Configuration\n  sendspark_config: sendsparkConfig,\n  \n  // AI Agent Instructions\n  ai_instructions: {\n    primary_objective: `Execute ${campaignName} targeting ${batchSize} ${campaignFocus.replace('_', ' ')} leads with ${includeSendSpark ? 'video-enhanced' : 'email-only'} personalized outreach`,\n    \n    processing_strategy: {\n      high_value_leads: includeSendSpark ? `Create SendSpark videos for leads with score >= ${videoThreshold}` : 'Focus on premium email personalization',\n      medium_value_leads: 'Standard personalized email outreach',\n      lead_prioritization: `Prioritize ${priorityLevel} priority leads based on ${campaignFocus} strategy`,\n      industry_focus: targetIndustry ? `Focus on ${targetIndustry} industry prospects` : 'Cross-industry approach'\n    },\n    \n    messaging_guidelines: {\n      tone: campaignFocus === 'quick_wins' ? 'Direct and action-oriented' : 'Professional and relationship-building',\n      personalization_level: campaignFocus === 'premium_prospects' ? 'Deep research-based' : 'Standard company-based',\n      call_to_action: campaignFocus === 'quick_wins' ? 'Meeting request' : 'Value-driven conversation starter',\n      additional_context: additionalInstructions || 'Follow standard best practices'\n    },\n    \n    success_metrics: {\n      target_response_rate: campaignFocus === 'premium_prospects' ? '15-25%' : campaignFocus === 'quick_wins' ? '20-35%' : '12-20%',\n      expected_meetings: Math.round(batchSize * 0.15),\n      video_creation_target: includeSendSpark ? Math.round(batchSize * 0.4) : 0\n    }\n  },\n  \n  // Airtable Query Configuration - FIXED FOR ACTUAL DATA\n  airtable_config: {\n    filter_formula: airtableFilter,\n    sort_by: 'Final Lead Score',  // Changed from Final Lead Score since many are empty\n    sort_direction: 'desc',\n    limit: batchSize * 3, // Increased limit since filtering is stricter\n    required_fields: [\n      'Record ID', 'Full Name', 'Email', 'Job Title', 'Company Name', 'Company Industry', \n      'Final Lead Score', 'Email Confidence', 'Seniority Level', \n      'Company Size', 'Funding Status', 'Personal LinkedIn URL', 'Email Status',\n      'Processing Status', 'Company Website',  'Business Description', 'Service Offering', 'Target Industry'\n    ]\n  },\n  \n  // Workflow Routing\n  next_steps: {\n    fetch_leads: true,\n    ai_processing: true,\n    sendspark_integration: includeSendSpark,\n    email_drafting: true,\n    progress_tracking: true\n  }\n};\n\n// Validate SendSpark configuration if enabled\nif (includeSendSpark) {\n  const missingFields = [];\n  if (!sendsparkConfig.workspace_id) missingFields.push('Workspace ID');\n  if (!sendsparkConfig.campaign_id) missingFields.push('Campaign ID');\n  if (!sendsparkConfig.api_key) missingFields.push('API Key');\n  if (!sendsparkConfig.api_secret) missingFields.push('API Secret');\n  \n  if (missingFields.length > 0) {\n    campaignContext.validation_warnings = [`SendSpark enabled but missing: ${missingFields.join(', ')}`];\n    console.warn(`\u26a0\ufe0f SendSpark validation warning: Missing ${missingFields.join(', ')}`);\n  }\n}\n\n// Enhanced logging\nconsole.log(`\ud83c\udfaf Campaign Configured: ${campaignName}`);\nconsole.log(`   \ud83d\udcca Batch Size: ${batchSize} (${batchSizeText.split(' - ')[1] || 'Custom'})`);\nconsole.log(`   \ud83c\udfaf Focus: ${campaignFocus} (${priorityLevel} priority)`);\nconsole.log(`   \ud83c\udfa5 SendSpark: ${includeSendSpark ? 'Premium Video Mode' : 'Standard Email Mode'}`);\nconsole.log(`   \ud83d\udcc8 Video Threshold: ${videoThreshold}`);\nconsole.log(`   \ud83c\udfed Industry: ${targetIndustry || 'All Industries'}`);\nconsole.log(`   \ud83d\udd0d Airtable Filter: ${airtableFilter}`);\n\n// Return the processed campaign context\nreturn [{ json: campaignContext }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1776,
+        1776
+      ],
+      "id": "63f259db-7c02-4d47-aca5-a7edd1051e30",
+      "name": "\ud83c\udfaf Process AI Outreach Campaign Form Data"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "72dae31c-19f4-481e-8584-06012b238a96",
+              "leftValue": "={{ $('\ud83e\udd16 Initialize AI Outreach Orchestration').item.json.next_steps.sendspark_integration }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -944,
+        1776
+      ],
+      "id": "0f4f1f43-50c7-4d86-b31c-df7e2989b996",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-4o-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        1968
+      ],
+      "id": "c855b3e5-edee-4d5b-befb-fe2da1a3bece",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "srSg7y6z8CLIxyxo",
+          "name": "OpenRouter - X Bot Brain Picker"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Real-time research tool powered by Perplexity AI. Use for gathering current market intelligence, company news, industry trends, and competitive analysis to enhance lead personalization.",
+        "text": "Research query: {{ $fromAI('message0_Text', 'Research query about the company, industry, or market trends', 'string') }}\n\nProvide comprehensive, current insights that can be used for lead personalization and outreach strategy.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -656,
+        2336
+      ],
+      "id": "667ee2a9-71e7-4031-b1ad-a51d18e4f34f",
+      "name": "Message a model in Perplexity1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        2496
+      ],
+      "id": "e0a94969-f905-42a6-b258-b33e4777afe3",
+      "name": "OpenRouter Chat Model2",
+      "credentials": {
+        "openRouterApi": {
+          "id": "srSg7y6z8CLIxyxo",
+          "name": "OpenRouter - X Bot Brain Picker"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.telegram_summary }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1136,
+        1760
+      ],
+      "id": "a2ee0443-ce01-4cd6-b07d-7dde30b47807",
+      "name": "\ud83d\udcf1 Send Success Notification",
+      "webhookId": "YOUR_WEBHOOKID_HERE",
+      "credentials": {
+        "telegramApi": {
+          "id": "EMYdSCihMCukxOcQ",
+          "name": "We Love Noz API"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// \ud83d\udcca Campaign Summary Generator\nconst allResults = $input.all();\nconst sessionId = allResults[0]?.json?.session_id || 'Unknown';\nconst campaignName = allResults[0]?.json?.campaign_name || 'AI Outreach Campaign';\n\n// Aggregate results\nconst totalLeads = allResults.length;\nconst successfulDrafts = allResults.filter(item => \n  item.json && (item.json.gmail_draft_created || item.json.subject)\n).length;\n\nconst companies = allResults.map(item => {\n  const leadData = item.json?.lead || item.json;\n  return {\n    name: leadData?.['Full Name'] || 'Unknown',\n    company: leadData?.['Company Name'] || 'Unknown Company',\n    industry: leadData?.['Company Industry'] || 'Unknown',\n    score: leadData?.['Final Lead Score'] || 0\n  };\n});\n\n// Calculate stats\nconst avgScore = Math.round(companies.reduce((sum, lead) => sum + lead.score, 0) / companies.length);\nconst industries = [...new Set(companies.map(c => c.industry))];\nconst topCompanies = companies.slice(0, 5); // Top 5 for summary\n\n// Create comprehensive summary\nconst summary = `\ud83d\ude80 **OUTREACH CAMPAIGN COMPLETED**\n\n\ud83d\udcca **Campaign Overview:**\n\u2022 Campaign: ${campaignName}\n\u2022 Session: ${sessionId}\n\u2022 Total Leads Processed: ${totalLeads}\n\u2022 Gmail Drafts Created: ${successfulDrafts}\n\u2022 Success Rate: ${Math.round((successfulDrafts/totalLeads)*100)}%\n\n\ud83d\udcc8 **Lead Quality:**\n\u2022 Average Lead Score: ${avgScore}/100\n\u2022 Industries: ${industries.slice(0,3).join(', ')}${industries.length > 3 ? ` +${industries.length-3} more` : ''}\n\n\ud83d\udc65 **Top Prospects:**\n${topCompanies.map(lead => \n  `\u2022 ${lead.name} - ${lead.company} (${lead.score})`\n).join('\\n')}\n\n\u2705 **Actions Completed:**\n\u2022 ${successfulDrafts} Gmail drafts ready for review\n\u2022 ${successfulDrafts} Airtable records updated\n\u2022 All leads marked as processed\n\n\ud83c\udfaf **Next Steps:**\nReview Gmail drafts and begin sending personalized outreach emails.\n\nCampaign completed at ${new Date().toLocaleString()}`;\n\nreturn [{ json: { telegram_summary: summary } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        1760
+      ],
+      "id": "12a6e450-548d-466c-af10-4fbc7ab2194b",
+      "name": "\ud83d\udcca Campaign Summary Generator"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83c\udfaf PHASE 1: INTELLIGENT CAMPAIGN CONFIGURATION & LEAD ORCHESTRATION\n**Key Nodes: Smart Campaign Form \u2192 Configuration Processor \u2192 AI Orchestration \u2192 Intelligent Lead Fetching**\n\n**\ud83c\udfaf SMART OUTREACH CAMPAIGN FORM (Form Trigger):**\n- **Comprehensive Wizard Interface** with 11 configurable fields\n- **Campaign Naming:** e.g., \"Q4 High-Value Tech Prospects\", \"Holiday Sales Push\"\n- **Intelligent Batch Sizing:**\n  - \ud83e\uddea Pilot Campaign (10-15 leads) - Test messaging\n  - \ud83c\udfaf Focused Outreach (20-30 leads) - Quality focused\n  - \ud83d\udcc8 Standard Campaign (35-50 leads) - Balanced approach\n  - \ud83d\ude80 Volume Push (60-75 leads) - Maximum reach\n- **Strategic Campaign Goals:**\n  - \ud83d\udc8e Premium Prospects - High-value decision makers\n  - \u26a1 Quick Wins - Fast responses and meetings\n  - \ud83d\udcca Strategic Growth - Long-term relationship building\n  - \ud83c\udfaf Industry Specific - Targeted vertical outreach\n\n**\ud83c\udfa5 SENDSPARK INTEGRATION CONFIG:**\n- **Video Toggle:** Premium video-enhanced vs standard email-only\n- **Dynamic API Setup:** Workspace ID, Campaign ID, API Key/Secret\n- **Smart Video Thresholds:** 90+, 80+, 70+, 60+ lead score triggers\n- **Industry Targeting:** Technology, Healthcare, Financial, E-commerce, etc.\n\n**\ud83c\udfaf PROCESS AI OUTREACH CAMPAIGN FORM DATA (Code Node):**\n- **Intelligent Form Parsing:** Extracts targeting parameters from descriptive dropdowns\n- **Dynamic Airtable Filter Building:** Creates complex filters based on campaign focus\n- **SendSpark Validation:** Ensures required credentials when videos enabled\n- **AI Agent Instruction Generation:** Creates specialized prompts for different tiers\n\n**\ud83e\udd16 INITIALIZE AI OUTREACH ORCHESTRATION (Code Node):**\n- **Multi-Agent System Setup:** Prepares Master Orchestrator with specialist agents\n- **Routing Decision Engine:** Email-only vs video-enhanced processing modes\n- **Success Metrics Definition:** Target response rates, expected meetings\n- **Tool Configuration:** Airtable, SendSpark, Gmail, Telegram integration setup\n\n**INTELLIGENT LEAD SELECTION:**\n- **Dynamic Filtering:** `Ready for SendSpark = TRUE`, `Ready to Send = TRUE`\n- **Quality Thresholds:** `Final Lead Score >= 60`, `Email Status = 'verified'`\n- **Campaign-Specific Filters:** Industry, company size, funding status based on focus\n- **Smart Sorting:** By email confidence (handles empty lead scores gracefully)",
+        "height": 1152,
+        "width": 1064,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2096,
+        832
+      ],
+      "id": "98d5ef85-88ed-4901-a41c-8960ce9a1f4d",
+      "name": "Phase 1: Intelligent Campaign Configuration"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83e\udd16 PHASE 2: AI ORCHESTRATION & MULTI-AGENT PROCESSING\n**Key Nodes: Conditional SendSpark \u2192 AI Context Preparation \u2192 Master Orchestrator with 5 Specialist Agents**\n\n**CONDITIONAL SENDSPARK VIDEO CREATION:**\n- **If Node:** Intelligent routing based on `sendspark_integration` flag\n- **\ud83c\udfa5 Create SendSpark Video (HTTP Request):**\n  - **API Endpoint:** `https://api-gw.sendspark.com/v1/workspaces/{workspace_id}/dynamics/{campaign_id}/prospect`\n  - **Authentication:** x-api-key and x-api-secret from form configuration\n  - **Smart Payload:** Dynamic prospect data with company background URL\n  - **Processing Config:** `processAndAuthorizeCharge: true`, `forceCreation: false`\n  - **Timeout:** 30 seconds for video generation\n\n**\ud83c\udfaf PREPARE AI CONTEXT (Advanced Code Node):**\n- **Lead Enhancement Engine:** Adds SendSpark video data and processing tiers\n- **Tier Classification System:**\n  - \ud83d\udd25 High-Value (80+): Full video + premium personalization\n  - \u26a1 Medium-Value (65-79): Standard personalization + company research\n  - \ud83d\udcc8 Qualified (60-64): Efficient template-based personalization\n  - \ud83d\udcca Basic (50-59): Minimal processing\n- **Video Integration Mapping:** Links created videos to lead emails\n- **Individual Lead Processing:** Outputs separate context for each lead\n- **Processing Statistics:** Calculates campaign metrics and quality indicators\n\n**\ud83c\udfaf MASTER OUTREACH ORCHESTRATOR (Claude Sonnet 4 Agent):**\n- **AI Model:** Claude Sonnet 4 via OpenRouter for maximum intelligence\n- **Orchestration Strategy:** Think \u2192 Research \u2192 Analyze \u2192 Personalize \u2192 Create \u2192 Execute\n- **Individual Lead Processing:** Each lead gets full AI attention with complete context\n\n**SPECIALIST AI AGENT ECOSYSTEM:**\n\n**\ud83e\udde0 Think Tool (Strategic Decision Making):**\n- **Purpose:** Complex outreach decision making and lead analysis planning\n- **Usage:** Approach strategy, personalization depth, technical detail level\n\n**\ud83d\udd0d Lead Intelligence Agent (Claude Sonnet 4):**\n- **Deep Company Analysis:** Business model, growth stage, technology readiness\n- **Decision Maker Profiling:** Role authority, budget influence, communication preferences\n- **Personalization Opportunities:** Pain points, value propositions, conversation starters\n- **Industry Intelligence:** Trends, challenges, competitive pressures\n\n**\ud83c\udfa8 Personalization Strategist Agent (Claude Sonnet 4):**\n- **Messaging Framework Development:** Hook \u2192 Value Prop \u2192 Social Proof \u2192 CTA\n- **Multi-Touch Sequence Planning:** 4-touch email sequences with timing\n- **Conversion Psychology:** Authority, urgency, social proof, reciprocity\n- **Tier-Specific Strategies:** Different approaches for each processing tier\n\n**\ud83d\udd0d Perplexity Research Tool (Sonar Model):**\n- **Real-Time Intelligence:** Current market trends, company news, industry insights\n- **Competitive Analysis:** Market positioning, differentiation opportunities\n- **Research Integration:** Feeds insights to personalization strategy\n\n**\ud83d\udce7 Gmail Draft Tool & \ud83c\udfa5 SendSpark Video Tool:**\n- **Dynamic Integration:** AI calls tools based on lead tier and video availability\n- **Quality Assurance:** Multiple validation layers for professional output",
+        "height": 2224,
+        "width": 1480,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        560
+      ],
+      "id": "3a31eec6-1d0c-4b43-a1f1-dfad4686c5c9",
+      "name": "Phase 2: AI Orchestration & Multi-Agent Processing"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udce7 PHASE 3: INTELLIGENT EXECUTION & CAMPAIGN COMPLETION\n**Key Nodes: Gmail Draft Creation \u2192 Campaign Analytics \u2192 Telegram Notification**\n\n**AUTOMATED GMAIL DRAFT CREATION:**\n- **OAuth2 Authentication:** \"Test Account (RA)\" Gmail credentials\n- **AI-Generated Content:** Subject lines and message body from Master Orchestrator\n- **Video Integration:** SendSpark videos embedded for high-value leads (80+)\n- **Subject Pattern:** \"[First Name], personalized video for [Company]\"\n- **Fallback Strategy:** Professional email if video creation fails\n\n**INTELLIGENT DRAFT STRUCTURE:**\n- **Personalized Subject Lines:** 3 AI-generated options (Value Prop, Question, Industry Insight)\n- **Email Framework:** Opening Hook \u2192 Value Proposition \u2192 Credibility Builder \u2192 SendSpark Video \u2192 Call-to-Action\n- **Tier-Based Personalization:**\n  - **High-Value (80+):** Deep research + video integration + premium content\n  - **Medium-Value (65-79):** Company-specific personalization + industry insights\n  - **Qualified (60-64):** Basic personalization + efficient messaging\n\n**\ud83d\udcca CAMPAIGN ANALYTICS & COMPLETION:**\n- **Summary Generator:** Metrics collection (leads processed, drafts created, success rates)\n- **Performance Analysis:** Industry breakdown, top prospects, quality indicators\n- **\ud83d\udcf1 Telegram Notification:** Comprehensive campaign report with actionable next steps\n\n**FINAL OUTPUTS:**\n- **\u2705 Gmail Drafts:** Ready-to-send personalized emails with video integration\n- **\ud83c\udfa5 SendSpark Videos:** Embedded in relevant drafts with tracking URLs\n- **\ud83d\udcca Complete Analytics:** Performance metrics and quality assessments\n- **\ud83d\udd04 Airtable Updates:** All leads marked with processing status\n- **\ud83d\udcf1 Real-Time Notifications:** Immediate campaign completion alerts\n\n**SUCCESS VALIDATION:**\n- **90%+ Gmail Draft Success Rate** with professional, personalized content\n- **Seamless Video Integration** for qualified prospects\n- **AI-Assessed Quality** matching lead tier requirements",
+        "height": 1264,
+        "width": 1032,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        464,
+        880
+      ],
+      "id": "a790eaad-7e8d-44c8-b18d-763ddacd429f",
+      "name": "Phase 3: Intelligent Execution & Completion"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\ude80 AI Outreach + SendSpark System Setup Guide\n\n**WHAT THIS SYSTEM DOES:**\nThis is a sophisticated AI-powered outreach system that creates personalized email campaigns with optional SendSpark video integration. It uses multiple AI agents to research leads, craft personalized messages, and create Gmail drafts automatically:\n- Smart campaign wizard for targeting configuration\n- AI agent orchestration for deep lead analysis\n- Optional SendSpark video creation for premium prospects\n- Automated Gmail draft generation\n- Real-time progress tracking and notifications\n\n**BEFORE YOU START:**\n1. You need OpenRouter API access (Claude Sonnet 4 & GPT-4o Mini)\n2. Gmail OAuth2 credentials for draft creation\n3. SendSpark account with API access (optional for videos)\n4. Perplexity API for real-time research\n5. Telegram bot for notifications\n6. Leads must be in Airtable marked \"Ready for SendSpark\" and \"Ready to Send\"\n\n**SETUP STEPS:**\n1. Configure all API credentials in n8n (see next notes)\n2. Set up SendSpark integration (if using videos)\n3. Test with pilot campaign (10-15 leads)\n4. Configure campaign targeting parameters\n5. Monitor AI agent performance",
+        "height": 592,
+        "width": 904,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3152,
+        224
+      ],
+      "id": "1bd41b77-2252-4c36-a047-74ab07374042",
+      "name": "Outreach Setup Guide"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udd11 API Keys & Credentials Setup - REQUIRED\n\n**OPENROUTER API (CRITICAL):**\n- **Models Required:** Claude Sonnet 4, GPT-4o Mini\n- **Setup:** Create account at openrouter.ai\n- **Usage:** Powers all AI agents for lead analysis and personalization\n- **Cost:** ~$0.50-2.00 per lead depending on complexity\n- **In n8n:** Create \"OpenRouter API\" credential with your API key\n\n**GMAIL OAUTH2 (REQUIRED):**\n- **Setup:** Google Cloud Console OAuth2 application\n- **Scopes Required:** Gmail compose and draft management\n- **Purpose:** Creates Gmail drafts automatically\n- **In n8n:** Create \"Gmail OAuth2\" credential with your client ID/secret\n\n**SENDSPARK API (OPTIONAL):**\n- **Setup:** Get API credentials from SendSpark settings\n- **Required:** API Key and API Secret\n- **API Endpoint:** `https://api-gw.sendspark.com/v1/workspaces/{workspace_id}/dynamics/{campaign_id}/prospect`\n- **Headers:** x-api-key, x-api-secret\n- **Purpose:** Creates personalized videos for high-value prospects\n- **In n8n:** Create \"HTTP Header Auth\" credential with your keys\n\n**PERPLEXITY API (RESEARCH):**\n- **Setup:** Get API key from perplexity.ai\n- **Model:** Sonar (real-time web access)\n- **Purpose:** Real-time company and industry research\n- **In n8n:** Create \"Perplexity API\" credential\n\n**TELEGRAM NOTIFICATIONS:**\n- **Setup:** Create Telegram bot via @BotFather\n- **Required:** Bot token and your chat ID\n- **Purpose:** Campaign completion notifications\n- **In n8n:** Create \"Telegram API\" credential",
+        "height": 800,
+        "width": 600,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3568,
+        832
+      ],
+      "id": "8e4782e9-2c41-4706-93f5-d1db61326cc7",
+      "name": "API Keys Setup"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83c\udfaf How The AI Outreach System Works\n\n**WORKFLOW OVERVIEW:**\n1. **Smart Campaign Form** - User configures campaign with wizard interface\n2. **Campaign Processing** - Extracts targeting parameters and SendSpark settings\n3. **AI Orchestration** - Initializes multi-agent system for lead processing\n4. **Lead Fetching** - Gets qualified leads from Airtable with smart filtering\n5. **SendSpark Integration** - Creates videos for high-value prospects (optional)\n6. **AI Agent Processing** - Deep lead analysis and personalization\n7. **Gmail Draft Creation** - Automated draft generation\n8. **Progress Tracking** - Real-time notifications and campaign summary\n\n**AI AGENT ORCHESTRATION:**\n- **Master Orchestrator** - Coordinates entire outreach process\n- **Lead Intelligence Agent** - Deep company and decision maker analysis\n- **Personalization Strategist** - Creates conversion-focused messaging\n- **Perplexity Research Tool** - Real-time market intelligence\n- **Think Tool** - Strategic decision making for complex scenarios\n\n**SMART CAMPAIGN FEATURES:**\n- **Batch Size Options:** 10-75 leads per campaign\n- **Campaign Goals:** Premium prospects, quick wins, strategic growth\n- **Industry Targeting:** Technology, healthcare, financial services, etc.\n- **Video Integration:** Optional SendSpark videos for high-value leads\n- **Lead Scoring:** Automatic prioritization based on quality metrics",
+        "height": 576,
+        "width": 600
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3568,
+        1648
+      ],
+      "id": "336ee685-8bc7-4e71-aa5e-4bb58a226df0",
+      "name": "AI Outreach Workflow"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\udccb Campaign Configuration & Lead Requirements\n\n**CAMPAIGN WIZARD OPTIONS:**\n\n**\ud83d\udcca Batch Size Selection:**\n- \ud83e\uddea Pilot Campaign (10-15 leads) - Test messaging\n- \ud83c\udfaf Focused Outreach (20-30 leads) - Quality focused\n- \ud83d\udcc8 Standard Campaign (35-50 leads) - Balanced approach\n- \ud83d\ude80 Volume Push (60-75 leads) - Maximum reach\n\n**\ud83c\udfaf Campaign Goals:**\n- \ud83d\udc8e Premium Prospects - Target high-value decision makers\n- \u26a1 Quick Wins - Fast responses and meetings\n- \ud83d\udcca Strategic Growth - Long-term relationship building\n- \ud83c\udfaf Industry Specific - Targeted vertical outreach\n\n**\ud83c\udfa5 SendSpark Video Options:**\n- \ud83c\udfac Yes - Create videos for high-value prospects (Premium)\n- \ud83d\udce7 No - Email-only campaign (Standard)\n\n**\u2b50 Video Creation Thresholds:**\n- \ud83d\udd25 90+ - Only for exceptional prospects\n- \u2b50 80+ - High-value prospects (Recommended)\n- \ud83d\udcc8 70+ - Good prospects with potential\n- \ud83c\udfaf 60+ - All qualified prospects\n\n**AIRTABLE LEAD FILTERS:**\nAutomatically filters for leads with:\n- `Ready for SendSpark = TRUE`\n- `Ready to Send = TRUE`\n- `Final Lead Score >= 60`\n- `Email Status = 'verified'`\n- Additional filters based on campaign focus and industry\n\n**UPDATE YOUR AIRTABLE BASE/TABLE IDs:**\n- Replace `appM31OKQZtVVzbS8` with your Airtable base ID\n- Replace `tblXRRZ1vHPbevxQT` with your table ID",
+        "height": 816,
+        "width": 856
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2960,
+        1808
+      ],
+      "id": "cafbbe30-b984-4212-bfc9-2afa9f092cb3",
+      "name": "Campaign Configuration"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83c\udfa5 SendSpark Integration Setup\n\n**SENDSPARK SETUP REQUIREMENTS:**\n- **\ud83c\udfe2 Workspace ID:** Get from your SendSpark workspace settings\n- **\ud83d\udcf9 Campaign ID:** Create a dynamic campaign and get its ID\n- **\ud83d\udd11 API Key:** From SendSpark account settings\n- **\ud83d\udd10 API Secret:** From SendSpark account settings\n\n**HOW TO GET SENDSPARK CREDENTIALS:**\n1. **Login to SendSpark** and go to Settings \u2192 API\n2. **Generate API Key and Secret** - save these securely\n3. **Create Dynamic Campaign** - note the campaign ID\n4. **Find Workspace ID** in your workspace settings URL\n\n**API ENDPOINT STRUCTURE:**\n`POST https://api-gw.sendspark.com/v1/workspaces/{YOUR_WORKSPACE_ID}/dynamics/{YOUR_CAMPAIGN_ID}/prospect`\n\n**VIDEO CREATION PROCESS:**\n1. **Lead Qualification:** Only creates videos for leads above threshold score\n2. **API Request:** Sends prospect data to SendSpark\n3. **Video Generation:** SendSpark creates personalized video\n4. **Integration:** Video URL integrated into email drafts\n\n**REQUEST PAYLOAD STRUCTURE:**\n```json\n{\n  \"processAndAuthorizeCharge\": true,\n  \"prospectDepurationConfig\": {\n    \"forceCreation\": false,\n    \"payloadDepurationStrategy\": \"keep-last-valid\"\n  },\n  \"prospect\": {\n    \"contactName\": \"Lead Name\",\n    \"contactEmail\": \"lead@company.com\",\n    \"company\": \"Company Name\",\n    \"jobTitle\": \"Job Title\",\n    \"backgroundUrl\": \"Company Website\"\n  }\n}\n```\n\n**CONFIGURATION IN WORKFLOW:**\n- Update the SendSpark HTTP Request node with your workspace/campaign IDs\n- Add your API credentials to the HTTP Header Auth credential\n- Test with a single lead before running full campaigns",
+        "height": 960,
+        "width": 856,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2960,
+        832
+      ],
+      "id": "5551d694-bf27-4f97-9307-df3c3a413e4c",
+      "name": "SendSpark Integration"
+    },
+    {
+      "parameters": {
+        "content": "## \u26a0\ufe0f Important Notes & Configuration Requirements\n\n**API COSTS & USAGE:**\n- **OpenRouter:** $0.50-2.00 per lead (varies by complexity)\n- **SendSpark:** Video creation costs (check SendSpark pricing)\n- **Perplexity:** Research queries (~$0.01-0.05 per query)\n- **Gmail:** Free (OAuth2 required)\n\n**WORKFLOW CONFIGURATION REQUIREMENTS:**\n- **Form Trigger Only:** Must be started via campaign form\n- **Sequential Processing:** Leads processed one by one by AI agents\n- **API Dependencies:** Requires all services to be operational\n- **Lead Requirements:** Must have verified emails and complete data\n\n**CREDENTIAL SETUP CHECKLIST:**\n\u2610 OpenRouter API credential with Claude Sonnet 4 access\n\u2610 Gmail OAuth2 credential with compose permissions\n\u2610 SendSpark HTTP Header Auth credential (if using videos)\n\u2610 Perplexity API credential for research\n\u2610 Telegram API credential for notifications\n\u2610 Airtable Token API credential for lead data\n\n**WORKFLOW CUSTOMIZATION:**\n- **Airtable IDs:** Update base and table IDs in all Airtable nodes\n- **Telegram Chat ID:** Update with your chat ID for notifications\n- **SendSpark IDs:** Update workspace and campaign IDs in HTTP nodes\n- **Gmail Account:** Connect your Gmail account for draft creation\n\n**DATA REQUIREMENTS:**\n- **Airtable Fields:** Full Name, Email, Company Name, Job Title required\n- **Lead Scoring:** Final Lead Score recommended for prioritization\n- **Email Verification:** Must have verified email status\n- **Business Description:** Enhances AI personalization quality\n\n**TROUBLESHOOTING:**\n- **AI Agent Failures:** Check OpenRouter API credits and limits\n- **SendSpark Errors:** Verify workspace/campaign IDs and API keys\n- **Gmail Issues:** Confirm OAuth2 permissions and scopes\n- **No Leads Found:** Check Airtable filter criteria\n- **Low Quality Output:** Ensure leads have complete business data",
+        "height": 864,
+        "width": 600,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1632,
+        -48
+      ],
+      "id": "d39c2d93-eb70-4bcc-8909-a524f1bf593b",
+      "name": "Configuration Requirements"
+    },
+    {
+      "parameters": {
+        "content": "## \ud83d\ude80 Step-by-Step Setup Checklist\n\n**STEP 1: API CREDENTIALS SETUP**\n\u2610 1. Create OpenRouter account and get API key\n\u2610 2. Set up Google Cloud Console project for Gmail OAuth2\n\u2610 3. Get SendSpark API credentials (workspace ID, campaign ID, API key/secret)\n\u2610 4. Create Perplexity account and get API key\n\u2610 5. Create Telegram bot via @BotFather and get your chat ID\n\u2610 6. Set up Airtable personal access token\n\n**STEP 2: N8N CREDENTIAL CONFIGURATION**\n\u2610 1. Add OpenRouter API credential in n8n\n\u2610 2. Configure Gmail OAuth2 credential with your Google app\n\u2610 3. Create HTTP Header Auth credential for SendSpark\n\u2610 4. Add Perplexity API credential\n\u2610 5. Configure Telegram API credential\n\u2610 6. Add Airtable Token API credential\n\n**STEP 3: WORKFLOW CUSTOMIZATION**\n\u2610 1. Update Airtable base ID (`appXXXXXXXXXXXXXX`) in all Airtable nodes\n\u2610 2. Update Airtable table ID (`tblXXXXXXXXXXXXXX`) in all Airtable nodes\n\u2610 3. Update Telegram chat ID in notification node\n\u2610 4. Update SendSpark workspace and campaign IDs in HTTP request\n\u2610 5. Assign all credentials to their respective nodes\n\n**STEP 4: CAMPAIGN PREPARATION**\n\u2610 1. Ensure leads are marked \"Ready for SendSpark\" and \"Ready to Send\"\n\u2610 2. Verify leads have complete data (name, email, company, job title)\n\u2610 3. Check lead scores are populated for proper prioritization\n\u2610 4. Review business descriptions for personalization quality\n\n**STEP 5: TESTING & VALIDATION**\n\u2610 1. Test with pilot campaign (5-10 leads)\n\u2610 2. Verify AI agents complete lead analysis successfully\n\u2610 3. Check Gmail drafts are created with quality content\n\u2610 4. Test SendSpark video creation (if enabled)\n\u2610 5. Confirm Telegram notifications are received\n\n**SUCCESS INDICATORS:**\n\u2705 Campaign form submits and processes successfully\n\u2705 AI agents complete lead analysis and personalization\n\u2705 Gmail drafts are created with personalized content\n\u2705 SendSpark videos are generated for high-value leads (if enabled)\n\u2705 Telegram notification shows campaign completion\n\u2705 All leads are marked as processed in Airtable",
+        "height": 912,
+        "width": 600,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2240,
+        -96
+      ],
+      "id": "91155a85-1582-4ad2-9229-906646fc4a4b",
+      "name": "Step-by-Step Setup"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "YOUR_DOCUMENTURL_HERE"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        2176
+      ],
+      "id": "9f719b69-5f4a-40ff-b4d1-ed7f5307120a",
+      "name": "AI Automation Services Handbook",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "cXmjd0V9oD83jUmA",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// \ud83c\udfaf Prepare AI Context - UPDATED FOR SENDSPARK VIDEO INTEGRATION\nconst allInputs = $input.all();\nconsole.log(`\ud83d\udce5 Received ${allInputs.length} inputs from workflow`);\n\n// Determine data sources based on workflow routing\nlet campaignContext, leadData, sendsparkVideos = [];\n\n// Check if we have SendSpark video data (from video creation branch)\nconst hasSendSparkData = allInputs.some(input => \n  input.json && (input.json.shareUrl || input.json.prospectList || input.json.contactEmail)\n);\n\nif (hasSendSparkData) {\n  // Video-enhanced workflow: Campaign Context + Lead Data + SendSpark Videos\n  campaignContext = allInputs.find(input => input.json && input.json.session_id)?.json;\n  \n  // Handle SendSpark API response format\n  sendsparkVideos = allInputs.filter(input => {\n    return input.json && (\n      input.json.prospectList || // Standard API response\n      input.json.shareUrl || // Direct video object\n      (input.json.contactEmail && input.json.status) // Individual prospect\n    );\n  }).map(input => {\n    // Normalize different SendSpark response formats\n    if (input.json.prospectList && input.json.prospectList.length > 0) {\n      return input.json.prospectList[0]; // Extract first prospect from list\n    } else if (input.json.shareUrl || input.json.contactEmail) {\n      return input.json; // Already in correct format\n    }\n    return null;\n  }).filter(video => video !== null);\n  \n  leadData = allInputs.filter(input => \n    input.json && input.json.id && input.json['Full Name'] && !input.json.shareUrl && !input.json.prospectList\n  ).map(input => input.json);\n} else {\n  // Email-only workflow: Campaign Context + Lead Data\n  campaignContext = allInputs.find(input => input.json && input.json.session_id)?.json;\n  leadData = allInputs.filter(input => \n    input.json && input.json.id && input.json['Full Name']\n  ).map(input => input.json);\n}\n\n// Fallback if campaign context is not found in expected format\nif (!campaignContext) {\n  campaignContext = allInputs[0]?.json || {};\n}\n\nconsole.log(`\ud83c\udfaf Data Analysis:`);\nconsole.log(`   \ud83d\udcca Campaign Context: ${campaignContext.campaign_name || 'Found'}`);\nconsole.log(`   \ud83d\uddc3\ufe0f Lead Records: ${leadData.length}`);\nconsole.log(`   \ud83c\udfa5 SendSpark Videos: ${sendsparkVideos.length}`);\n\n// Create SendSpark video lookup map for easy integration - UPDATED FOR API RESPONSE\nconst videoLookup = {};\nsendsparkVideos.forEach(video => {\n  if (video && video.contactEmail) {\n    videoLookup[video.contactEmail] = {\n      videoUrl: video.shareUrl,\n      videoId: video._id || video.id,\n      createdAt: video.createdAt || new Date().toISOString(),\n      status: video.status || 'created',\n      valid: video.valid || false,\n      screenshotUrl: video.screenshotUrl || null\n    };\n  }\n});\n\n// Enhance lead data with SendSpark video information\nconst enhancedLeads = leadData.map(lead => {\n  const leadEmail = lead.Email;\n  const hasVideo = videoLookup[leadEmail];\n  \n  return {\n    ...lead,\n    // Add SendSpark integration data - UPDATED FORMAT\n    sendspark_integration: hasVideo ? {\n      video_created: true,\n      video_url: hasVideo.videoUrl,\n      video_id: hasVideo.videoId,\n      video_status: hasVideo.status,\n      video_valid: hasVideo.valid,\n      screenshot_url: hasVideo.screenshotUrl,\n      created_at: hasVideo.createdAt\n    } : {\n      video_created: false,\n      video_eligible: (lead['Final Lead Score'] || 0) >= (campaignContext.sendspark_config?.video_threshold || 80),\n      video_url: null,\n      video_id: null,\n      video_status: null,\n      screenshot_url: null\n    },\n    \n    // Add processing tier classification\n    processing_tier: (() => {\n      const score = lead['Final Lead Score'] || 0;\n      const videoThreshold = campaignContext.sendspark_config?.video_threshold || 80;\n      \n      if (score >= videoThreshold) return 'high_value';\n      if (score >= 65) return 'medium_value';\n      if (score >= 60) return 'qualified';\n      return 'basic';\n    })()\n  };\n});\n\n// Sort leads by processing tier priority (high_value first)\nconst sortedLeads = enhancedLeads.sort((a, b) => {\n  const tierPriority = { 'high_value': 3, 'medium_value': 2, 'qualified': 1, 'basic': 0 };\n  const aPriority = tierPriority[a.processing_tier] || 0;\n  const bPriority = tierPriority[b.processing_tier] || 0;\n  \n  // Sort by tier priority first, then by lead score\n  if (aPriority !== bPriority) {\n    return bPriority - aPriority; // Higher priority first\n  }\n  return (b['Final Lead Score'] || 0) - (a['Final Lead Score'] || 0); // Higher score first\n});\n\n// Calculate processing statistics for campaign context\nconst processingStats = {\n  total_leads: enhancedLeads.length,\n  high_value_leads: enhancedLeads.filter(lead => lead.processing_tier === 'high_value').length,\n  medium_value_leads: enhancedLeads.filter(lead => lead.processing_tier === 'medium_value').length,\n  qualified_leads: enhancedLeads.filter(lead => lead.processing_tier === 'qualified').length,\n  basic_leads: enhancedLeads.filter(lead => lead.processing_tier === 'basic').length,\n  \n  // SendSpark Statistics - UPDATED\n  videos_created: sendsparkVideos.length,\n  videos_successful: sendsparkVideos.filter(v => v.valid && v.status === 'completed').length,\n  videos_processing: sendsparkVideos.filter(v => v.status === 'processing').length,\n  videos_pending: enhancedLeads.filter(lead => \n    lead.sendspark_integration.video_eligible && !lead.sendspark_integration.video_created\n  ).length,\n  video_eligible_count: enhancedLeads.filter(lead => lead.sendspark_integration.video_eligible).length,\n  \n  // Quality Metrics\n  avg_lead_score: Math.round(enhancedLeads.reduce((sum, lead) => sum + (lead['Final Lead Score'] || 0), 0) / enhancedLeads.length),\n  avg_email_confidence: Math.round(enhancedLeads.reduce((sum, lead) => sum + (lead['Email Confidence'] || 0), 0) / enhancedLeads.length),\n  c_level_count: enhancedLeads.filter(lead => lead['Seniority Level'] === 'C-Level').length,\n  verified_emails: enhancedLeads.filter(lead => lead['Email Status'] === 'verified').length\n};\n\n// Build shared campaign context (will be included with each lead)\nconst sharedCampaignContext = {\n  // Session Management\n  session_id: campaignContext.session_id || Math.random().toString(36).substr(2, 9),\n  campaign_name: campaignContext.campaign_name || 'AI Outreach Campaign',\n  workflow_stage: 'ai_processing_ready',\n  processing_timestamp: new Date().toISOString(),\n  \n  // Campaign Configuration\n  campaign_config: campaignContext.campaign_config || {},\n  sendspark_config: campaignContext.sendspark_config || { enabled: false },\n  ai_instructions: campaignContext.ai_instructions || {},\n  routing_decision: campaignContext.routing_decision || { processing_mode: 'email_only' },\n  \n  // Processing Statistics (campaign overview)\n  processing_brief: processingStats,\n  \n  // SendSpark Integration Status - UPDATED\n  sendspark_status: {\n    enabled: campaignContext.sendspark_config?.enabled || false,\n    videos_available: sendsparkVideos.length > 0,\n    video_integration_complete: sendsparkVideos.length > 0,\n    video_threshold: campaignContext.sendspark_config?.video_threshold || 80,\n    workspace_id: campaignContext.sendspark_config?.workspace_id,\n    campaign_id: campaignContext.sendspark_config?.campaign_id,\n    videos_successful: processingStats.videos_successful,\n    videos_processing: processingStats.videos_processing\n  },\n  \n  // AI Processing Instructions - UPDATED FOR VIDEO INTEGRATION\n  processing_instructions: {\n    high_value_strategy: campaignContext.sendspark_config?.enabled \n      ? (sendsparkVideos.length > 0 \n        ? 'Integrate existing SendSpark videos into premium email campaigns'\n        : 'Create SendSpark videos AND premium emails for high-value leads')\n      : 'Focus on premium email personalization for high-value leads',\n    \n    medium_value_strategy: 'Standard personalized email outreach with company-specific insights',\n    qualified_strategy: 'Efficient template-based personalization with key company details',\n    \n    video_integration_mode: sendsparkVideos.length > 0 ? 'use_existing_videos' : \n      (campaignContext.sendspark_config?.enabled ? 'create_new_videos' : 'email_only'),\n    \n    video_email_template: campaignContext.sendspark_config?.enabled ? {\n      subject_pattern: '[First Name], quick personalized video for [Company]',\n      opening_line: 'I created a quick personalized video for you about [specific value proposition]',\n      video_placement: 'After opening line, before main value proposition',\n      call_to_action: 'Worth a quick 15-minute conversation to explore this further?'\n    } : null\n  },\n  \n  // Tool Configuration\n  tool_config: {\n    airtable_base: 'appM31OKQZtVVzbS8',\n    airtable_table: 'tblXRRZ1vHPbevxQT',\n    sendspark_workspace: campaignContext.sendspark_config?.workspace_id,\n    sendspark_campaign: campaignContext.sendspark_config?.campaign_id,\n    gmail_integration: true,\n    video_email_integration: sendsparkVideos.length > 0\n  },\n  \n  // Success Metrics\n  success_targets: {\n    target_response_rate: campaignContext.ai_instructions?.success_metrics?.target_response_rate || '15-25%',\n    expected_meetings: campaignContext.ai_instructions?.success_metrics?.expected_meetings || Math.round(enhancedLeads.length * 0.15),\n    video_creation_target: campaignContext.ai_instructions?.success_metrics?.video_creation_target || 0,\n    personalization_quality: campaignContext.ai_instructions?.messaging_guidelines?.personalization_level || 'high'\n  }\n};\n\n// Enhanced Logging\nconsole.log(`\u2705 AI Context Prepared - Individual Lead Processing:`);\nconsole.log(`   \ud83c\udfaf Campaign: ${sharedCampaignContext.campaign_name}`);\nconsole.log(`   \ud83d\udcca Total Leads: ${sortedLeads.length}`);\nconsole.log(`   \ud83d\udd25 High-Value (${processingStats.high_value_leads}), \u26a1 Medium (${processingStats.medium_value_leads}), \ud83d\udcc8 Qualified (${processingStats.qualified_leads})`);\nconsole.log(`   \ud83c\udfa5 SendSpark Status: ${sharedCampaignContext.sendspark_status.enabled ? 'ENABLED' : 'DISABLED'}`);\nconsole.log(`   \ud83c\udfac Videos Created: ${processingStats.videos_created} (${processingStats.videos_successful} successful)`);\nconsole.log(`   \ud83d\udce7 Processing Mode: ${sharedCampaignContext.routing_decision.processing_mode}`);\nconsole.log(`   \ud83d\ude80 Outputting ${sortedLeads.length} individual lead items for AI processing`);\n\n// Validation warnings\nif (sharedCampaignContext.sendspark_config.enabled && sendsparkVideos.length === 0 && processingStats.high_value_leads > 0) {\n  console.warn(`\u26a0\ufe0f SendSpark enabled but no videos found for ${processingStats.high_value_leads} high-value leads`);\n}\n\nif (sortedLeads.length === 0) {\n  console.warn(`\u26a0\ufe0f No leads found for processing - check Airtable filters`);\n}\n\n// \ud83c\udfaf CRITICAL CHANGE: Return individual items for each lead\n// Each item contains the lead data + shared campaign context\nconst outputItems = sortedLeads.map((lead, index) => {\n  return {\n    json: {\n      // Individual Lead Data (primary focus for AI agent)\n      lead: lead,\n      lead_index: index + 1,\n      total_leads: sortedLeads.length,\n      \n      // Shared Campaign Context (for reference and tool usage)\n      ...sharedCampaignContext,\n      \n      // Processing Context for this specific lead\n      current_lead_context: {\n        processing_tier: lead.processing_tier,\n        lead_score: lead['Final Lead Score'] || 0,\n        email_confidence: lead['Email Confidence'] || 0,\n        seniority_level: lead['Seniority Level'],\n        company_size: lead['Company Size'],\n        industry: lead['Company Industry'],\n        sendspark_eligible: lead.sendspark_integration.video_eligible,\n        sendspark_video_available: lead.sendspark_integration.video_created,\n        sendspark_video_valid: lead.sendspark_integration.video_valid,\n        \n        // Processing recommendations for this lead\n        recommended_approach: lead.processing_tier === 'high_value' ? 'premium_personalization' :\n                             lead.processing_tier === 'medium_value' ? 'standard_personalization' : 'efficient_personalization',\n        \n        technical_detail_level: lead['Seniority Level'] === 'C-Level' ? 'business_focused' : \n                               lead['Seniority Level'] === 'VP' ? 'strategic_focused' : 'technical_focused'\n      }\n    }\n  };\n});\n\nconsole.log(`\ud83c\udfaf Generated ${outputItems.length} individual lead items for AI agent processing`);\nconsole.log(`   \ud83d\udccb Lead processing order: ${sortedLeads.map(l => `${l['Full Name']} (${l.processing_tier})`).join(', ')}`);\n\n// Return array of individual lead items\nreturn outputItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -672,
+        1760
+      ],
+      "id": "95e9ba9e-9a79-4c20-bf31-91ef74639925",
+      "name": "\ud83c\udfaf Prepare AI Context1"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Specialized agent that creates the final personalized email using the proven 90-word structure. Call this agent last with all gathered intelligence.",
+        "text": "=You are the **Email Creator Agent** - a specialist that crafts perfect 90-word cold outreach emails using a proven high-conversion structure.\n\n## YOUR MISSION\nCreate exactly ONE personalized cold outreach email following the mandatory 90-word structure.\n\n## EMAIL STRUCTURE (MANDATORY)\n\n**Subject Line Pattern:**\n- Format: \"[First Name], quick idea for [specific pain point/opportunity]\"\n- Under 50 characters, curiosity-driven\n- Examples: \"Jon, quick idea for your lead generation\", \"Steve, automation opportunity I spotted\"\n\n**Email Body (Under 90 words total):**\n\n1. **Casual Opener (1-2 lines max):**\n   - \"Hey [First Name],\"\n   - Specific observation about their business/website/industry\n\n2. **Pain Point/Opportunity (1-2 lines):**\n   - Point out specific pain point or missed opportunity\n   - Use \"I noticed...\" or \"I saw that...\"\n   - Make it relevant to their business\n\n3. **Solution Tie-in (1-2 lines):**\n   - Briefly mention how your service addresses this\n   - Create curiosity, don't give details\n   - Connect to their specific situation\n\n4. **Video Reference (CONDITIONAL - CRITICAL LOGIC):**\n   - **ONLY IF SendSpark is enabled AND video exists:** \"I recorded a quick 2\u20133 minute video walking through this in more detail \u2014 you can watch it here [VIDEO_URL].\"\n   - **IF SendSpark disabled OR no video:** SKIP this line entirely - do NOT mention video at all\n\n5. **Low-Commitment CTA (1 line):**\n   - \"Curious to hear your thoughts,\" OR \"Worth a look?\"\n   - Always end with a question mark\n\n6. **Signature:**\n   - Use sender name from AI Automation Services Handbook\n   - Format: \"[Sender Name]\"\n\n## CRITICAL VIDEO LOGIC\n- **Check SendSpark status first** - if disabled, never mention video\n- **Check video availability** - if no valid video URL, never mention video\n- **Only include video line if BOTH conditions are true:**\n  1. SendSpark is enabled\n  2. Valid video URL exists\n\n## OUTPUT REQUIREMENTS\nProvide exactly:\n1. **Subject:** The email subject line\n2. **Message:** The complete email body (under 90 words)\n3. **To_Email:** The lead's email address\n\n## TONE GUIDELINES\n- Friendly and conversational\n- No corporate jargon or buzzwords\n- Simple language (8th grade reading level)\n- Confident but not pushy\n- Genuinely personalized\n\n## CRITICAL RULES\n1. Stay under 90 words total\n2. Follow structure exactly\n3. NEVER mention video unless SendSpark enabled AND video exists\n4. Always get sender name from company handbook\n5. Make it feel personally crafted\n6. End with question mark CTA\n\n**Remember:** You're the final step - create the perfect email that gets responses!",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        176,
+        1312
+      ],
+      "id": "e34b0752-2412-4d41-8597-a0b38f318521",
+      "name": "\ud83d\udce7 Email Creator Agent"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        176,
+        1472
+      ],
+      "id": "355ac754-2123-4b03-aae5-ca524312401f",
+      "name": "\ud83d\udce7 Email Creator LLM",
+      "credentials": {
+        "openRouterApi": {
+          "id": "srSg7y6z8CLIxyxo",
+          "name": "OpenRouter - X Bot Brain Picker"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Intelligent agent that decides if SendSpark video is needed and retrieves video information. Handles all video-related logic and HTTP requests.",
+        "text": "=You are the **SendSpark Decision Agent** - a specialist that handles all video-related decisions and retrieval for outreach campaigns.\n\n## YOUR MISSION\nAnalyze lead data, decide if video is needed, and retrieve video information if available.\n\n## DECISION LOGIC\n\n### STEP 1: Assess Video Need\nAnalyze the lead and determine video eligibility:\n- **High Priority:** Lead score \u2265 80 AND C-Level seniority\n- **Medium Priority:** Lead score \u2265 75 AND (VP level OR high-value industry)\n- **Low Priority:** All other qualified leads\n\n### STEP 2: Check Existing Video Status\nReview current video data from the orchestrator\n\n### STEP 3: Video Retrieval Decision\n\n**IF video_created = true AND video_valid = true AND video_url exists:**\n- Return the existing video_url\n- Status: \"existing_video_available\"\n\n**IF video_created = false AND lead qualifies for video:**\n- Use \"Create SendSpark Video Tool\" to generate new video\n- Provide lead information for video creation\n- Return new video URL if successful\n\n**IF video not needed or creation fails:**\n- Return status: \"no_video_placeholder\"\n- Email Creator will use placeholder text\n\n## OUTPUT FORMAT\nAlways return:\n```json\n{\n  \"video_status\": \"existing_video_available\" | \"new_video_created\" | \"no_video_placeholder\",\n  \"video_url\": \"actual_url_or_null\",\n  \"video_decision_reason\": \"explanation_of_decision\",\n  \"email_video_instruction\": \"instruction_for_email_creator\"\n}\n```\n\n## CRITICAL RULES\n1. Always make a clear video decision\n2. Only create videos for qualified high-value leads\n3. Reuse existing valid videos when available\n4. Provide clear instructions to Email Creator\n5. Handle HTTP request errors gracefully\n\n**Remember:** You control whether the email includes a real video or placeholder - make the right decision for maximum impact!",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        176,
+        1680
+      ],
+      "id": "bda155e2-1739-4473-a2d4-2cee7baa35ff",
+      "name": "\ud83c\udfa5 SendSpark Decision Agent"
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        176,
+        1856
+      ],
+      "id": "179dfd36-2f13-4003-8397-ec308160251c",
+      "name": "\ud83c\udfa5 SendSpark Decision LLM",
+      "credentials": {
+        "openRouterApi": {
+          "id": "srSg7y6z8CLIxyxo",
+          "name": "OpenRouter - X Bot Brain Picker"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Create personalized SendSpark videos for high-value prospects. Use for leads with score >= 80 or C-Level contacts. Requires person name and company website for video personalization.",
+        "method": "POST",
+        "url": "YOUR_URL_HERE",
+        "authentication": "YOUR_AUTHENTICATION_HERE",
+        "genericAuthType": "YOUR_GENERICAUTHTYPE_HERE",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $json.sendspark_config.api_key }}"
+            },
+            {
+              "name": "x-api-secret",
+              "value": "={{ $json.sendspark_config.api_secret }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"processAndAuthorizeCharge\": true,\n  \"prospectDepurationConfig\": {\n    \"forceCreation\": false,\n    \"payloadDepurationStrategy\": \"keep-last-valid\"\n  },\n  \"prospect\": {\n    \"contactName\": \"{{ $fromAI('contact_name', 'Lead full name for video personalization', 'string') }}\",\n    \"contactEmail\": \"{{ $fromAI('contact_email', 'Lead email address', 'string') }}\",\n    \"company\": \"{{ $fromAI('company_name', 'Lead company name', 'string') }}\",\n    \"jobTitle\": \"{{ $fromAI('job_title', 'Lead job title', 'string') }}\",\n    \"backgroundUrl\": \"{{ $fromAI('company_website', 'Company website URL for video background scrolling', 'string') }}\"\n  }\n}",
+        "options": {
+          "timeout": 45000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        1856
+      ],
+      "id": "a2c5622a-6a52-494a-bb37-48595508472c",
+      "name": "\ud83c\udfa5 Create SendSpark Video Tool",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "grJBBf82qkh8fFWK",
+          "name": "TripleWhale"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        176,
+        2208
+      ],
+      "id": "88e8c8fc-1ed6-446b-a8ed-f3c5a1b815e8",
+      "name": "\ud83d\udd0d Lead Intelligence LLM1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "srSg7y6z8CLIxyxo",
+          "name": "OpenRouter - X Bot Brain Picker"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        176,
+        2576
+      ],
+      "id": "8a9f3f05-432b-43d3-8e66-2406a54f87ee",
+      "name": "\ud83c\udfa8 Personalization Strategist LLM1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "srSg7y6z8CLIxyxo",
+          "name": "OpenRouter - X Bot Brain Picker"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Call this AI Agent that specializes in deep lead analysis, company intelligence gathering, and identifying personalization opportunities for outreach campaigns.",
+        "text": "=You are the **Lead Intelligence Agent** - a specialist AI that performs deep analysis of qualified leads to identify personalization opportunities, company insights, and strategic outreach angles.\n\n## \ud83d\udcca **DATA YOU RECEIVE**\n\n**Lead Data Structure** (from Master Orchestrator):\n- **Core Identity**: Full Name, Email, Job Title, Seniority Level\n- **Contact Quality**: Email Status, Email Confidence (%), Personal LinkedIn URL\n- **Company Profile**: Company Name, Company Website, Company Industry, Company Size, Funding Status\n- **Business Intelligence**: Business Description (detailed), Pain Points Detected, Opportunities Identified\n- **Lead Scoring**: Final Lead Score, Automation Fit, Quick Pitch, Personalized Message\n- **Processing Context**: processing_tier (high_value/medium_value/qualified), sendspark_integration status\n\n**Analysis Parameters** (from Master Orchestrator):\n- **Analysis Focus:** {{ $fromAI('analysis_focus', 'What aspects to analyze deeply', 'string') }}\n- **Personalization Goals:** {{ $fromAI('personalization_goals', 'What personalization opportunities to identify', 'string') }}\n- **Industry Context:** {{ $fromAI('industry_context', 'Industry-specific insights needed', 'string') }}\n- **Session Context:** {{ $fromAI('session_id', 'Workflow session identifier', 'string') }}\n\n## \ud83c\udfaf **YOUR ANALYSIS MISSION**\n\nAnalyze the provided leads and extract actionable intelligence for personalized outreach:\n\n### **1. Company Intelligence Analysis**\n- **Business Model**: Analyze the `Business Description` to understand their core business, services, and market position\n- **Growth Stage**: Use `Company Size`, `Funding Status`, and business description to assess growth trajectory\n- **Market Position**: Identify competitive landscape and differentiation factors\n- **Technology Stack**: Infer likely technology needs based on industry and business model\n\n### **2. Decision Maker Profiling**\n- **Role Analysis**: Use `Job Title` and `Seniority Level` to understand decision-making authority\n- **Responsibility Scope**: Determine likely areas of responsibility and budget authority\n- **Pain Point Validation**: Cross-reference `Pain Points Detected` with role-specific challenges\n- **Influence Mapping**: Assess their influence on technology/automation decisions\n\n### **3. Personalization Opportunity Identification**\n- **Value Proposition Alignment**: Match `Opportunities Identified` with likely business needs\n- **Timing Indicators**: Look for growth signals, funding events, or expansion indicators\n- **Approach Strategy**: Recommend communication style based on seniority and industry\n- **Conversation Starters**: Identify specific business challenges or opportunities to reference\n\n### **4. Industry-Specific Insights**\n- **Industry Trends**: Provide relevant market trends affecting their `Company Industry`\n- **Common Challenges**: Identify typical pain points for companies in their sector\n- **Technology Adoption**: Assess likely technology maturity and automation readiness\n- **Competitive Pressures**: Understand market forces driving their decision-making\n\n## \ud83d\udccb **ANALYSIS OUTPUT FORMAT**\n\nFor each lead, provide:\n\n**COMPANY INTELLIGENCE:**\n- Business Model Summary (2-3 sentences)\n- Growth Stage Assessment (startup/growth/mature)\n- Key Differentiators\n- Technology Readiness Score (1-10)\n\n**DECISION MAKER PROFILE:**\n- Role Authority Level (high/medium/limited)\n- Primary Responsibilities\n- Likely Budget Influence\n- Communication Preference (technical/business/executive)\n\n**PERSONALIZATION OPPORTUNITIES:**\n- Top 3 Pain Points to Address\n- Best Value Propositions to Lead With\n- Timing Indicators (urgent/moderate/exploratory)\n- Recommended Conversation Starters\n\n**OUTREACH STRATEGY:**\n- Optimal Approach (direct/consultative/educational)\n- Message Tone (formal/professional/friendly)\n- Technical Detail Level (high/medium/low)\n- Follow-up Sequence Recommendation\n\n## \ud83c\udfaf **SUCCESS CRITERIA**\n\nYour analysis should enable the Email Creator Agent to:\n- Create highly targeted messaging that resonates with the prospect's specific situation\n- Address real business challenges the prospect is likely facing\n- Position solutions in terms of business outcomes they care about\n- Choose the right tone and approach for their seniority level and industry\n\n**Remember**: You're analyzing pre-qualified leads with rich business data. Use the existing `Business Description`, `Pain Points Detected`, and `Opportunities Identified` as your foundation, then add deeper strategic insights and personalization angles.\n\nFocus on actionable intelligence that will make the difference between a generic outreach and a compelling, personalized approach that gets responses.",
+        "options": {}
+      },
+      "id": "19cc005a-404b-4936-9ae9-40816a553dfe",
+      "name": "\ud83d\udd0d Lead Intelligence Agent",
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "position": [
+        176,
+        2048
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "toolDescription": "Call this AI Agent that specializes in creating sophisticated personalization strategies based on lead analysis, industry expertise, and conversion psychology.",
+        "text": "=You are the **Personalization Strategist Agent** - a specialist AI that creates sophisticated, conversion-focused messaging strategies based on lead intelligence and proven outreach psychology.\n\n## \ud83d\udcca **DATA YOU RECEIVE**\n\n**Lead Intelligence Results** (from Lead Intelligence Agent):\n- **Company Intelligence**: Business model, growth stage, differentiators, technology readiness\n- **Decision Maker Profile**: Role authority, responsibilities, budget influence, communication preferences\n- **Personalization Opportunities**: Pain points, value propositions, timing indicators, conversation starters\n- **Outreach Strategy**: Approach style, message tone, technical detail level, follow-up recommendations\n\n**Strategic Context** (from Master Orchestrator):\n- **Industry Focus:** {{ $fromAI('industry_focus', 'Industry-specific considerations', 'string') }}\n- **Company Size Context:** {{ $fromAI('company_size_context', 'Company size and organizational insights', 'string') }}\n- **Pain Points:** {{ $fromAI('pain_points', 'Identified pain points and challenges', 'string') }}\n- **Conversion Goals:** {{ $fromAI('conversion_goals', 'Desired outreach outcomes', 'string') }}\n- **Session Context:** {{ $fromAI('session_id', 'Workflow session identifier', 'string') }}\n\n## \ud83c\udfaf **YOUR STRATEGY MISSION**\n\nTransform lead intelligence into compelling, personalized messaging strategies that drive engagement and conversions:\n\n### **1. Message Framework Development**\n- **Hook Strategy**: Create attention-grabbing opening lines based on company-specific insights\n- **Value Proposition**: Craft compelling value statements aligned with their business needs\n- **Social Proof**: Identify relevant case studies or success stories for their industry/size\n- **Call-to-Action**: Design appropriate next steps based on their decision-making process\n\n### **2. 90-Word Email Strategy**\n- **Opening Hook** (15-20 words): Personalized attention-grabber\n- **Pain Point** (15-20 words): Specific business challenge identification\n- **Solution Tie-in** (15-20 words): Brief value proposition connection\n- **Video Reference** (15-20 words): Standard video line or placeholder\n- **CTA** (5-10 words): Low-commitment question\n- **Signature** (5 words): Professional close\n\n### **3. Personalization Depth Strategy**\n- **Surface Level**: Company name, industry, role personalization\n- **Medium Level**: Business challenges, growth stage, technology context\n- **Deep Level**: Specific pain points, competitive pressures, strategic initiatives\n\n### **4. Conversion Psychology Application**\n- **Authority**: Position based on their seniority level and decision-making power\n- **Urgency**: Create appropriate urgency based on timing indicators\n- **Social Proof**: Leverage industry credibility and peer success stories\n- **Reciprocity**: Provide valuable insights before asking for anything\n\n## \ud83d\udce7 **STRATEGY OUTPUT FORMAT**\n\nFor each lead, provide:\n\n**EMAIL STRATEGY RECOMMENDATIONS:**\n- **Subject Line Approach** (curiosity/value/problem-focused)\n- **Opening Hook Strategy** (observation/compliment/industry insight)\n- **Pain Point Focus** (specific challenge to highlight)\n- **Value Proposition Angle** (how to position your solution)\n- **Tone Recommendation** (friendly/professional/executive)\n- **Technical Detail Level** (high/medium/low)\n\n**PERSONALIZATION ELEMENTS:**\n- **Company-Specific Details** to reference\n- **Industry Insights** to demonstrate knowledge\n- **Role-Specific Challenges** to address\n- **Business Context** to acknowledge\n\n**MESSAGING PSYCHOLOGY:**\n- **Primary Motivation** to appeal to\n- **Decision-Making Style** to match\n- **Communication Preference** to adopt\n- **Follow-up Strategy** recommendation\n\n## \ud83c\udfaf **PERSONALIZATION TIERS**\n\n**HIGH-VALUE LEADS** (Score \u2265 80):\n- Deep research-based personalization\n- Executive-level messaging with business impact focus\n- Multiple value propositions and social proof elements\n- Consultative approach with strategic insights\n\n**MEDIUM-VALUE LEADS** (Score 65-79):\n- Company and role-specific personalization\n- Professional messaging with clear value proposition\n- Relevant industry insights and pain point addressing\n- Solution-focused approach with clear benefits\n\n**QUALIFIED LEADS** (Score 60-64):\n- Basic company and industry personalization\n- Straightforward messaging with direct value statement\n- Simple pain point identification and solution positioning\n- Efficient approach with clear call-to-action\n\n## \ud83d\udcca **SUCCESS CRITERIA**\n\nYour messaging strategies should achieve:\n- **Relevance**: Every message element should feel specifically crafted for this prospect\n- **Value**: Provide immediate value through insights, not just sales pitches\n- **Clarity**: Clear, compelling communication appropriate for their seniority level\n- **Action**: Strong, appropriate calls-to-action that match their decision-making process\n\n**CRITICAL REQUIREMENTS:**\n- Use the lead intelligence insights to create truly personalized messaging\n- Match message complexity and tone to the prospect's seniority level\n- Include specific business context that proves you understand their situation\n- Create messaging that stands out from generic outreach they receive daily\n- Provide specific recommendations for the Email Creator Agent\n\n**Remember**: You're creating strategies for pre-qualified, high-value prospects. Your messaging should reflect the premium nature of these leads and justify the investment in personalized outreach.\n\nFocus on creating messaging strategies that recipients will want to respond to because they demonstrate genuine understanding of their business and offer clear, relevant value.",
+        "options": {}
+      },
+      "id": "68710d98-558b-4cfe-8021-a359a0688bee",
+      "name": "\ud83c\udfa8 Personalization Strategist Agent",
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "position": [
+        176,
+        2416
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "YOUR_URL_HERE",
+        "authentication": "YOUR_AUTHENTICATION_HERE",
+        "genericAuthType": "YOUR_GENERICAUTHTYPE_HERE",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $json.sendspark_config.api_key }}"
+            },
+            {
+              "name": "x-api-secret",
+              "value": "={{ $json.sendspark_config.api_secret }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"processAndAuthorizeCharge\": true,\n  \"prospectDepurationConfig\": {\n    \"forceCreation\": false,\n    \"payloadDepurationStrategy\": \"keep-last-valid\"\n  },\n  \"prospect\": {\n    \"contactName\": \"{{ $json['Full Name'] }}\",\n    \"contactEmail\": \"{{ $json.Email }}\",\n    \"company\": \"{{ $json['Company Name'] }}\",\n    \"jobTitle\": \"{{ $json['Job Title'] }}\",\n    \"backgroundUrl\": \"{{ $json['Company Website'] || 'https://www.google.com/search?q=' + encodeURIComponent($json['Company Name']) }}\"\n  }\n}",
+        "options": {
+          "timeout": 45000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -944,
+        2064
+      ],
+      "id": "0b56644d-756b-418f-be7b-32011bd18b08",
+      "name": "\ud83c\udfa5 Create SendSpark Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "grJBBf82qkh8fFWK",
+          "name": "TripleWhale"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Fill out document\n\nhttps://docs.google.com/document/d/1f1mXkf9ASvHxnFmQHvfiszLYgb_ufxouZX_D24IpYEg/edit?usp=sharing",
+        "height": 176,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        2352
+      ],
+      "id": "0e343829-8833-4dea-b073-1dd101c70cec",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "\ud83e\udd16 Initialize AI Outreach Orchestration": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83e\udde0 Think Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "\ud83c\udfaf Master Outreach Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udce7 Create Gmail Draft Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "\ud83c\udfaf Master Outreach Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udccb Update Airtable Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "\ud83c\udfaf Master Outreach Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83c\udfaf Master Outreach Orchestrator": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udcca Campaign Summary Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model in Perplexity": {
+      "ai_tool": [
+        [
+          {
+            "node": "Message a model in Perplexity1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83c\udfaf Smart Outreach Campaign Form": {
+      "main": [
+        [
+          {
+            "node": "\ud83c\udfaf Process AI Outreach Campaign Form Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83c\udfaf Process AI Outreach Campaign Form Data": {
+      "main": [
+        [
+          {
+            "node": "\ud83e\udd16 Initialize AI Outreach Orchestration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "\ud83c\udfaf Prepare AI Context1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "\ud83c\udfa5 Create SendSpark Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "\ud83c\udfaf Master Outreach Orchestrator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model in Perplexity1": {
+      "ai_tool": [
+        [
+          {
+            "node": "\ud83c\udfaf Master Outreach Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Message a model in Perplexity1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udcf1 Send Success Notification": {
+      "main": [
+        []
+      ]
+    },
+    "\ud83d\udcca Campaign Summary Generator": {
+      "main": [
+        [
+          {
+            "node": "\ud83d\udcf1 Send Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Automation Services Handbook": {
+      "ai_tool": [
+        [
+          {
+            "node": "\ud83c\udfaf Master Outreach Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83c\udfaf Prepare AI Context1": {
+      "main": [
+        [
+          {
+            "node": "\ud83c\udfaf Master Outreach Orchestrator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udce7 Email Creator Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "\ud83c\udfaf Master Outreach Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udce7 Email Creator LLM": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "\ud83d\udce7 Email Creator Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83c\udfa5 SendSpark Decision Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "\ud83c\udfaf Master Outreach Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83c\udfa5 SendSpark Decision LLM": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "\ud83c\udfa5 SendSpark Decision Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83c\udfa5 Create SendSpark Video Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "\ud83c\udfa5 SendSpark Decision Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udd0d Lead Intelligence LLM1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "\ud83d\udd0d Lead Intelligence Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83c\udfa8 Personalization Strategist LLM1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "\ud83c\udfa8 Personalization Strategist Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83d\udd0d Lead Intelligence Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "\ud83c\udfaf Master Outreach Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83c\udfa8 Personalization Strategist Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "\ud83c\udfaf Master Outreach Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "\ud83c\udfa5 Create SendSpark Video": {
+      "main": [
+        [
+          {
+            "node": "\ud83c\udfaf Master Outreach Orchestrator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-08-31T15:49:42.120Z",
+      "createdAt": "2025-08-31T15:49:42.120Z",
+      "role": "workflow:owner",
+      "workflowId": "drsNK1Vhz5l9zqnZ",
+      "projectId": "3PTcJ2mMcVduDkV6",
+      "project": {
+        "updatedAt": "2025-04-23T19:12:24.962Z",
+        "createdAt": "2025-04-23T19:10:00.223Z",
+        "id": "3PTcJ2mMcVduDkV6",
+        "name": "YOUR_CREDENTIAL_HERE",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "c59b8fe8-021b-47c6-bde5-5b2ca7aae876"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
